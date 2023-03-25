@@ -1,4 +1,4 @@
-package com.example.eventiapp;
+package com.example.eventiapp.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,8 @@ import android.view.WindowManager;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
+import com.example.eventiapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
