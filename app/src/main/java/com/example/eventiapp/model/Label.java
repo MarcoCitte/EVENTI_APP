@@ -1,7 +1,7 @@
 package com.example.eventiapp.model;
 
 public class Label {
-    String name;
+    private String name;
 
     public String getName() {
         return name;

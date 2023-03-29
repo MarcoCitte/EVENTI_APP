@@ -1,4 +1,4 @@
-package com.example.eventiapp.ui;
+package com.example.eventiapp.ui.main;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

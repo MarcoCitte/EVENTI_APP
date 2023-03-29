@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.eventiapp.R;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.service.EventsApiService;
@@ -20,7 +21,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class EventsRepository implements IEventsRepository{
+public class EventsRepository implements IEventsRepository {  //NON SERVE PIU QUESTA CLASSE
 
     private static final String TAG = EventsRepository.class.getSimpleName();
 
@@ -38,23 +39,22 @@ public class EventsRepository implements IEventsRepository{
     }
 
     @Override
-    public void fetchEvents(String country,long lastUpdate) {
+    public void fetchEvents(String country, long lastUpdate) {
         long currentTime = System.currentTimeMillis();
-
         // It gets the events from the Web Service if the last download
         // of the events has been performed more than FRESH_TIMEOUT value ago
         if (currentTime - lastUpdate > FRESH_TIMEOUT) {
             Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,
-                    CONTENT_TYPE_VALUE, TOKEN_API_VALUE);
+                    TOKEN_API_VALUE,CONTENT_TYPE_VALUE);
 
             eventsResponseCall.enqueue(new Callback<EventsApiResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<EventsApiResponse> call,
                                        @NonNull Response<EventsApiResponse> response) {
 
-                    if (response.body() != null && response.isSuccessful() &&
-                            !response.body().getStatus().equals("error")) {
+                    if (response.body() != null && response.isSuccessful()) {
                         List<Events> eventsList = response.body().getEventsList();
+                        Log.i("RESPONSE", eventsList.toString());
                         //saveDataInDatabase(eventsList); //ROOM
                     } else {
                         eventsResponseCallback.onFailure("ERRORE");
@@ -64,6 +64,7 @@ public class EventsRepository implements IEventsRepository{
                 @Override
                 public void onFailure(@NonNull Call<EventsApiResponse> call, @NonNull Throwable t) {
                     eventsResponseCallback.onFailure(t.getMessage());
+                    Log.e("ERRORE",t.getMessage());
                 }
             });
         } else {

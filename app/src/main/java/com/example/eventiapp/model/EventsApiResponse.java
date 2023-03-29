@@ -5,39 +5,60 @@ import android.os.Parcelable;
 import java.util.List;
 
 public class EventsApiResponse extends EventsResponse{
-    private String status;
-    private int totalResults;
+    private String count;
+    private boolean overflow;
+    private String next;
+    private String previous;
 
     public EventsApiResponse() {super();}
 
-    public EventsApiResponse(String status,int totalResults,List<Events> events){
-        super(events);
-        this.status=status;
-        this.totalResults=totalResults;
-
+    public EventsApiResponse(List<Events> eventsList, String count, boolean overflow, String next, String previous) {
+        super(eventsList);
+        this.count = count;
+        this.overflow = overflow;
+        this.next = next;
+        this.previous = previous;
     }
 
-    public String getStatus() {
-        return status;
+    public String getCount() {
+        return count;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setCount(String count) {
+        this.count = count;
     }
 
-    public int getTotalResults() {
-        return totalResults;
+    public boolean isOverflow() {
+        return overflow;
     }
 
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
+    public void setOverflow(boolean overflow) {
+        this.overflow = overflow;
+    }
+
+    public String getNext() {
+        return next;
+    }
+
+    public void setNext(String next) {
+        this.next = next;
+    }
+
+    public String getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(String previous) {
+        this.previous = previous;
     }
 
     @Override
     public String toString() {
         return "EventsApiResponse{" +
-                "status='" + status + '\'' +
-                ", totalResults=" + totalResults +
+                "count='" + count + '\'' +
+                ", overflow=" + overflow +
+                ", next='" + next + '\'' +
+                ", previous='" + previous + '\'' +
                 '}';
     }
 }

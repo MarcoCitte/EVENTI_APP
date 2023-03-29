@@ -7,6 +7,9 @@ android {
     namespace 'com.example.eventiapp'
     compileSdk 33
 
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
     defaultConfig {
         applicationId "com.example.eventiapp"
         minSdk 22
@@ -15,6 +18,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue "string", "events_api_key", properties.getProperty("events_api_key", "")
     }
 
     buildTypes {

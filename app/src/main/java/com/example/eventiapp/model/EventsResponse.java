@@ -11,22 +11,14 @@ import java.util.List;
 
 public class EventsResponse implements Parcelable {
 
-    private boolean isLoading;
+    //private boolean isLoading;
 
-    @SerializedName("events")
+    @SerializedName("results")
     private List<Events> eventsList;
 
     public EventsResponse() {}
 
     public EventsResponse(List<Events> eventsList){this.eventsList=eventsList;};
-
-    public boolean isLoading() {
-        return isLoading;
-    }
-
-    public void setLoading(boolean loading) {
-        isLoading = loading;
-    }
 
     public List<Events> getEventsList() {
         return eventsList;
@@ -39,13 +31,11 @@ public class EventsResponse implements Parcelable {
     @Override
     public String toString() {
         return "EventsResponse{" +
-                "isLoading=" + isLoading +
-                ", eventsList=" + eventsList +
+                "eventsList=" + eventsList +
                 '}';
     }
 
     protected EventsResponse(Parcel in) {
-        isLoading = in.readByte() != 0;
         eventsList = in.createTypedArrayList(Events.CREATOR);
     }
 
@@ -68,7 +58,6 @@ public class EventsResponse implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeByte((byte) (isLoading ? 1 : 0));
         dest.writeTypedList(eventsList);
     }
 }

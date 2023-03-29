@@ -1,4 +1,4 @@
-package com.example.eventiapp.ui;
+package com.example.eventiapp.ui.main;
 
 import android.os.Bundle;
 
@@ -9,13 +9,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
+import com.example.eventiapp.model.Events;
+import com.example.eventiapp.repository.events.EventsRepository;
+import com.example.eventiapp.repository.events.EventsResponseCallback;
+import com.example.eventiapp.repository.events.IEventsRepository;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements EventsResponseCallback {
+
+    private IEventsRepository iEventsRepository;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,6 +63,10 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        iEventsRepository=new EventsRepository(requireActivity().getApplication(),this);
+        iEventsRepository.fetchEvents("IT",1000);
+
     }
 
     @Override
@@ -62,5 +74,20 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onSuccess(List<Events> eventsList) {
+
+    }
+
+    @Override
+    public void onFailure(String errorMessage) {
+
+    }
+
+    @Override
+    public void onEventsFavoriteStatusChanged(Events events) {
+
     }
 }
