@@ -5,4 +5,11 @@
     <string name="events">MY EVENTS</string>
     <string name="search">SEARCH</string>
 
+    <string name="content_description_fav_addition">Add the news to the favorite list</string>
+
+    <string name="error_retrieving_events">Error in retrieving the events</string>
+    <string name="api_key_error">API Key not valid or maximum number of requests reached</string>
+    <string name="unexpected_error">Unexpected error</string>
+
+
 </resources>

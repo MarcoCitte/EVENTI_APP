@@ -1,5 +1,7 @@
 package com.example.eventiapp.repository.events;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.eventiapp.model.Events;
@@ -65,7 +67,8 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
 
     @Override
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
-
+        List<Events> eventsList = eventsApiResponse.getEventsList();
+        Log.i("RESPONSE", eventsList.toString());
     }
 
     @Override

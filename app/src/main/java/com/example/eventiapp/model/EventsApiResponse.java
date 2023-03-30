@@ -5,14 +5,14 @@ import android.os.Parcelable;
 import java.util.List;
 
 public class EventsApiResponse extends EventsResponse{
-    private String count;
+    private int count;
     private boolean overflow;
     private String next;
     private String previous;
 
     public EventsApiResponse() {super();}
 
-    public EventsApiResponse(List<Events> eventsList, String count, boolean overflow, String next, String previous) {
+    public EventsApiResponse(List<Events> eventsList, int count, boolean overflow, String next, String previous) {
         super(eventsList);
         this.count = count;
         this.overflow = overflow;
@@ -20,11 +20,11 @@ public class EventsApiResponse extends EventsResponse{
         this.previous = previous;
     }
 
-    public String getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(String count) {
+    public void setCount(int count) {
         this.count = count;
     }
 

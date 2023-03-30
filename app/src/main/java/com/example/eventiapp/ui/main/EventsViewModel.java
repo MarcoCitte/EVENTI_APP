@@ -21,8 +21,8 @@ public class EventsViewModel extends ViewModel {
     private MutableLiveData<Result> eventsListLiveData;
     private MutableLiveData<Result> favoriteEventsListLiveData;
 
-    public EventsViewModel(IEventsRepositoryWithLiveData iEventsRepository) {
-        this.iEventsRepositoryWithLiveData = iEventsRepository;
+    public EventsViewModel(IEventsRepositoryWithLiveData iEventsRepositoryWithLiveData) {
+        this.iEventsRepositoryWithLiveData = iEventsRepositoryWithLiveData;
         this.page = 1;
         this.totalResults = 0;
         this.firstLoading = true;

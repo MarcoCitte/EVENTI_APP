@@ -1,6 +1,8 @@
 package com.example.eventiapp.source;
 
+import static com.example.eventiapp.util.Constants.API_KEY_ERROR;
 import static com.example.eventiapp.util.Constants.CONTENT_TYPE_VALUE;
+import static com.example.eventiapp.util.Constants.RETROFIT_ERROR;
 import static com.example.eventiapp.util.Constants.TOKEN_API_VALUE;
 
 import android.util.Log;
@@ -41,13 +43,13 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
                 if (response.body() != null && response.isSuccessful()) {
                    eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
                 } else {
-                    eventsCallback.onFailureFromRemote(new Exception("ERRORE API KEY"));
+                    eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<EventsApiResponse> call, @NonNull Throwable t) {
-                eventsCallback.onFailureFromRemote(new Exception("ERRORE RETROFIT"));
+                eventsCallback.onFailureFromRemote(new Exception(RETROFIT_ERROR));
             }
         });
     }
