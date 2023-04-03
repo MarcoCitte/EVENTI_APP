@@ -15,29 +15,29 @@ import java.util.List;
 
 public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveData, EventsCallback {
 
-    private static final String TAG=EventsRepositoryWithLiveData.class.getSimpleName();
+    private static final String TAG = EventsRepositoryWithLiveData.class.getSimpleName();
 
     private final MutableLiveData<Result> allEventsMutableLiveData;
     private final MutableLiveData<Result> favoriteEventsMutableLiveData;
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
 
     public EventsRepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource) {
-        allEventsMutableLiveData=new MutableLiveData<>();
-        favoriteEventsMutableLiveData=new MutableLiveData<>();
+        allEventsMutableLiveData = new MutableLiveData<>();
+        favoriteEventsMutableLiveData = new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
     }
 
     @Override
     public MutableLiveData<Result> fetchEvents(String country, long lastUpdate) {
-        long currentTime=System.currentTimeMillis();
+        long currentTime = System.currentTimeMillis();
 
-        if(currentTime - lastUpdate > Constants.FRESH_TIMEOUT){
+        if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
             eventsRemoteDataSource.getEvents(country);
-        }else{
+        } else {
             //PRENDE IN LOCALE I DATI
         }
-        return null;
+        return allEventsMutableLiveData;
     }
 
     @Override
@@ -47,9 +47,9 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
 
     @Override
     public MutableLiveData<Result> getFavoriteEvents(boolean isFirstLoading) {
-        if(isFirstLoading){
+        if (isFirstLoading) {
             //PRENDE I BACKUP
-        }else{
+        } else {
             //PRENDE DATI LOCALI
         }
         return favoriteEventsMutableLiveData;
@@ -67,8 +67,8 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
 
     @Override
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
-        List<Events> eventsList = eventsApiResponse.getEventsList();
-        Log.i("RESPONSE", eventsList.toString());
+        Result.EventsResponseSuccess result = new Result.EventsResponseSuccess(eventsApiResponse);
+        allEventsMutableLiveData.postValue(result);
     }
 
     @Override

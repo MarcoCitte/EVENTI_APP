@@ -1,5 +1,7 @@
 package com.example.eventiapp.ui.main;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -30,7 +32,8 @@ public class EventsViewModel extends ViewModel {
 
     public MutableLiveData<Result> getEvents(String country, long lastUpdate){
       if(eventsListLiveData==null){
-          iEventsRepositoryWithLiveData.fetchEvents(country,lastUpdate);
+          Log.i("GET EVENTS VIEW MODEL","LIVE DATA NULL");
+          fetchEvents(country,lastUpdate);
       }
       return eventsListLiveData;
     }
@@ -48,6 +51,10 @@ public class EventsViewModel extends ViewModel {
 
     public void fetchEvents(String country) {
         iEventsRepositoryWithLiveData.fetchEvents(country);
+    }
+
+    public void fetchEvents(String country,long lastUpdate) {
+        eventsListLiveData=iEventsRepositoryWithLiveData.fetchEvents(country,lastUpdate);
     }
 
     private void getFavoriteEvents(boolean firstLoading) {

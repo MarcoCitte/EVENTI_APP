@@ -95,12 +95,12 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewDate = itemView.findViewById(R.id.textview_date);
             imageViewFavoriteEvent = itemView.findViewById(R.id.imageview_favorite_event);
             itemView.setOnClickListener(this);
-            imageViewFavoriteEvent.setOnClickListener(this);
+            //imageViewFavoriteEvent.setOnClickListener(this);
         }
 
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
-            textViewDate.setText(DateTimeUtil.getDate(events.getStart()) + DateTimeUtil.getDate(events.getEnd()));
+            textViewDate.setText(DateTimeUtil.getDate(events.getStart()));
             //setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
         }
 

@@ -107,7 +107,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String country="IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
+        String country = "IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -146,15 +146,18 @@ public class HomeFragment extends Fragment {
 
         fragmentHomeBinding.progressBar.setVisibility(View.VISIBLE);
 
-        eventsViewModel.getEvents(country, Long.parseLong(lastUpdate));
+        Log.i("EVENTS: ", eventsViewModel.getEvents(country, Long.parseLong(lastUpdate)).toString());
 
-        /*
-        eventsViewModel.getEvents(country, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(),
-                result -> {
+        eventsViewModel.getEvents(country, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+                    Log.i("RESULT", "RESULT");
+
                     if (result.isSuccess()) {
+                        Log.i("SUCCESSO", "SUCCESSO");
 
                         EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                         List<Events> fetchedEvents = eventsResponse.getEventsList();
+
+                        Log.i("FETCHED EVENTS", fetchedEvents.toString());
 
                         if (!eventsViewModel.isLoading()) {
                             if (eventsViewModel.isFirstLoading()) {
@@ -189,6 +192,8 @@ public class HomeFragment extends Fragment {
                             eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
                         }
                     } else {
+                        Log.i("FALLITO", "FALLITO");
+
                         ErrorMessageUtil errorMessagesUtil =
                                 new ErrorMessageUtil(requireActivity().getApplication());
                         Snackbar.make(view, errorMessagesUtil.
@@ -238,7 +243,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-         */
+
     }
 
     @Override
