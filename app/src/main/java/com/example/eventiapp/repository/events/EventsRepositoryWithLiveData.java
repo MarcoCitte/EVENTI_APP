@@ -6,11 +6,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
+import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
+import com.example.eventiapp.source.BaseEventsLocalDataSource;
 import com.example.eventiapp.source.BaseEventsRemoteDataSource;
 import com.example.eventiapp.source.EventsCallback;
 import com.example.eventiapp.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveData, EventsCallback {
@@ -20,20 +23,25 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     private final MutableLiveData<Result> allEventsMutableLiveData;
     private final MutableLiveData<Result> favoriteEventsMutableLiveData;
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
+    private BaseEventsLocalDataSource eventsLocalDataSource;
 
-    public EventsRepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource) {
+
+
+    public EventsRepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
+        this.eventsLocalDataSource=eventsLocalDataSource;
+        this.eventsLocalDataSource.setEventsCallback(this);
     }
 
     @Override
-    public MutableLiveData<Result> fetchEvents(String country, long lastUpdate) {
+    public MutableLiveData<Result> fetchEvents(String country, String location, String date, int limit, long lastUpdate) {
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
-            eventsRemoteDataSource.getEvents(country);
+            eventsRemoteDataSource.getEvents(country, location, date, limit);
         } else {
             //PRENDE IN LOCALE I DATI
         }
@@ -41,8 +49,8 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     }
 
     @Override
-    public void fetchEvents(String country) {
-        eventsRemoteDataSource.getEvents(country);
+    public void fetchEvents(String country, String location, String date, int limit) {
+        eventsRemoteDataSource.getEvents(country, location, date, limit);
     }
 
     @Override
@@ -50,25 +58,31 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         if (isFirstLoading) {
             //PRENDE I BACKUP
         } else {
-            //PRENDE DATI LOCALI
+            eventsLocalDataSource.getFavoriteEvents();
         }
         return favoriteEventsMutableLiveData;
     }
 
     @Override
     public void updateEvents(Events events) {
-
+        eventsLocalDataSource.updateEvents(events);
+        if(events.isFavorite()){
+            //AGGIUNGI EVENTO COME PREFERITO
+        }else{
+            //ELIMINA EVENTO COME PREFERITO
+        }
     }
 
     @Override
     public void deleteFavoriteEvents() {
-
+      eventsLocalDataSource.deleteFavoriteEvents();
     }
 
     @Override
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
-        Result.EventsResponseSuccess result = new Result.EventsResponseSuccess(eventsApiResponse);
-        allEventsMutableLiveData.postValue(result);
+        //Result.EventsResponseSuccess result = new Result.EventsResponseSuccess(eventsApiResponse);
+        //allEventsMutableLiveData.postValue(result);
+        eventsLocalDataSource.insertEvents(eventsApiResponse);
     }
 
     @Override
@@ -79,37 +93,98 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
 
     @Override
     public void onSuccessFromLocal(EventsApiResponse eventsApiResponse) {
-
+        if (allEventsMutableLiveData.getValue() != null && allEventsMutableLiveData.getValue().isSuccess()) {
+            List<Events> eventsList = ((Result.EventsResponseSuccess)allEventsMutableLiveData.getValue()).getData().getEventsList();
+            eventsList.addAll(eventsApiResponse.getEventsList());
+            eventsApiResponse.setEventsList(eventsList);
+            Result.EventsResponseSuccess result = new Result.EventsResponseSuccess(eventsApiResponse);
+            allEventsMutableLiveData.postValue(result);
+        } else {
+            Result.EventsResponseSuccess result = new Result.EventsResponseSuccess(eventsApiResponse);
+            allEventsMutableLiveData.postValue(result);
+        }
     }
 
     @Override
     public void onFailureFromLocal(Exception exception) {
-
+       Result.Error resultError= new Result.Error(exception.getMessage());
+       allEventsMutableLiveData.postValue(resultError);
+       favoriteEventsMutableLiveData.postValue(resultError);
     }
 
     @Override
-    public void onNewsFavoriteStatusChanged(Events events, List<Events> favoriteEvents) {
+    public void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents) {
+        Result allEventsResult = allEventsMutableLiveData.getValue();
 
+        if (allEventsResult != null && allEventsResult.isSuccess()) {
+            List<Events> oldAllEvents = ((Result.EventsResponseSuccess)allEventsResult).getData().getEventsList();
+            if (oldAllEvents.contains(events)) {
+                oldAllEvents.set(oldAllEvents.indexOf(events), events);
+                allEventsMutableLiveData.postValue(allEventsResult);
+            }
+        }
+        favoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(favoriteEvents)));
     }
 
     @Override
-    public void onNewsFavoriteStatusChanged(List<Events> events) {
+    public void onEventsFavoriteStatusChanged(List<Events> events) {
+        List<Events> notSynchronizedEventsList = new ArrayList<>();
 
+        for (Events event : events) {
+            if (!event.isSynchronized()) {
+                notSynchronizedEventsList.add(event);
+            }
+        }
+
+        if (!notSynchronizedEventsList.isEmpty()) {
+            //BACKUP
+        }
+
+        favoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
     }
 
     @Override
-    public void onDeleteFavoriteNewsSuccess(List<Events> favoriteEvents) {
+    public void onDeleteFavoriteEventsSuccess(List<Events> favoriteEvents) {
+        Result allEventsResult = allEventsMutableLiveData.getValue();
 
+        if (allEventsResult != null && allEventsResult.isSuccess()) {
+            List<Events> oldAllEvents = ((Result.EventsResponseSuccess)allEventsResult).getData().getEventsList();
+            for (Events event : favoriteEvents) {
+                if (oldAllEvents.contains(event)) {
+                    oldAllEvents.set(oldAllEvents.indexOf(event), event);
+                }
+            }
+            allEventsMutableLiveData.postValue(allEventsResult);
+        }
+
+        if (favoriteEventsMutableLiveData.getValue() != null &&
+                favoriteEventsMutableLiveData.getValue().isSuccess()) {
+            favoriteEvents.clear();
+            Result.EventsResponseSuccess result = new Result.EventsResponseSuccess(new EventsResponse(favoriteEvents));
+            favoriteEventsMutableLiveData.postValue(result);
+        }
+
+        //backupDataSource.deleteAllFavoriteNews();
     }
 
     @Override
     public void onSuccessFromCloudReading(List<Events> eventsList) {
-
+        if (eventsList != null) {
+            for (Events events : eventsList) {
+                events.setSynchronized(true);
+            }
+            eventsLocalDataSource.insertEvents(eventsList);
+            favoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
+        }
     }
 
     @Override
     public void onSuccessFromCloudWriting(Events events) {
-
+        if (events != null && !events.isFavorite()) {
+            events.setSynchronized(false);
+        }
+        eventsLocalDataSource.updateEvents(events);
+        //backupDataSource.getFavoriteNews();
     }
 
     @Override
@@ -119,7 +194,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
 
     @Override
     public void onSuccessSynchronization() {
-
+        Log.d(TAG, "Events synchronized from remote");
     }
 
     @Override

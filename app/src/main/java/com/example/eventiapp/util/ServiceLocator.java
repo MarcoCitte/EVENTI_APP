@@ -3,10 +3,13 @@ package com.example.eventiapp.util;
 import android.app.Application;
 
 import com.example.eventiapp.R;
+import com.example.eventiapp.database.EventsRoomDatabase;
 import com.example.eventiapp.repository.events.EventsRepositoryWithLiveData;
 import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
 import com.example.eventiapp.service.EventsApiService;
+import com.example.eventiapp.source.BaseEventsLocalDataSource;
 import com.example.eventiapp.source.BaseEventsRemoteDataSource;
+import com.example.eventiapp.source.EventsLocalDataSource;
 import com.example.eventiapp.source.EventsRemoteDataSource;
 
 import java.io.IOException;
@@ -43,10 +46,19 @@ public class ServiceLocator {
         return retrofit.create(EventsApiService.class);
     }
 
+    public EventsRoomDatabase getEventsDao(Application application) {
+        return EventsRoomDatabase.getDatabase(application);
+    }
+
     public IEventsRepositoryWithLiveData getEventsRepository(Application application) {
         BaseEventsRemoteDataSource eventsRemoteDataSource;
-        eventsRemoteDataSource = new EventsRemoteDataSource(application.getString(R.string.events_api_key));
+        BaseEventsLocalDataSource eventsLocalDataSource;
+        SharedPreferencesUtil sharedPreferencesUtil=new SharedPreferencesUtil(application);
+        DataEncryptionUtil dataEncryptionUtil=new DataEncryptionUtil(application);
 
-        return new EventsRepositoryWithLiveData(eventsRemoteDataSource);
+        eventsRemoteDataSource = new EventsRemoteDataSource(application.getString(R.string.events_api_key));
+        eventsLocalDataSource=new EventsLocalDataSource(getEventsDao(application),sharedPreferencesUtil,dataEncryptionUtil);
+
+        return new EventsRepositoryWithLiveData(eventsRemoteDataSource,eventsLocalDataSource);
     }
 }

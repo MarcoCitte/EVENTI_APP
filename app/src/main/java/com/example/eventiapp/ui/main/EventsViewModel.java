@@ -30,12 +30,12 @@ public class EventsViewModel extends ViewModel {
         this.firstLoading = true;
     }
 
-    public MutableLiveData<Result> getEvents(String country, long lastUpdate){
-      if(eventsListLiveData==null){
-          Log.i("GET EVENTS VIEW MODEL","LIVE DATA NULL");
-          fetchEvents(country,lastUpdate);
-      }
-      return eventsListLiveData;
+    public MutableLiveData<Result> getEvents(String country, String location,String date, int limit, long lastUpdate) {
+        if (eventsListLiveData == null) {
+            Log.i("GET EVENTS VIEW MODEL", "LIVE DATA NULL");
+            fetchEvents(country, location, date, limit, lastUpdate);
+        }
+        return eventsListLiveData;
     }
 
     public MutableLiveData<Result> getFavoriteEventsLiveData(boolean isFirstLoading) {
@@ -49,12 +49,12 @@ public class EventsViewModel extends ViewModel {
         iEventsRepositoryWithLiveData.updateEvents(events);
     }
 
-    public void fetchEvents(String country) {
-        iEventsRepositoryWithLiveData.fetchEvents(country);
+    public void fetchEvents(String country, String location, String date, int limit) {
+        iEventsRepositoryWithLiveData.fetchEvents(country, location, date, limit);
     }
 
-    public void fetchEvents(String country,long lastUpdate) {
-        eventsListLiveData=iEventsRepositoryWithLiveData.fetchEvents(country,lastUpdate);
+    public void fetchEvents(String country, String location,String date,int limit, long lastUpdate) {
+        eventsListLiveData = iEventsRepositoryWithLiveData.fetchEvents(country, location, date, limit, lastUpdate);
     }
 
     private void getFavoriteEvents(boolean firstLoading) {

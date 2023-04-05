@@ -31,15 +31,15 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
     }
 
     @Override
-    public void getEvents(String country) {
-        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,
+    public void getEvents(String country, String location, String date, int limit) {
+        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,location,date,limit,
                 TOKEN_API_VALUE,CONTENT_TYPE_VALUE);
+
 
         eventsResponseCall.enqueue(new Callback<EventsApiResponse>() {
             @Override
             public void onResponse(@NonNull Call<EventsApiResponse> call,
                                    @NonNull Response<EventsApiResponse> response) {
-
                 if (response.body() != null && response.isSuccessful()) {
                    eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
                 } else {

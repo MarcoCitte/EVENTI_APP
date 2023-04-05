@@ -39,12 +39,12 @@ public class EventsRepository implements IEventsRepository {  //NON SERVE PIU QU
     }
 
     @Override
-    public void fetchEvents(String country, long lastUpdate) {
+    public void fetchEvents(String country, String location, String date, int limit,long lastUpdate) {
         long currentTime = System.currentTimeMillis();
         // It gets the events from the Web Service if the last download
         // of the events has been performed more than FRESH_TIMEOUT value ago
         if (currentTime - lastUpdate > FRESH_TIMEOUT) {
-            Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,
+            Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,location,date,limit,
                     TOKEN_API_VALUE,CONTENT_TYPE_VALUE);
 
             eventsResponseCall.enqueue(new Callback<EventsApiResponse>() {

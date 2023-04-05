@@ -5,20 +5,29 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-
+@Entity
 public class Events implements Parcelable {
 
-    private String id;
+
+    @PrimaryKey(autoGenerate = true)
+    private long id_db;
     //private EventsSource source;
     private String title;
     private String description;
     private String category;
-    //private List<Label> labels;
+    //private String[] labels;
     private int rank;
     @SerializedName("local_rank")
     private int localRank;
@@ -27,23 +36,30 @@ public class Events implements Parcelable {
     //@SerializedName("entities") //LUOGO E INDIRIZZO EVENTO
     //private String place;
     private int duration;
+    @ColumnInfo(name = "startDate")
     private String start;
     private String end;
     private String timezone;
-   // @SerializedName("location")
+    // @SerializedName("location")
     //private List<Coordinate> coordinates; //COORDINATE
     private String country;
     private String state; //ATTIVO o DISATTIVO
     @SerializedName("private")
     private boolean isPrivate;
 
-    //private boolean isFavorite;
+    @ColumnInfo(name = "is_favorite")
+    private boolean isFavorite;
 
-    public Events(){};
+    @ColumnInfo(name = "is_synchronized")
+    private boolean isSynchronized;
 
-    public Events(String id, String title, String description, String category, int rank, int localRank, int attendance, int duration,
-                  String start, String end, String timezone, String country, String state, boolean isPrivate) {
-        this.id = id;
+    public Events() {
+    }
+
+    ;
+
+    public Events(String title, String description, String category, int rank, int localRank, int attendance, int duration,
+                  String start, String end, String timezone, String country, String state, boolean isPrivate, boolean isFavorite, boolean isSynchronized) {
         this.title = title;
         this.description = description;
         this.category = category;
@@ -57,15 +73,48 @@ public class Events implements Parcelable {
         this.country = country;
         this.state = state;
         this.isPrivate = isPrivate;
+        this.isFavorite = isFavorite;
+        this.isSynchronized = isSynchronized;
     }
 
 
-    public String getId() {
-        return id;
+    protected Events(Parcel in) {
+        id_db = in.readLong();
+        title = in.readString();
+        description = in.readString();
+        category = in.readString();
+        rank = in.readInt();
+        localRank = in.readInt();
+        attendance = in.readInt();
+        duration = in.readInt();
+        start = in.readString();
+        end = in.readString();
+        timezone = in.readString();
+        country = in.readString();
+        state = in.readString();
+        isPrivate = in.readByte() != 0;
+        isFavorite = in.readByte() != 0;
+        isSynchronized = in.readByte() != 0;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public static final Creator<Events> CREATOR = new Creator<Events>() {
+        @Override
+        public Events createFromParcel(Parcel in) {
+            return new Events(in);
+        }
+
+        @Override
+        public Events[] newArray(int size) {
+            return new Events[size];
+        }
+    };
+
+    public long getId_db() {
+        return id_db;
+    }
+
+    public void setId_db(long id_db) {
+        this.id_db = id_db;
     }
 
     public String getTitle() {
@@ -172,10 +221,25 @@ public class Events implements Parcelable {
         isPrivate = aPrivate;
     }
 
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public boolean isSynchronized() {
+        return isSynchronized;
+    }
+
+    public void setSynchronized(boolean aSynchronized) {
+        isSynchronized = aSynchronized;
+    }
+
     @Override
     public String toString() {
         return "Events{" +
-                "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", category='" + category + '\'' +
@@ -189,29 +253,32 @@ public class Events implements Parcelable {
                 ", country='" + country + '\'' +
                 ", state='" + state + '\'' +
                 ", isPrivate=" + isPrivate +
+                ", isFavorite=" + isFavorite +
+                ", isSynchronized=" + isSynchronized +
                 '}';
     }
 
-    protected Events(Parcel in) {
-        id = in.readString();
-        title = in.readString();
-        description = in.readString();
-        category = in.readString();
-        rank = in.readInt();
-        localRank = in.readInt();
-        attendance = in.readInt();
-        duration = in.readInt();
-        start = in.readString();
-        end = in.readString();
-        timezone = in.readString();
-        country = in.readString();
-        state = in.readString();
-        isPrivate = in.readByte() != 0;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Events events = (Events) o;
+        return id_db == events.id_db && rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && isPrivate == events.isPrivate && isFavorite == events.isFavorite && isSynchronized == events.isSynchronized && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(timezone, events.timezone) && Objects.equals(country, events.country) && Objects.equals(state, events.state);
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
+    public int hashCode() {
+        return Objects.hash(id_db, title, description, category, rank, localRank, attendance, duration, start, end, timezone, country, state, isPrivate, isFavorite, isSynchronized);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeLong(id_db);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(category);
@@ -225,22 +292,7 @@ public class Events implements Parcelable {
         dest.writeString(country);
         dest.writeString(state);
         dest.writeByte((byte) (isPrivate ? 1 : 0));
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
+        dest.writeByte((byte) (isSynchronized ? 1 : 0));
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<Events> CREATOR = new Creator<Events>() {
-        @Override
-        public Events createFromParcel(Parcel in) {
-            return new Events(in);
-        }
-
-        @Override
-        public Events[] newArray(int size) {
-            return new Events[size];
-        }
-    };
 }

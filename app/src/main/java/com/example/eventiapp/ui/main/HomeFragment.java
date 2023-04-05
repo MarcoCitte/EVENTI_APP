@@ -108,6 +108,9 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         String country = "IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
+        String location="45.5193323, 9.200713"; //BICOCCA
+        String date="2023-04-04";
+        int limit=50;
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -146,9 +149,8 @@ public class HomeFragment extends Fragment {
 
         fragmentHomeBinding.progressBar.setVisibility(View.VISIBLE);
 
-        Log.i("EVENTS: ", eventsViewModel.getEvents(country, Long.parseLong(lastUpdate)).toString());
 
-        eventsViewModel.getEvents(country, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+        eventsViewModel.getEvents(country, location, date, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
                     Log.i("RESULT", "RESULT");
 
                     if (result.isSuccess()) {
@@ -236,7 +238,7 @@ public class HomeFragment extends Fragment {
 
                             int page = eventsViewModel.getPage() + 1;
                             eventsViewModel.setPage(page);
-                            eventsViewModel.fetchEvents(country);
+                            eventsViewModel.fetchEvents(country,location,date,limit);
                         }
                     }
                 }

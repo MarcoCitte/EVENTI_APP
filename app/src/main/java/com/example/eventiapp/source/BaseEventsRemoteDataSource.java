@@ -8,5 +8,5 @@ public abstract class BaseEventsRemoteDataSource {
         this.eventsCallback=eventsCallback;
     }
 
-    public abstract void getEvents(String country);
+    public abstract void getEvents(String country, String location, String date, int limit);
 }

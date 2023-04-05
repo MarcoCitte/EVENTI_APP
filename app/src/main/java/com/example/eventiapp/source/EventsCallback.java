@@ -10,9 +10,9 @@ public interface EventsCallback {
     void onFailureFromRemote(Exception exception);
     void onSuccessFromLocal(EventsApiResponse eventsApiResponse);
     void onFailureFromLocal(Exception exception);
-    void onNewsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
-    void onNewsFavoriteStatusChanged(List<Events> events);
-    void onDeleteFavoriteNewsSuccess(List<Events> favoriteEvents);
+    void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
+    void onEventsFavoriteStatusChanged(List<Events> events);
+    void onDeleteFavoriteEventsSuccess(List<Events> favoriteEvents);
     void onSuccessFromCloudReading(List<Events> eventsList);
     void onSuccessFromCloudWriting(Events events);
     void onFailureFromCloud(Exception exception);

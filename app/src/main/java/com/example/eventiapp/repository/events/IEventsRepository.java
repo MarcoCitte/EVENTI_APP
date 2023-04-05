@@ -4,7 +4,7 @@ import com.example.eventiapp.model.Events;
 
 public interface IEventsRepository {
 
-    void fetchEvents(String country, long lastUpdate);
+    void fetchEvents(String country, String location, String date, int limit, long lastUpdate);
 
     void updateEvents(Events events);
 
