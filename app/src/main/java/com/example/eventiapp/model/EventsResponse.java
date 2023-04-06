@@ -11,7 +11,7 @@ import java.util.List;
 
 public class EventsResponse implements Parcelable {
 
-    //private boolean isLoading;
+    private boolean isLoading;
 
     @SerializedName("results")
     private List<Events> eventsList;

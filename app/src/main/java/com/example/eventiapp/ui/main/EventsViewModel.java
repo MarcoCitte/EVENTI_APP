@@ -32,7 +32,6 @@ public class EventsViewModel extends ViewModel {
 
     public MutableLiveData<Result> getEvents(String country, String location,String date, int limit, long lastUpdate) {
         if (eventsListLiveData == null) {
-            Log.i("GET EVENTS VIEW MODEL", "LIVE DATA NULL");
             fetchEvents(country, location, date, limit, lastUpdate);
         }
         return eventsListLiveData;

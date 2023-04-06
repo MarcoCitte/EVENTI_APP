@@ -26,13 +26,12 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     private BaseEventsLocalDataSource eventsLocalDataSource;
 
 
-
     public EventsRepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
-        this.eventsLocalDataSource=eventsLocalDataSource;
+        this.eventsLocalDataSource = eventsLocalDataSource;
         this.eventsLocalDataSource.setEventsCallback(this);
     }
 
@@ -43,7 +42,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
             eventsRemoteDataSource.getEvents(country, location, date, limit);
         } else {
-            //PRENDE IN LOCALE I DATI
+            eventsLocalDataSource.getEvents();
         }
         return allEventsMutableLiveData;
     }
@@ -66,16 +65,16 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     @Override
     public void updateEvents(Events events) {
         eventsLocalDataSource.updateEvents(events);
-        if(events.isFavorite()){
+        if (events.isFavorite()) {
             //AGGIUNGI EVENTO COME PREFERITO
-        }else{
+        } else {
             //ELIMINA EVENTO COME PREFERITO
         }
     }
 
     @Override
     public void deleteFavoriteEvents() {
-      eventsLocalDataSource.deleteFavoriteEvents();
+        eventsLocalDataSource.deleteFavoriteEvents();
     }
 
     @Override
@@ -94,7 +93,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     @Override
     public void onSuccessFromLocal(EventsApiResponse eventsApiResponse) {
         if (allEventsMutableLiveData.getValue() != null && allEventsMutableLiveData.getValue().isSuccess()) {
-            List<Events> eventsList = ((Result.EventsResponseSuccess)allEventsMutableLiveData.getValue()).getData().getEventsList();
+            List<Events> eventsList = ((Result.EventsResponseSuccess) allEventsMutableLiveData.getValue()).getData().getEventsList();
             eventsList.addAll(eventsApiResponse.getEventsList());
             eventsApiResponse.setEventsList(eventsList);
             Result.EventsResponseSuccess result = new Result.EventsResponseSuccess(eventsApiResponse);
@@ -107,9 +106,9 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
 
     @Override
     public void onFailureFromLocal(Exception exception) {
-       Result.Error resultError= new Result.Error(exception.getMessage());
-       allEventsMutableLiveData.postValue(resultError);
-       favoriteEventsMutableLiveData.postValue(resultError);
+        Result.Error resultError = new Result.Error(exception.getMessage());
+        allEventsMutableLiveData.postValue(resultError);
+        favoriteEventsMutableLiveData.postValue(resultError);
     }
 
     @Override
@@ -117,7 +116,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         Result allEventsResult = allEventsMutableLiveData.getValue();
 
         if (allEventsResult != null && allEventsResult.isSuccess()) {
-            List<Events> oldAllEvents = ((Result.EventsResponseSuccess)allEventsResult).getData().getEventsList();
+            List<Events> oldAllEvents = ((Result.EventsResponseSuccess) allEventsResult).getData().getEventsList();
             if (oldAllEvents.contains(events)) {
                 oldAllEvents.set(oldAllEvents.indexOf(events), events);
                 allEventsMutableLiveData.postValue(allEventsResult);
@@ -148,7 +147,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         Result allEventsResult = allEventsMutableLiveData.getValue();
 
         if (allEventsResult != null && allEventsResult.isSuccess()) {
-            List<Events> oldAllEvents = ((Result.EventsResponseSuccess)allEventsResult).getData().getEventsList();
+            List<Events> oldAllEvents = ((Result.EventsResponseSuccess) allEventsResult).getData().getEventsList();
             for (Events event : favoriteEvents) {
                 if (oldAllEvents.contains(event)) {
                     oldAllEvents.set(oldAllEvents.indexOf(event), event);

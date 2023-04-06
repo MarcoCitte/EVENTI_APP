@@ -108,7 +108,8 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         String country = "IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
-        String location="45.5193323, 9.200713"; //BICOCCA
+        String location="45.51851, 9.2075123"; //BICOCCA
+        double radius=4.2;
         String date="2023-04-04";
         int limit=50;
 
@@ -150,7 +151,7 @@ public class HomeFragment extends Fragment {
         fragmentHomeBinding.progressBar.setVisibility(View.VISIBLE);
 
 
-        eventsViewModel.getEvents(country, location, date, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+        eventsViewModel.getEvents(country, radius + "km@" + location, date, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
                     Log.i("RESULT", "RESULT");
 
                     if (result.isSuccess()) {
@@ -217,7 +218,6 @@ public class HomeFragment extends Fragment {
                     lastVisibleItem = layoutManager.findLastVisibleItemPosition();
                     visibleItemCount = layoutManager.getChildCount();
 
-                    // Condition to enable the loading of other events while the user is scrolling the list
                     if (totalItemCount == visibleItemCount ||
                             (totalItemCount <= (lastVisibleItem + threshold) &&
                                     dy > 0 &&
@@ -238,7 +238,7 @@ public class HomeFragment extends Fragment {
 
                             int page = eventsViewModel.getPage() + 1;
                             eventsViewModel.setPage(page);
-                            eventsViewModel.fetchEvents(country,location,date,limit);
+                            eventsViewModel.fetchEvents(country,radius + "km@" + location,date,limit);
                         }
                     }
                 }

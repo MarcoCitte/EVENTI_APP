@@ -11,9 +11,15 @@ import androidx.annotation.NonNull;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
+import com.example.eventiapp.model.Place;
 import com.example.eventiapp.service.EventsApiService;
 import com.example.eventiapp.util.ServiceLocator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -41,7 +47,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
             public void onResponse(@NonNull Call<EventsApiResponse> call,
                                    @NonNull Response<EventsApiResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
-                   eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
+                    eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
                 } else {
                     eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));
                 }
@@ -53,4 +59,5 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
             }
         });
     }
+
 }

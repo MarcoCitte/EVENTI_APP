@@ -1,20 +1,22 @@
 package com.example.eventiapp.database;
 
-import static com.example.eventiapp.util.Constants.DATABASE_VERSION;
 
 import android.content.Context;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.util.Constants;
+import com.example.eventiapp.util.Converters;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Events.class}, version = DATABASE_VERSION)
+@Database(entities = {Events.class}, version = 6)
+@TypeConverters({Converters.class})
 public abstract class EventsRoomDatabase extends RoomDatabase {
     public abstract EventsDao eventsDao();
 
@@ -28,7 +30,7 @@ public abstract class EventsRoomDatabase extends RoomDatabase {
             synchronized (EventsRoomDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            EventsRoomDatabase.class, Constants.EVENTS_DATABASE_NAME).build();
+                            EventsRoomDatabase.class, Constants.EVENTS_DATABASE_NAME).fallbackToDestructiveMigration().build();
                 }
             }
         }
