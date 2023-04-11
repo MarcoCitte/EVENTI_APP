@@ -22,6 +22,7 @@ public class EventsViewModel extends ViewModel {
     private boolean firstLoading;
     private MutableLiveData<Result> eventsListLiveData;
     private MutableLiveData<Result> favoriteEventsListLiveData;
+    private MutableLiveData<Result> categoryEventsLiveData;
 
     public EventsViewModel(IEventsRepositoryWithLiveData iEventsRepositoryWithLiveData) {
         this.iEventsRepositoryWithLiveData = iEventsRepositoryWithLiveData;
@@ -30,9 +31,9 @@ public class EventsViewModel extends ViewModel {
         this.firstLoading = true;
     }
 
-    public MutableLiveData<Result> getEvents(String country, String location,String date, int limit, long lastUpdate) {
+    public MutableLiveData<Result> getEvents(String country, String location, String date, String sort, int limit, long lastUpdate) {
         if (eventsListLiveData == null) {
-            fetchEvents(country, location, date, limit, lastUpdate);
+            fetchEvents(country, location, date, sort, limit, lastUpdate);
         }
         return eventsListLiveData;
     }
@@ -44,28 +45,24 @@ public class EventsViewModel extends ViewModel {
         return favoriteEventsListLiveData;
     }
 
-    public void updateEvents(Events events) {
-        iEventsRepositoryWithLiveData.updateEvents(events);
+    public MutableLiveData<Result> getCategoryEventsLiveData(String category) {
+        if (categoryEventsLiveData == null) {
+            categoryEventsLiveData=iEventsRepositoryWithLiveData.getCategoryEvents(category);
+        }
+        return categoryEventsLiveData;
     }
 
-    public void fetchEvents(String country, String location, String date, int limit) {
-        iEventsRepositoryWithLiveData.fetchEvents(country, location, date, limit);
+    public void deleteEvents(){
+        iEventsRepositoryWithLiveData.deleteEvents();
     }
 
-    public void fetchEvents(String country, String location,String date,int limit, long lastUpdate) {
-        eventsListLiveData = iEventsRepositoryWithLiveData.fetchEvents(country, location, date, limit, lastUpdate);
+
+    public void fetchEvents(String country, String location, String date, String sort, int limit) {
+        iEventsRepositoryWithLiveData.fetchEvents(country, location, date, sort, limit);
     }
 
-    private void getFavoriteEvents(boolean firstLoading) {
-        favoriteEventsListLiveData = iEventsRepositoryWithLiveData.getFavoriteEvents(firstLoading);
-    }
-
-    public void removeFromFavorite(Events events) {
-        iEventsRepositoryWithLiveData.updateEvents(events);
-    }
-
-    public void deleteAllFavoriteEvents() {
-        iEventsRepositoryWithLiveData.deleteFavoriteEvents();
+    public void fetchEvents(String country, String location, String date, String sort, int limit, long lastUpdate) {
+        eventsListLiveData = iEventsRepositoryWithLiveData.fetchEvents(country, location, date, sort, limit, lastUpdate);
     }
 
     public int getPage() {

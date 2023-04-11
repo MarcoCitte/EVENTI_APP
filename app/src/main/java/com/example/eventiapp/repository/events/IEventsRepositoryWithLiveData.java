@@ -7,13 +7,17 @@ import com.example.eventiapp.model.Result;
 
 public interface IEventsRepositoryWithLiveData {
 
-    MutableLiveData<Result> fetchEvents(String country, String location, String date, int limit, long lastUpdate);
+    MutableLiveData<Result> fetchEvents(String country, String location, String date, String sort, int limit, long lastUpdate);
 
-    void fetchEvents(String country, String location, String date, int limit);
+    void fetchEvents(String country, String location, String date, String sort, int limit);
 
     MutableLiveData<Result> getFavoriteEvents(boolean isFirstLoading);
 
+    MutableLiveData<Result> getCategoryEvents(String category);
+
     void updateEvents(Events events);
+
+    void deleteEvents();
 
     void deleteFavoriteEvents();
 }

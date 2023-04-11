@@ -13,7 +13,7 @@ import java.util.List;
 
 @Dao
 public interface EventsDao {
-    @Query("SELECT * FROM events ORDER BY startDate ASC")
+    @Query("SELECT * FROM events WHERE category <> 'severe-weather' ORDER BY startDate ASC")
     List<Events> getAll();
 
     @Query("SELECT * FROM events WHERE id_db = :id")
@@ -21,6 +21,12 @@ public interface EventsDao {
 
     @Query("SELECT * FROM events WHERE is_favorite = 1 ORDER BY startDate ASC")
     List<Events> getFavoriteEvents();
+
+    @Query("SELECT * FROM events WHERE category = :category ORDER BY startDate ASC")
+    List<Events> getCategoryEvents(String category);
+
+    @Query("SELECT COUNT(*) FROM events")
+    int count();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     List<Long> insertEventsList(List<Events> eventsList);

@@ -22,6 +22,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
 
     private final MutableLiveData<Result> allEventsMutableLiveData;
     private final MutableLiveData<Result> favoriteEventsMutableLiveData;
+    private final MutableLiveData<Result> categoryEventsMutableLiveData;
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
     private BaseEventsLocalDataSource eventsLocalDataSource;
 
@@ -29,6 +30,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     public EventsRepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
+        categoryEventsMutableLiveData=new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
         this.eventsLocalDataSource = eventsLocalDataSource;
@@ -36,11 +38,11 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     }
 
     @Override
-    public MutableLiveData<Result> fetchEvents(String country, String location, String date, int limit, long lastUpdate) {
+    public MutableLiveData<Result> fetchEvents(String country, String location, String date, String sort, int limit, long lastUpdate) {
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
-            eventsRemoteDataSource.getEvents(country, location, date, limit);
+            eventsRemoteDataSource.getEvents(country, location, date, sort, limit);
         } else {
             eventsLocalDataSource.getEvents();
         }
@@ -48,8 +50,8 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     }
 
     @Override
-    public void fetchEvents(String country, String location, String date, int limit) {
-        eventsRemoteDataSource.getEvents(country, location, date, limit);
+    public void fetchEvents(String country, String location, String date, String sort, int limit) {
+        eventsRemoteDataSource.getEvents(country, location, date,sort, limit);
     }
 
     @Override
@@ -62,6 +64,12 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         return favoriteEventsMutableLiveData;
     }
 
+
+    public MutableLiveData<Result> getCategoryEvents(String category){
+       eventsLocalDataSource.getCategoryEvents(category);
+       return categoryEventsMutableLiveData;
+    }
+
     @Override
     public void updateEvents(Events events) {
         eventsLocalDataSource.updateEvents(events);
@@ -70,6 +78,10 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         } else {
             //ELIMINA EVENTO COME PREFERITO
         }
+    }
+
+    public void deleteEvents(){
+       eventsLocalDataSource.deleteAll();
     }
 
     @Override
@@ -104,11 +116,17 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         }
     }
 
+
     @Override
     public void onFailureFromLocal(Exception exception) {
         Result.Error resultError = new Result.Error(exception.getMessage());
         allEventsMutableLiveData.postValue(resultError);
         favoriteEventsMutableLiveData.postValue(resultError);
+    }
+
+    @Override
+    public void onEventsCategory(List<Events> events) {
+        categoryEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
     }
 
     @Override
@@ -197,7 +215,5 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     }
 
     @Override
-    public void onSuccessDeletion() {
-
-    }
+    public void onSuccessDeletion() {}
 }

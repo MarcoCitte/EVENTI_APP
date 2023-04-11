@@ -10,6 +10,7 @@ public interface EventsCallback {
     void onFailureFromRemote(Exception exception);
     void onSuccessFromLocal(EventsApiResponse eventsApiResponse);
     void onFailureFromLocal(Exception exception);
+    void onEventsCategory(List<Events> events);
     void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
     void onEventsFavoriteStatusChanged(List<Events> events);
     void onDeleteFavoriteEventsSuccess(List<Events> favoriteEvents);

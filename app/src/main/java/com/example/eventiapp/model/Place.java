@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Place implements Serializable {
 
@@ -51,6 +52,19 @@ public class Place implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Place place = (Place) o;
+        return Objects.equals(id, place.id) && Objects.equals(name, place.name) && Objects.equals(type, place.type) && Objects.equals(address, place.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, type, address);
     }
 
     @Override

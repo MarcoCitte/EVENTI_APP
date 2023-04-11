@@ -3,12 +3,13 @@ package com.example.eventiapp.source;
 import static com.example.eventiapp.util.Constants.API_KEY_ERROR;
 import static com.example.eventiapp.util.Constants.CONTENT_TYPE_VALUE;
 import static com.example.eventiapp.util.Constants.RETROFIT_ERROR;
-import static com.example.eventiapp.util.Constants.TOKEN_API_VALUE;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import android.app.Application;
 
+import com.example.eventiapp.R;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.Place;
@@ -37,9 +38,9 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
     }
 
     @Override
-    public void getEvents(String country, String location, String date, int limit) {
-        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,location,date,limit,
-                TOKEN_API_VALUE,CONTENT_TYPE_VALUE);
+    public void getEvents(String country, String location, String date, String sort, int limit) {
+        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,location,date,sort,limit,
+                apiKey,CONTENT_TYPE_VALUE);
 
 
         eventsResponseCall.enqueue(new Callback<EventsApiResponse>() {

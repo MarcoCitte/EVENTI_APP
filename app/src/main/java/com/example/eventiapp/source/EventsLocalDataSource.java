@@ -6,6 +6,8 @@ import static com.example.eventiapp.util.Constants.ENCRYPTED_SHARED_PREFERENCES_
 import static com.example.eventiapp.util.Constants.LAST_UPDATE;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
 
+import android.util.Log;
+
 import com.example.eventiapp.database.EventsDao;
 import com.example.eventiapp.database.EventsRoomDatabase;
 import com.example.eventiapp.model.Events;
@@ -15,7 +17,7 @@ import com.example.eventiapp.util.SharedPreferencesUtil;
 
 import java.util.List;
 
-public class EventsLocalDataSource extends BaseEventsLocalDataSource{
+public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     private final EventsDao eventsDao;
     private final SharedPreferencesUtil sharedPreferences;
@@ -30,38 +32,46 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource{
     @Override
     public void getEvents() {
         EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
-          EventsApiResponse eventsApiResponse=new EventsApiResponse();
-          eventsApiResponse.setEventsList(eventsDao.getAll());
-          eventsCallback.onSuccessFromLocal(eventsApiResponse);
+            EventsApiResponse eventsApiResponse = new EventsApiResponse();
+            eventsApiResponse.setEventsList(eventsDao.getAll());
+            eventsCallback.onSuccessFromLocal(eventsApiResponse);
         });
     }
 
     @Override
     public void getFavoriteEvents() {
         EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
-          List<Events> favoriteEvents = eventsDao.getFavoriteEvents();
-          eventsCallback.onEventsFavoriteStatusChanged(favoriteEvents);
+            List<Events> favoriteEvents = eventsDao.getFavoriteEvents();
+            eventsCallback.onEventsFavoriteStatusChanged(favoriteEvents);
+        });
+    }
+
+    @Override
+    public void getCategoryEvents(String category) {
+        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> categoryEvents = eventsDao.getCategoryEvents(category);
+            eventsCallback.onEventsCategory(categoryEvents);
         });
     }
 
     @Override
     public void updateEvents(Events events) {
         EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
-          if(events!=null){
-              int rowUpdatedCounter = eventsDao.updateSingleFavoriteEvents(events);
-              if (rowUpdatedCounter == 1) {
-                  Events updatedEvents = eventsDao.getEvents(events.getId_db());
-                  eventsCallback.onEventsFavoriteStatusChanged(updatedEvents, eventsDao.getFavoriteEvents());
-              } else {
-                  eventsCallback.onFailureFromLocal(new Exception("ERRORE"));
-              }
-          } else {
-              List<Events> allEvents = eventsDao.getAll();
-              for (Events e : allEvents) {
-                  e.setSynchronized(false);
-                  eventsDao.updateSingleFavoriteEvents(e);
-              }
-          }
+            if (events != null) {
+                int rowUpdatedCounter = eventsDao.updateSingleFavoriteEvents(events);
+                if (rowUpdatedCounter == 1) {
+                    Events updatedEvents = eventsDao.getEvents(events.getId_db());
+                    eventsCallback.onEventsFavoriteStatusChanged(updatedEvents, eventsDao.getFavoriteEvents());
+                } else {
+                    eventsCallback.onFailureFromLocal(new Exception("ERRORE"));
+                }
+            } else {
+                List<Events> allEvents = eventsDao.getAll();
+                for (Events e : allEvents) {
+                    e.setSynchronized(false);
+                    eventsDao.updateSingleFavoriteEvents(e);
+                }
+            }
         });
     }
 
@@ -137,6 +147,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource{
             int eventsCounter = eventsDao.getAll().size();
             int deletedEvents = eventsDao.deleteAll();
 
+            Log.i("ELEMENTI CANCELLATI:", String.valueOf(eventsCounter));
             if (eventsCounter == deletedEvents) {
                 sharedPreferences.deleteAll(SHARED_PREFERENCES_FILE_NAME);
                 dataEncryptionUtil.deleteAll(ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, ENCRYPTED_DATA_FILE_NAME);

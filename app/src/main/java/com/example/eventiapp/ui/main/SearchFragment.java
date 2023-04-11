@@ -2,13 +2,20 @@ package com.example.eventiapp.ui.main;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.eventiapp.R;
+
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,5 +69,20 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
+    }
+
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        ImageView communityIV=view.findViewById(R.id.communityIV);
+        TextView communityTV=view.findViewById(R.id.communityTV);
+        Bundle category=new Bundle();
+        category.putString("category",communityTV.getText().toString().toLowerCase(Locale.ROOT));
+        communityIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(view).navigate(R.id.action_searchFragment_to_categoryFragment,category);
+            }
+        });
+
+
     }
 }

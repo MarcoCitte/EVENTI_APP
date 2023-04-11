@@ -298,12 +298,12 @@ public class Events implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Events events = (Events) o;
-        return id_db == events.id_db && rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && isPrivate == events.isPrivate && isFavorite == events.isFavorite && isSynchronized == events.isSynchronized && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Arrays.equals(labels, events.labels) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(timezone, events.timezone) && Arrays.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state);
+        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && isPrivate == events.isPrivate && isFavorite == events.isFavorite && isSynchronized == events.isSynchronized && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Arrays.equals(labels, events.labels) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(timezone, events.timezone) && Arrays.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id_db, title, description, category, rank, localRank, attendance, places, duration, start, end, timezone, country, state, isPrivate, isFavorite, isSynchronized);
+        int result = Objects.hash(title, description, category, rank, localRank, attendance, places, duration, start, end, timezone, country, state, isPrivate, isFavorite, isSynchronized);
         result = 31 * result + Arrays.hashCode(labels);
         result = 31 * result + Arrays.hashCode(coordinates);
         return result;

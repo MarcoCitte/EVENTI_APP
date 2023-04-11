@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
-import com.example.eventiapp.databinding.FragmentHomeBinding;
+import com.example.eventiapp.databinding.FragmentCategoryBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
@@ -40,22 +40,15 @@ import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class HomeFragment extends Fragment {
 
-    private static final String TAG = HomeFragment.class.getSimpleName();
+public class CategoryFragment extends Fragment {
 
-    private FragmentHomeBinding fragmentHomeBinding;
+    private static final String TAG = CategoryFragment.class.getSimpleName();
+
+    private FragmentCategoryBinding fragmentCategoryBinding;
 
     private List<Events> eventsList;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
@@ -70,18 +63,12 @@ public class HomeFragment extends Fragment {
     private final int threshold = 1;
 
 
-    public HomeFragment() {
+    public CategoryFragment() {
         // Required empty public constructor
     }
 
-    private String currentDate() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        Date date = new Date();
-        return dateFormat.format(date);
-    }
-
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
+    public static CategoryFragment newInstance() {
+        return new CategoryFragment();
     }
 
     @Override
@@ -108,20 +95,15 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        fragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false);
-        return fragmentHomeBinding.getRoot();
+        fragmentCategoryBinding = FragmentCategoryBinding.inflate(inflater, container, false);
+        return fragmentCategoryBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String country = "IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
-        String location="45.51851, 9.2075123"; //BICOCCA
-        double radius=4.2;
-        String sort="start";
-        String date=currentDate();
-        int limit=5000;
+        String category = getArguments().getString("category");
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -158,62 +140,61 @@ public class HomeFragment extends Fragment {
 
         String lastUpdate = "0";
 
-        fragmentHomeBinding.progressBar.setVisibility(View.VISIBLE);
+        fragmentCategoryBinding.progressBar.setVisibility(View.VISIBLE);
 
+        eventsViewModel.getCategoryEventsLiveData(category).observe(getViewLifecycleOwner(), result -> {
 
-        eventsViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+            if (result.isSuccess()) {
+                Log.i("SUCCESSO", "SUCCESSO");
 
-                    if (result.isSuccess()) {
-                        Log.i("SUCCESSO", "SUCCESSO");
+                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                List<Events> fetchedEvents = eventsResponse.getEventsList();
 
-                        EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
-                        List<Events> fetchedEvents = eventsResponse.getEventsList();
-                        Log.i("COUNT RESULTS: ",((EventsApiResponse) eventsResponse).getCount() +" ");
-                        Log.i("FETCHED EVENTS", fetchedEvents.toString());
+                Log.i("CATEGORY EVENTS", fetchedEvents.toString());
 
-                        if (!eventsViewModel.isLoading()) {
-                            if (eventsViewModel.isFirstLoading()) {
-                                eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                                eventsViewModel.setFirstLoading(false);
-                                this.eventsList.addAll(fetchedEvents);
-                                eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
-                                        this.eventsList.size());
-                            } else {
-                                // Updates related to the favorite status of the events
-                                eventsList.clear();
-                                eventsList.addAll(fetchedEvents);
-                                eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
-                            }
-                            fragmentHomeBinding.progressBar.setVisibility(View.GONE);
-                        } else {
-                            eventsViewModel.setLoading(false);
-                            eventsViewModel.setCurrentResults(eventsList.size());
-
-                            int initialSize = eventsList.size();
-
-                            for (int i = 0; i < eventsList.size(); i++) {
-                                if (eventsList.get(i) == null) {
-                                    eventsList.remove(eventsList.get(i));
-                                }
-                            }
-                            int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
-                                    EVENTS_PAGE_SIZE_VALUE;
-                            for (int i = startIndex; i < fetchedEvents.size(); i++) {
-                                eventsList.add(fetchedEvents.get(i));
-                            }
-                            eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
-                        }
+                if (!eventsViewModel.isLoading()) {
+                    if (eventsViewModel.isFirstLoading()) {
+                        eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
+                        eventsViewModel.setFirstLoading(false);
+                        this.eventsList.addAll(fetchedEvents);
+                        eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
+                                this.eventsList.size());
                     } else {
-                        Log.i("FALLITO", "FALLITO");
-
-                        ErrorMessageUtil errorMessagesUtil =
-                                new ErrorMessageUtil(requireActivity().getApplication());
-                        Snackbar.make(view, errorMessagesUtil.
-                                        getErrorMessage(((Result.Error) result).getMessage()),
-                                Snackbar.LENGTH_SHORT).show();
-                        fragmentHomeBinding.progressBar.setVisibility(View.GONE);
+                        // Updates related to the favorite status of the events
+                        eventsList.clear();
+                        eventsList.addAll(fetchedEvents);
+                        eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
                     }
-                });
+                    fragmentCategoryBinding.progressBar.setVisibility(View.GONE);
+                } else {
+                    eventsViewModel.setLoading(false);
+                    eventsViewModel.setCurrentResults(eventsList.size());
+
+                    int initialSize = eventsList.size();
+
+                    for (int i = 0; i < eventsList.size(); i++) {
+                        if (eventsList.get(i) == null) {
+                            eventsList.remove(eventsList.get(i));
+                        }
+                    }
+                    int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                            EVENTS_PAGE_SIZE_VALUE;
+                    for (int i = startIndex; i < fetchedEvents.size(); i++) {
+                        eventsList.add(fetchedEvents.get(i));
+                    }
+                    eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
+                }
+            } else {
+                Log.i("FALLITO", "FALLITO");
+
+                ErrorMessageUtil errorMessagesUtil =
+                        new ErrorMessageUtil(requireActivity().getApplication());
+                Snackbar.make(view, errorMessagesUtil.
+                                getErrorMessage(((Result.Error) result).getMessage()),
+                        Snackbar.LENGTH_SHORT).show();
+                fragmentCategoryBinding.progressBar.setVisibility(View.GONE);
+            }
+        });
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -247,7 +228,7 @@ public class HomeFragment extends Fragment {
 
                             int page = eventsViewModel.getPage() + 1;
                             eventsViewModel.setPage(page);
-                            eventsViewModel.fetchEvents(country,radius + "km@" + location,date,sort,limit);
+                            eventsViewModel.getCategoryEventsLiveData(category);
                         }
                     }
                 }
@@ -267,7 +248,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        fragmentHomeBinding = null;
+        fragmentCategoryBinding = null;
     }
 
 

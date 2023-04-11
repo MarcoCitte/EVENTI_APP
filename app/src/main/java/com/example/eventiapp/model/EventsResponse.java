@@ -20,22 +20,8 @@ public class EventsResponse implements Parcelable {
 
     public EventsResponse(List<Events> eventsList){this.eventsList=eventsList;};
 
-    public List<Events> getEventsList() {
-        return eventsList;
-    }
-
-    public void setEventsList(List<Events> eventsList) {
-        this.eventsList = eventsList;
-    }
-
-    @Override
-    public String toString() {
-        return "EventsResponse{" +
-                "eventsList=" + eventsList +
-                '}';
-    }
-
     protected EventsResponse(Parcel in) {
+        isLoading = in.readByte() != 0;
         eventsList = in.createTypedArrayList(Events.CREATOR);
     }
 
@@ -51,6 +37,22 @@ public class EventsResponse implements Parcelable {
         }
     };
 
+    public List<Events> getEventsList() {
+        return eventsList;
+    }
+
+    public void setEventsList(List<Events> eventsList) {
+        this.eventsList = eventsList;
+    }
+
+    @Override
+    public String toString() {
+        return "EventsResponse{" +
+                "eventsList=" + eventsList +
+                '}';
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -58,6 +60,7 @@ public class EventsResponse implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeByte((byte) (isLoading ? 1 : 0));
         dest.writeTypedList(eventsList);
     }
 }

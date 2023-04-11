@@ -11,9 +11,9 @@ public class Constants {
     public static final String EVENTS_LIMIT="limit";
     public static final String EVENTS_START="start.gte";
     public static final String EVENTS_WITHIN="whitin";
+    public static final String EVENTS_SORT="sort";
     public static final String EVENTS_END="end.lte";
     public static final String CLIENT_ID_VALUE = "JY2hDOGTKiMtHH_VdBulMoKQai3uJq49AazyMAfJDDuzOqiJN4uq6A";
-    public static final String TOKEN_API_VALUE = "Bearer kTBSbQX6vl4mXWDKxB9fOsyQvSyb4VqtItnnuATN"; //DA METTERE IN LOCAL PROPERTIES
     public static final String TOKEN_API = "Authorization";
     public static final String CONTENT_TYPE = "Accept";
     public static final String CONTENT_TYPE_VALUE = "application/json";

@@ -62,7 +62,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         } else {
             view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.events_loading_item, parent, false);
-            return new EventsViewHolder(view);
+            return new LoadingEventsViewHolder(view);
         }
     }
 
@@ -100,7 +100,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
-            textViewDate.setText(DateTimeUtil.getDate(events.getStart()));
+            String fromTO="FROM: " + DateTimeUtil.getDate(events.getStart()) + " \nTO: " + DateTimeUtil.getDate(events.getStart());
+            textViewDate.setText(fromTO);
             //setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
         }
 
