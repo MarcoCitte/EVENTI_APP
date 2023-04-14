@@ -8,12 +8,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.model.Events;
@@ -29,13 +32,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MapsFragment extends Fragment {
 
@@ -43,7 +49,6 @@ public class MapsFragment extends Fragment {
     private List<Events> eventsList;
     private Marker marker;
     private UiSettings mUiSettings;
-
 
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -64,7 +69,7 @@ public class MapsFragment extends Fragment {
             mUiSettings.setMapToolbarEnabled(true);
 
 
-           LatLng bicocca = new LatLng(45.51851, 9.2075123);
+            LatLng bicocca = new LatLng(45.51851, 9.2075123);
            /*
             googleMap.addMarker(new MarkerOptions().position(bicocca).title("Marker in Bicocca"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(bicocca));
@@ -73,27 +78,35 @@ public class MapsFragment extends Fragment {
             float zoomLevel = 15.0f; //This goes up to 21
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bicocca, zoomLevel));
 
-           int count=0;
+            int count = 0;
 
-            for (int i = 0; i < eventsList.size(); i++) {
-                if (eventsList.get(i).getPlaces().isEmpty() || eventsList.get(i).getCategory().equals("severe-weather")) {
-                    //NON AGGIUNGE IL MARKER
-                } else {
-                    count++;
-                    double[] location = eventsList.get(i).getCoordinates();
-                    marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(location[1], location[0])).title(eventsList.get(i).getPlaces().get(0).getName()));
-                    googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                        @Override
-                        public boolean onMarkerClick(@NonNull Marker marker) {
-                            LatLng position = marker.getPosition();
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-                            googleMap.getMaxZoomLevel();
-
-                            return true;
-                        }
-                    });
+            //RIMUOVE LUOGHI DUPLICATI E SENZA COORDINATE COSI DA NON AVERE COORDINATE UGUALI
+            Map<String, Events> map = new HashMap<String, Events>();
+            for (Events e : eventsList) {
+                if (!e.getPlaces().isEmpty() && !e.getCategory().equals("severe-weather") && !e.getCategory().equals("airport-delays")) {
+                    String idPlace = e.getPlaces().get(0).getId();
+                    if (!map.containsKey(idPlace)) {
+                        map.put(idPlace, e);
+                    }
                 }
             }
+            List<Events> placesList = new ArrayList<>(map.values());
+
+            for (int i = 0; i < placesList.size(); i++) {
+                count++;
+                double[] location = placesList.get(i).getCoordinates();
+                marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(location[1], location[0])).title(placesList.get(i).getPlaces().get(0).getName()));
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(@NonNull Marker marker) {
+                        LatLng position = marker.getPosition();
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(20).build();
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        return true;
+                    }
+                });
+            }
+
 
             Log.i("NUMERO COORDINATE: ", count + " ");
         }

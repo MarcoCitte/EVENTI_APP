@@ -33,12 +33,20 @@ import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentSinglePlaceBinding;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -50,6 +58,9 @@ public class PlaceFragment extends Fragment {
 
     private FragmentSinglePlaceBinding fragmentSinglePlaceBinding;
     private EventsViewModel eventsViewModel;
+
+    MapView mMapView;
+    private GoogleMap googleMap;
 
     private List<Events> eventsList;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
@@ -88,6 +99,8 @@ public class PlaceFragment extends Fragment {
         }
         eventsList = new ArrayList<>();
 
+
+
     }
 
     @Override
@@ -120,6 +133,45 @@ public class PlaceFragment extends Fragment {
         fragmentSinglePlaceBinding.placeName.setText(events.getPlaces().get(0).getName());
         fragmentSinglePlaceBinding.placeType.setText(events.getPlaces().get(0).getType());
         fragmentSinglePlaceBinding.placeAddress.setText(events.getPlaces().get(0).getAddress());
+
+        //GOOGLE MAPS
+        mMapView=view.findViewById(R.id.mapView);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();
+
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap mMap) {
+                googleMap = mMap;
+
+                // For dropping a marker at a point on the Map
+                double[] location = events.getCoordinates();
+                LatLng latLng=new LatLng(location[1], location[0]);
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(events.getPlaces().get(0).getName()));
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(@NonNull Marker marker) {
+                        LatLng position = marker.getPosition();
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+                        googleMap.getMaxZoomLevel();
+
+                        return true;
+                    }
+                });
+
+                // For zooming automatically to the location of the marker
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        });
+
+
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview_events);
         LinearLayoutManager layoutManager =
@@ -259,6 +311,7 @@ public class PlaceFragment extends Fragment {
         super.onDestroy();
         eventsViewModel.setFirstLoading(true);
         eventsViewModel.setLoading(false);
+        mMapView.onDestroy();
     }
 
     @Override
@@ -266,6 +319,19 @@ public class PlaceFragment extends Fragment {
         super.onDestroyView();
         fragmentSinglePlaceBinding = null;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
 
 
     private boolean isConnected() {
