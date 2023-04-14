@@ -19,6 +19,10 @@ public abstract class BaseEventsLocalDataSource {
 
     public abstract void getCategoryEvents(String category);
 
+    public abstract void getSingleEvent(long id);
+
+    public abstract void getPlaceEvent(String id);
+
     public abstract void updateEvents(Events events);
 
     public abstract void deleteFavoriteEvents();

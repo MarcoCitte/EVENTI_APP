@@ -82,46 +82,46 @@ public class Events implements Parcelable {
     }
 
     protected Events(Parcel in) {
-        id_db = in.readLong();
-        title = in.readString();
-        description = in.readString();
-        category = in.readString();
-        labels = in.createStringArray();
-        rank = in.readInt();
-        localRank = in.readInt();
-        attendance = in.readInt();
-        duration = in.readInt();
-        start = in.readString();
-        end = in.readString();
-        timezone = in.readString();
-        coordinates = in.createDoubleArray();
-        country = in.readString();
-        state = in.readString();
-        isPrivate = in.readByte() != 0;
-        isFavorite = in.readByte() != 0;
-        isSynchronized = in.readByte() != 0;
+        this.id_db = in.readLong();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.category = in.readString();
+        this.labels = in.createStringArray();
+        this.rank = in.readInt();
+        this.localRank = in.readInt();
+        this.attendance = in.readInt();
+        this.duration = in.readInt();
+        this.start = in.readString();
+        this.end = in.readString();
+        this.timezone = in.readString();
+        this.coordinates = in.createDoubleArray();
+        this.country = in.readString();
+        this.state = in.readString();
+        this.isPrivate = in.readByte() != 0;
+        this.isFavorite = in.readByte() != 0;
+        this.isSynchronized = in.readByte() != 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id_db);
-        dest.writeString(title);
-        dest.writeString(description);
-        dest.writeString(category);
-        dest.writeStringArray(labels);
-        dest.writeInt(rank);
-        dest.writeInt(localRank);
-        dest.writeInt(attendance);
-        dest.writeInt(duration);
-        dest.writeString(start);
-        dest.writeString(end);
-        dest.writeString(timezone);
-        dest.writeDoubleArray(coordinates);
-        dest.writeString(country);
-        dest.writeString(state);
-        dest.writeByte((byte) (isPrivate ? 1 : 0));
-        dest.writeByte((byte) (isFavorite ? 1 : 0));
-        dest.writeByte((byte) (isSynchronized ? 1 : 0));
+        dest.writeLong(this.id_db);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeString(this.category);
+        dest.writeStringArray(this.labels);
+        dest.writeInt(this.rank);
+        dest.writeInt(this.localRank);
+        dest.writeInt(this.attendance);
+        dest.writeInt(this.duration);
+        dest.writeString(this.start);
+        dest.writeString(this.end);
+        dest.writeString(this.timezone);
+        dest.writeDoubleArray(this.coordinates);
+        dest.writeString(this.country);
+        dest.writeString(this.state);
+        dest.writeByte((byte) (this.isPrivate ? 1 : 0));
+        dest.writeByte((byte) (this.isFavorite ? 1 : 0));
+        dest.writeByte((byte) (this.isSynchronized ? 1 : 0));
     }
 
     @Override
@@ -206,7 +206,7 @@ public class Events implements Parcelable {
     }
 
     public List<Place> getPlaces() {
-        return places;
+       return places;
     }
 
     public void setPlaces(List<Place> places) {

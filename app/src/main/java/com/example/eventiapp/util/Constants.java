@@ -10,7 +10,7 @@ public class Constants {
     public static final String EVENTS_COUNTRY="country";
     public static final String EVENTS_LIMIT="limit";
     public static final String EVENTS_START="start.gte";
-    public static final String EVENTS_WITHIN="whitin";
+    public static final String EVENTS_WITHIN="within";
     public static final String EVENTS_SORT="sort";
     public static final String EVENTS_END="end.lte";
     public static final String CLIENT_ID_VALUE = "JY2hDOGTKiMtHH_VdBulMoKQai3uJq49AazyMAfJDDuzOqiJN4uq6A";
@@ -37,6 +37,11 @@ public class Constants {
 
     // Constants for encrypted files
     public static final String ENCRYPTED_DATA_FILE_NAME = "encrypted_file.txt";
+
+    //RECYCLER VIEW ADAPTER
+    public static final int EVENTS_VIEW_TYPE = 0;
+    public static final int LOADING_VIEW_TYPE = 1;
+    public static final int PLACES_VIEW_TYPE = 2;
 
 
 

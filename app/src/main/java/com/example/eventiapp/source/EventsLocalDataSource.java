@@ -55,6 +55,22 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     }
 
     @Override
+    public void getSingleEvent(long id) {
+        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+          Events event =eventsDao.getEvents(id);
+          eventsCallback.onSingleEvent(event);
+        });
+    }
+
+    @Override
+    public void getPlaceEvent(String id) {
+        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> events=eventsDao.getPlaceEvents(id);
+            eventsCallback.onEventsPlace(events);
+        });
+    }
+
+    @Override
     public void updateEvents(Events events) {
         EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
             if (events != null) {

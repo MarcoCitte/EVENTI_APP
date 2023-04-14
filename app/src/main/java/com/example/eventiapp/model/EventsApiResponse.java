@@ -1,6 +1,9 @@
 package com.example.eventiapp.model;
 
+import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -12,7 +15,7 @@ public class EventsApiResponse extends EventsResponse{
 
     public EventsApiResponse() {super();}
 
-    public EventsApiResponse(List<Events> eventsList, int count, boolean overflow, String next, String previous) {
+    public EventsApiResponse(int count, boolean overflow, String next, String previous,List<Events> eventsList) {
         super(eventsList);
         this.count = count;
         this.overflow = overflow;
@@ -61,4 +64,46 @@ public class EventsApiResponse extends EventsResponse{
                 ", previous='" + previous + '\'' +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeInt(this.count);
+        dest.writeByte(this.overflow ? (byte) 1 : (byte) 0);
+        dest.writeString(this.next);
+        dest.writeString(this.previous);
+    }
+
+    public void readFromParcel(Parcel source) {
+        this.count = source.readInt();
+        this.overflow = source.readByte() != 0;
+        this.next = source.readString();
+        this.previous = source.readString();
+    }
+
+    protected EventsApiResponse(Parcel in) {
+        super(in);
+        this.count = in.readInt();
+        this.overflow = in.readByte() != 0;
+        this.next = in.readString();
+        this.previous = in.readString();
+    }
+
+    public static final Creator<EventsApiResponse> CREATOR = new Creator<EventsApiResponse>() {
+        @Override
+        public EventsApiResponse createFromParcel(Parcel source) {
+            return new EventsApiResponse(source);
+        }
+
+        @Override
+        public EventsApiResponse[] newArray(int size) {
+            return new EventsApiResponse[size];
+        }
+    };
 }

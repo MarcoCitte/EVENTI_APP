@@ -23,6 +23,8 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     private final MutableLiveData<Result> allEventsMutableLiveData;
     private final MutableLiveData<Result> favoriteEventsMutableLiveData;
     private final MutableLiveData<Result> categoryEventsMutableLiveData;
+    private final MutableLiveData<Result> placeEventsMutableLiveData;
+    private final MutableLiveData<Result> singleEventMutableLiveData;
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
     private BaseEventsLocalDataSource eventsLocalDataSource;
 
@@ -30,7 +32,9 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     public EventsRepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
-        categoryEventsMutableLiveData=new MutableLiveData<>();
+        categoryEventsMutableLiveData = new MutableLiveData<>();
+        singleEventMutableLiveData = new MutableLiveData<>();
+        placeEventsMutableLiveData = new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
         this.eventsLocalDataSource = eventsLocalDataSource;
@@ -51,7 +55,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
 
     @Override
     public void fetchEvents(String country, String location, String date, String sort, int limit) {
-        eventsRemoteDataSource.getEvents(country, location, date,sort, limit);
+        eventsRemoteDataSource.getEvents(country, location, date, sort, limit);
     }
 
     @Override
@@ -65,9 +69,21 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     }
 
 
-    public MutableLiveData<Result> getCategoryEvents(String category){
-       eventsLocalDataSource.getCategoryEvents(category);
-       return categoryEventsMutableLiveData;
+    public MutableLiveData<Result> getCategoryEvents(String category) {
+        eventsLocalDataSource.getCategoryEvents(category);
+        return categoryEventsMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Result> getPlaceEvents(String id) {
+        eventsLocalDataSource.getPlaceEvent(id);
+        return placeEventsMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Result> getSingleEvent(long id) {
+        eventsLocalDataSource.getSingleEvent(id);
+        return singleEventMutableLiveData;
     }
 
     @Override
@@ -80,8 +96,8 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         }
     }
 
-    public void deleteEvents(){
-       eventsLocalDataSource.deleteAll();
+    public void deleteEvents() {
+        eventsLocalDataSource.deleteAll();
     }
 
     @Override
@@ -127,6 +143,16 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     @Override
     public void onEventsCategory(List<Events> events) {
         categoryEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
+    }
+
+    @Override
+    public void onEventsPlace(List<Events> events) {
+        placeEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
+    }
+
+    @Override
+    public void onSingleEvent(Events event) {
+
     }
 
     @Override
@@ -215,5 +241,6 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     }
 
     @Override
-    public void onSuccessDeletion() {}
+    public void onSuccessDeletion() {
+    }
 }

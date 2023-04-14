@@ -11,6 +11,8 @@ public interface EventsCallback {
     void onSuccessFromLocal(EventsApiResponse eventsApiResponse);
     void onFailureFromLocal(Exception exception);
     void onEventsCategory(List<Events> events);
+    void onEventsPlace(List <Events> events);
+    void onSingleEvent(Events event);
     void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
     void onEventsFavoriteStatusChanged(List<Events> events);
     void onDeleteFavoriteEventsSuccess(List<Events> favoriteEvents);

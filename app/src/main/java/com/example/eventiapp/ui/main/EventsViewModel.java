@@ -23,6 +23,8 @@ public class EventsViewModel extends ViewModel {
     private MutableLiveData<Result> eventsListLiveData;
     private MutableLiveData<Result> favoriteEventsListLiveData;
     private MutableLiveData<Result> categoryEventsLiveData;
+    private MutableLiveData<Result> placeEventsLiveData;
+    private MutableLiveData<Result> eventLiveData;
 
     public EventsViewModel(IEventsRepositoryWithLiveData iEventsRepositoryWithLiveData) {
         this.iEventsRepositoryWithLiveData = iEventsRepositoryWithLiveData;
@@ -47,12 +49,21 @@ public class EventsViewModel extends ViewModel {
 
     public MutableLiveData<Result> getCategoryEventsLiveData(String category) {
         if (categoryEventsLiveData == null) {
-            categoryEventsLiveData=iEventsRepositoryWithLiveData.getCategoryEvents(category);
+            categoryEventsLiveData = iEventsRepositoryWithLiveData.getCategoryEvents(category);
         }
         return categoryEventsLiveData;
     }
 
-    public void deleteEvents(){
+    public MutableLiveData<Result> getPlaceEventsLiveData(String id) {
+        return iEventsRepositoryWithLiveData.getPlaceEvents(id);
+    }
+
+    public MutableLiveData<Result> getSingleEvent(long id) {
+        eventLiveData = iEventsRepositoryWithLiveData.getSingleEvent(id);
+        return eventLiveData;
+    }
+
+    public void deleteEvents() {
         iEventsRepositoryWithLiveData.deleteEvents();
     }
 

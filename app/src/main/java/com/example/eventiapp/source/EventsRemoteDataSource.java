@@ -48,6 +48,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
             public void onResponse(@NonNull Call<EventsApiResponse> call,
                                    @NonNull Response<EventsApiResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
+                    Log.i("RESPONSE BODY: ",response.body() + " FINE ");
                     eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
                 } else {
                     eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));

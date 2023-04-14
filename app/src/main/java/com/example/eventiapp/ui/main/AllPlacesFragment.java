@@ -1,24 +1,12 @@
 package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
-import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
+import static com.example.eventiapp.util.Constants.PLACES_VIEW_TYPE;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.MenuProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,9 +15,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
-import com.example.eventiapp.databinding.FragmentCategoryBinding;
+import com.example.eventiapp.databinding.FragmentAllEventsBinding;
+import com.example.eventiapp.databinding.FragmentPlacesBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
@@ -37,21 +36,25 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+public class AllPlacesFragment extends Fragment {
 
 
-public class CategoryFragment extends Fragment {
+    private static final String TAG = HomeFragment.class.getSimpleName();
 
-    private static final String TAG = CategoryFragment.class.getSimpleName();
-
-    private FragmentCategoryBinding fragmentCategoryBinding;
+    private FragmentPlacesBinding fragmentPlacesBinding;
 
     private List<Events> eventsList;
-    private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
+    private EventsRecyclerViewAdapter placesRecyclerViewAdapter;
     private EventsViewModel eventsViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
 
@@ -63,12 +66,12 @@ public class CategoryFragment extends Fragment {
     private final int threshold = 1;
 
 
-    public CategoryFragment() {
+    public AllPlacesFragment() {
         // Required empty public constructor
     }
 
-    public static CategoryFragment newInstance() {
-        return new CategoryFragment();
+    public static AllPlacesFragment newInstance() {
+        return new AllPlacesFragment();
     }
 
     @Override
@@ -95,15 +98,20 @@ public class CategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        fragmentCategoryBinding = FragmentCategoryBinding.inflate(inflater, container, false);
-        return fragmentCategoryBinding.getRoot();
+        fragmentPlacesBinding = FragmentPlacesBinding.inflate(inflater, container, false);
+        return fragmentPlacesBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String category = getArguments().getString("category");
+        String country = "IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
+        String location = "45.51851, 9.2075123"; //BICOCCA
+        double radius = 4.2;
+        String sort = "start";
+        String date = AllEventsFragment.currentDate();
+        int limit = 5000;
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -117,25 +125,24 @@ public class CategoryFragment extends Fragment {
             }
         });
 
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerview_events);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerview_places);
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(requireContext(),
                         LinearLayoutManager.VERTICAL, false);
 
-        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),EVENTS_VIEW_TYPE,
+        placesRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
+                requireActivity().getApplication(),PLACES_VIEW_TYPE,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
-                        //VAI AI DETTAGLI DELL'EVENTO
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("event", events);
-                        Navigation.findNavController(view).navigate(R.id.action_categoryFragment_to_eventFragment, bundle);
                     }
 
                     @Override
                     public void onPlacesItemClick(Events events) {
-
+                        //VAI AI DETTAGLI DEL POSTO
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("event", events);
+                        Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_placeFragment, bundle);
                     }
 
                     @Override
@@ -144,13 +151,14 @@ public class CategoryFragment extends Fragment {
                     }
                 });
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(eventsRecyclerViewAdapter);
+        recyclerView.setAdapter(placesRecyclerViewAdapter);
 
         String lastUpdate = "0";
 
-        fragmentCategoryBinding.progressBar.setVisibility(View.VISIBLE);
+        fragmentPlacesBinding.progressBar.setVisibility(View.VISIBLE);
 
-        eventsViewModel.getCategoryEventsLiveData(category).observe(getViewLifecycleOwner(), result -> {
+
+        eventsViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
 
             if (result.isSuccess()) {
                 Log.i("SUCCESSO", "SUCCESSO");
@@ -158,21 +166,33 @@ public class CategoryFragment extends Fragment {
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
 
+                //RIMUOVE LUOGHI DUPLICATI COSI DA NON AVERE LUOGHI UGUALI
+                Map<String, Events> map = new HashMap<String, Events>();
+                for (Events e : fetchedEvents) {
+                    if(!e.getPlaces().isEmpty() && !e.getCategory().equals("severe-weather") && !e.getCategory().equals("airport-delays")) {
+                        String idPlace = e.getPlaces().get(0).getId();
+                        if (!map.containsKey(idPlace)) {
+                            map.put(idPlace, e);
+                        }
+                    }
+                }
+                List<Events> placesList=new ArrayList<>(map.values());
+
 
                 if (!eventsViewModel.isLoading()) {
                     if (eventsViewModel.isFirstLoading()) {
                         eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
                         eventsViewModel.setFirstLoading(false);
-                        this.eventsList.addAll(fetchedEvents);
-                        eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
+                        this.eventsList.addAll(placesList);
+                        placesRecyclerViewAdapter.notifyItemRangeInserted(0,
                                 this.eventsList.size());
                     } else {
                         // Updates related to the favorite status of the events
                         eventsList.clear();
-                        eventsList.addAll(fetchedEvents);
-                        eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
+                        eventsList.addAll(placesList);
+                        placesRecyclerViewAdapter.notifyItemChanged(0, placesList.size());
                     }
-                    fragmentCategoryBinding.progressBar.setVisibility(View.GONE);
+                    fragmentPlacesBinding.progressBar.setVisibility(View.GONE);
                 } else {
                     eventsViewModel.setLoading(false);
                     eventsViewModel.setCurrentResults(eventsList.size());
@@ -186,10 +206,10 @@ public class CategoryFragment extends Fragment {
                     }
                     int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
                             EVENTS_PAGE_SIZE_VALUE;
-                    for (int i = startIndex; i < fetchedEvents.size(); i++) {
-                        eventsList.add(fetchedEvents.get(i));
+                    for (int i = startIndex; i < placesList.size(); i++) {
+                        eventsList.add(placesList.get(i));
                     }
-                    eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
+                    placesRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
                 }
             } else {
                 Log.i("FALLITO", "FALLITO");
@@ -199,7 +219,7 @@ public class CategoryFragment extends Fragment {
                 Snackbar.make(view, errorMessagesUtil.
                                 getErrorMessage(((Result.Error) result).getMessage()),
                         Snackbar.LENGTH_SHORT).show();
-                fragmentCategoryBinding.progressBar.setVisibility(View.GONE);
+                fragmentPlacesBinding.progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -230,35 +250,17 @@ public class CategoryFragment extends Fragment {
 
                             eventsViewModel.setLoading(true);
                             eventsList.add(null);
-                            eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
+                            placesRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
                                     eventsList.size() + 1);
 
                             int page = eventsViewModel.getPage() + 1;
                             eventsViewModel.setPage(page);
-                            eventsViewModel.getCategoryEventsLiveData(category);
+                            eventsViewModel.fetchEvents(country, radius + "km@" + location, date, sort, limit);
                         }
                     }
                 }
             }
         });
-
-
-        NavBackStackEntry navBackStackEntry = Navigation.
-                findNavController(view).getPreviousBackStackEntry();
-
-        if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.homeFragment) {
-            ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
-                    getMenu().findItem(R.id.homeFragment).setChecked(true);
-        } else if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.myEventsFragment) {
-            ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
-                    getMenu().findItem(R.id.myEventsFragment).setChecked(true);
-        } else if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.mapsFragment) {
-            ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
-                    getMenu().findItem(R.id.mapsFragment).setChecked(true);
-        }
 
 
     }
@@ -273,7 +275,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        fragmentCategoryBinding = null;
+        fragmentPlacesBinding = null;
     }
 
 
@@ -284,5 +286,4 @@ public class CategoryFragment extends Fragment {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
-
 }

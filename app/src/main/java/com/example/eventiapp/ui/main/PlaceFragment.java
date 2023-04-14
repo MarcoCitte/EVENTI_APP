@@ -6,19 +6,8 @@ import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.MenuProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,9 +16,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
-import com.example.eventiapp.databinding.FragmentCategoryBinding;
+import com.example.eventiapp.databinding.FragmentSinglePlaceBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
@@ -44,15 +46,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CategoryFragment extends Fragment {
+public class PlaceFragment extends Fragment {
 
-    private static final String TAG = CategoryFragment.class.getSimpleName();
-
-    private FragmentCategoryBinding fragmentCategoryBinding;
+    private FragmentSinglePlaceBinding fragmentSinglePlaceBinding;
+    private EventsViewModel eventsViewModel;
 
     private List<Events> eventsList;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
-    private EventsViewModel eventsViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
 
     private int totalItemCount; // Total number of events
@@ -62,19 +62,17 @@ public class CategoryFragment extends Fragment {
     // Based on this value, the process of loading more events is anticipated or postponed
     private final int threshold = 1;
 
-
-    public CategoryFragment() {
+    public PlaceFragment() {
         // Required empty public constructor
     }
 
-    public static CategoryFragment newInstance() {
-        return new CategoryFragment();
+    public static PlaceFragment newInstance() {
+        return new PlaceFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
                 ServiceLocator.getInstance().getEventsRepository(
                         requireActivity().getApplication()
@@ -95,16 +93,13 @@ public class CategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        fragmentCategoryBinding = FragmentCategoryBinding.inflate(inflater, container, false);
-        return fragmentCategoryBinding.getRoot();
+        fragmentSinglePlaceBinding = FragmentSinglePlaceBinding.inflate(inflater, container, false);
+        return fragmentSinglePlaceBinding.getRoot();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        String category = getArguments().getString("category");
-
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -113,24 +108,33 @@ public class CategoryFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == android.R.id.home) {
+                    Navigation.findNavController(requireView()).navigateUp();
+                }
                 return false;
             }
-        });
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
+        Events events = getArguments().getParcelable("event", Events.class);
+
+        fragmentSinglePlaceBinding.placeName.setText(events.getPlaces().get(0).getName());
+        fragmentSinglePlaceBinding.placeType.setText(events.getPlaces().get(0).getType());
+        fragmentSinglePlaceBinding.placeAddress.setText(events.getPlaces().get(0).getAddress());
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview_events);
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(requireContext(),
-                        LinearLayoutManager.VERTICAL, false);
+                        LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),EVENTS_VIEW_TYPE,
+                requireActivity().getApplication(), EVENTS_VIEW_TYPE,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
                         //VAI AI DETTAGLI DELL'EVENTO
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("event", events);
-                        Navigation.findNavController(view).navigate(R.id.action_categoryFragment_to_eventFragment, bundle);
+                        Navigation.findNavController(view).navigate(R.id.action_placeFragment_to_eventFragment, bundle);
                     }
 
                     @Override
@@ -147,10 +151,9 @@ public class CategoryFragment extends Fragment {
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
 
         String lastUpdate = "0";
+        fragmentSinglePlaceBinding.progressBar.setVisibility(View.VISIBLE);
 
-        fragmentCategoryBinding.progressBar.setVisibility(View.VISIBLE);
-
-        eventsViewModel.getCategoryEventsLiveData(category).observe(getViewLifecycleOwner(), result -> {
+        eventsViewModel.getPlaceEventsLiveData(events.getPlaces().get(0).getId()).observe(getViewLifecycleOwner(), result -> {
 
             if (result.isSuccess()) {
                 Log.i("SUCCESSO", "SUCCESSO");
@@ -158,21 +161,11 @@ public class CategoryFragment extends Fragment {
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
 
-
                 if (!eventsViewModel.isLoading()) {
-                    if (eventsViewModel.isFirstLoading()) {
-                        eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                        eventsViewModel.setFirstLoading(false);
-                        this.eventsList.addAll(fetchedEvents);
-                        eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
-                                this.eventsList.size());
-                    } else {
-                        // Updates related to the favorite status of the events
-                        eventsList.clear();
-                        eventsList.addAll(fetchedEvents);
-                        eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
-                    }
-                    fragmentCategoryBinding.progressBar.setVisibility(View.GONE);
+                    this.eventsList.addAll(fetchedEvents);
+                    eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
+                            this.eventsList.size());
+                    fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
                 } else {
                     eventsViewModel.setLoading(false);
                     eventsViewModel.setCurrentResults(eventsList.size());
@@ -199,7 +192,7 @@ public class CategoryFragment extends Fragment {
                 Snackbar.make(view, errorMessagesUtil.
                                 getErrorMessage(((Result.Error) result).getMessage()),
                         Snackbar.LENGTH_SHORT).show();
-                fragmentCategoryBinding.progressBar.setVisibility(View.GONE);
+                fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -235,7 +228,7 @@ public class CategoryFragment extends Fragment {
 
                             int page = eventsViewModel.getPage() + 1;
                             eventsViewModel.setPage(page);
-                            eventsViewModel.getCategoryEventsLiveData(category);
+                            eventsViewModel.getPlaceEventsLiveData(events.getPlaces().get(0).getId());
                         }
                     }
                 }
@@ -259,8 +252,6 @@ public class CategoryFragment extends Fragment {
             ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
                     getMenu().findItem(R.id.mapsFragment).setChecked(true);
         }
-
-
     }
 
     @Override
@@ -273,7 +264,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        fragmentCategoryBinding = null;
+        fragmentSinglePlaceBinding = null;
     }
 
 
@@ -284,5 +275,4 @@ public class CategoryFragment extends Fragment {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
-
 }

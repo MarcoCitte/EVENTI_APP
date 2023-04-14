@@ -15,6 +15,10 @@ public interface IEventsRepositoryWithLiveData {
 
     MutableLiveData<Result> getCategoryEvents(String category);
 
+    MutableLiveData<Result> getPlaceEvents(String id);
+
+    MutableLiveData<Result> getSingleEvent(long id);
+
     void updateEvents(Events events);
 
     void deleteEvents();

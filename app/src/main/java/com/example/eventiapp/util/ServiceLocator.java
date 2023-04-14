@@ -25,11 +25,6 @@ public class ServiceLocator {
     private ServiceLocator() {
     }
 
-    /**
-     * Returns an instance of ServiceLocator class.
-     *
-     * @return An instance of ServiceLocator.
-     */
     public static ServiceLocator getInstance() {
         if (INSTANCE == null) {
             synchronized (ServiceLocator.class) {

@@ -1,23 +1,50 @@
 package com.example.eventiapp.ui.main;
 
+import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
+import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.EventsApiResponse;
+import com.example.eventiapp.model.EventsResponse;
+import com.example.eventiapp.model.Result;
+import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
+import com.example.eventiapp.util.ErrorMessageUtil;
+import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsFragment extends Fragment {
+
+    private EventsViewModel eventsViewModel;
+    private List<Events> eventsList;
+    private Marker marker;
+    private UiSettings mUiSettings;
+
+
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -32,11 +59,64 @@ public class MapsFragment extends Fragment {
          */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            LatLng bicocca = new LatLng(45.51851, 9.2075123);
+            mUiSettings = googleMap.getUiSettings();
+            mUiSettings.setZoomControlsEnabled(true);
+            mUiSettings.setMapToolbarEnabled(true);
+
+
+           LatLng bicocca = new LatLng(45.51851, 9.2075123);
+           /*
             googleMap.addMarker(new MarkerOptions().position(bicocca).title("Marker in Bicocca"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(bicocca));
+            */
+
+            float zoomLevel = 15.0f; //This goes up to 21
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bicocca, zoomLevel));
+
+           int count=0;
+
+            for (int i = 0; i < eventsList.size(); i++) {
+                if (eventsList.get(i).getPlaces().isEmpty() || eventsList.get(i).getCategory().equals("severe-weather")) {
+                    //NON AGGIUNGE IL MARKER
+                } else {
+                    count++;
+                    double[] location = eventsList.get(i).getCoordinates();
+                    marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(location[1], location[0])).title(eventsList.get(i).getPlaces().get(0).getName()));
+                    googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(@NonNull Marker marker) {
+                            LatLng position = marker.getPosition();
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+                            googleMap.getMaxZoomLevel();
+
+                            return true;
+                        }
+                    });
+                }
+            }
+
+            Log.i("NUMERO COORDINATE: ", count + " ");
         }
     };
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getEventsRepository(
+                        requireActivity().getApplication()
+                );
+
+        if (eventsRepositoryWithLiveData != null) {
+            eventsViewModel = new ViewModelProvider(
+                    requireActivity(),
+                    new EventsViewModelFactory(eventsRepositoryWithLiveData)).get(EventsViewModel.class);
+        } else {
+            Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                    R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
+        }
+        eventsList = new ArrayList<>();
+    }
 
     @Nullable
     @Override
@@ -54,5 +134,58 @@ public class MapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+
+        String country = "IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
+        String location = "45.51851, 9.2075123"; //BICOCCA
+        double radius = 4.2;
+        String sort = "start";
+        String date = AllEventsFragment.currentDate();
+        int limit = 5000;
+        String lastUpdate = "0";
+
+
+        eventsViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+
+            if (result.isSuccess()) {
+                Log.i("SUCCESSO", "SUCCESSO IN MAPS FRAGMENT");
+
+                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                List<Events> fetchedEvents = eventsResponse.getEventsList();
+                Log.i("COUNT RESULTS: ", ((EventsApiResponse) eventsResponse).getCount() + " ");
+                Log.i("FETCHED EVENTS", fetchedEvents.toString());
+
+                if (!eventsViewModel.isLoading()) {
+
+                    eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
+                    eventsViewModel.setFirstLoading(false);
+                    this.eventsList.addAll(fetchedEvents);
+
+                } else {
+                    eventsViewModel.setLoading(false);
+                    eventsViewModel.setCurrentResults(eventsList.size());
+
+                    int initialSize = eventsList.size();
+
+                    for (int i = 0; i < eventsList.size(); i++) {
+                        if (eventsList.get(i) == null) {
+                            eventsList.remove(eventsList.get(i));
+                        }
+                    }
+                    int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                            EVENTS_PAGE_SIZE_VALUE;
+                    for (int i = startIndex; i < fetchedEvents.size(); i++) {
+                        eventsList.add(fetchedEvents.get(i));
+                    }
+                }
+            } else {
+                Log.i("FALLITO", "FALLITO");
+
+                ErrorMessageUtil errorMessagesUtil =
+                        new ErrorMessageUtil(requireActivity().getApplication());
+                Snackbar.make(view, errorMessagesUtil.
+                                getErrorMessage(((Result.Error) result).getMessage()),
+                        Snackbar.LENGTH_SHORT).show();
+            }
+        });
     }
 }
