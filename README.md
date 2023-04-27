@@ -5,6 +5,8 @@ EVENTI CUSBICOCCA: http://www.cusbicocca.it/eventi/
 EVENTI BICOCCA VILLAGE: https://www.bicoccavillage.it/
 EVENTI UCI: https://www.ucicinemas.it/cinema/lombardia/milano/uci-cinemas-bicocca-milano/
 EVENTI ARCIMBOLDI: https://www.teatroarcimboldi.it/all/
+EVENTI CINETECA: https://www.cinetecamilano.it/films E https://www.cinetecamilano.it/attivita/visita-il-mic
+EVENTI MILANO IN GENERALE: https://www.milanotoday.it/eventi/
 
 LIBRERIA SCRAPING: JSOUP
 
