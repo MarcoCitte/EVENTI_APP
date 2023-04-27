@@ -2,6 +2,8 @@ package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
 import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentEventBinding;
 import com.example.eventiapp.model.Events;
@@ -31,16 +36,31 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class EventFragment extends Fragment {
 
     private FragmentEventBinding fragmentEventBinding;
     private EventsViewModel eventsViewModel;
+
+    MapView mMapView;
+    private GoogleMap googleMap;
 
     public EventFragment() {
         // Required empty public constructor
@@ -95,17 +115,79 @@ public class EventFragment extends Fragment {
 
         Events events = getArguments().getParcelable("event", Events.class);
 
+        if (events.getEventSource()!=null && events.getEventSource().getUrlPhoto() != null) {
+            Glide.with(this).load(events.getEventSource().getUrlPhoto()).into(fragmentEventBinding.eventImage);
+        }
         fragmentEventBinding.eventTitle.setText(events.getTitle());
         fragmentEventBinding.eventCategory.setText(events.getCategory());
         //fragmentEventBinding.eventTimezone.setText(events.getTimezone());
         fragmentEventBinding.eventDescription.setText(events.getDescription());
-        String date = "FROM: " + events.getStart() + " TO: " + events.getEnd() + "(" + events.getTimezone() +")";
-        fragmentEventBinding.eventDate.setText(date);
+        if(events.getEnd()!=null) {
+            String date = "FROM: " + events.getStart() + " TO: " + events.getEnd() + " (" + events.getTimezone() + ")";
+            fragmentEventBinding.eventDate.setText(date);
+        }else{
+            String date=events.getStart() + " (" +events.getTimezone() +")";
+            fragmentEventBinding.eventDate.setText(date);
+        }
         if (!events.getPlaces().isEmpty()) {
             fragmentEventBinding.eventLocation.setText((CharSequence) events.getPlaces().get(0).getAddress());
         } else {
             fragmentEventBinding.eventLocation.setVisibility(View.GONE);
         }
+
+        eventsViewModel.getEventsDates(events.getTitle()).observe(getViewLifecycleOwner(), result -> {
+
+            if (result.size() > 1) {
+                showAllEventsDate(result);
+            }
+        });
+
+
+        //GOOGLE MAPS
+        mMapView = view.findViewById(R.id.mapView);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();
+
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap mMap) {
+                googleMap = mMap;
+
+                // For dropping a marker at a point on the Map
+                double[] location = events.getCoordinates();
+                LatLng latLng = new LatLng(location[1], location[0]);
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(events.getPlaces().get(0).getName()));
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(@NonNull Marker marker) {
+                        LatLng position = marker.getPosition();
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+                        googleMap.getMaxZoomLevel();
+
+                        return true;
+                    }
+                });
+
+                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(@NonNull LatLng latLng) {
+                        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latLng.latitude, latLng.longitude);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        startActivity(intent);
+                    }
+                });
+
+                // For zooming automatically to the location of the marker
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        });
 
 
         NavBackStackEntry navBackStackEntry = Navigation.
@@ -123,6 +205,30 @@ public class EventFragment extends Fragment {
                 navBackStackEntry.getDestination().getId() == R.id.mapsFragment) {
             ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
                     getMenu().findItem(R.id.mapsFragment).setChecked(true);
+        }
+    }
+
+    private void showAllEventsDate(List<String> dates) {
+        LinearLayout linearLayout = fragmentEventBinding.otherDatesLayout;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMarginEnd(20);
+        TextView textView = fragmentEventBinding.otherDatesTextView;
+        textView.setVisibility(View.VISIBLE);
+
+        for (String date : dates) {
+            MaterialButton button = new MaterialButton(requireContext());
+            button.setLayoutParams(params);
+            button.setTextSize(16);
+            button.setPadding(15, 15, 15, 15);
+            button.setCornerRadius(30);
+            button.setText(date);
+            button.setOnClickListener(v -> {
+                //VAI AGLI EVENTI CON QUELLA LABEL
+            });
+            linearLayout.addView(button);
         }
     }
 

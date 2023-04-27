@@ -25,8 +25,10 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     private final MutableLiveData<Result> categoryEventsMutableLiveData;
     private final MutableLiveData<Result> placeEventsMutableLiveData;
     private final MutableLiveData<Result> singleEventMutableLiveData;
+    private final MutableLiveData<List<String>> eventsDateMutableLiveData;
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
     private BaseEventsLocalDataSource eventsLocalDataSource;
+    private List<String> dates;
 
 
     public EventsRepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource) {
@@ -35,6 +37,7 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
         categoryEventsMutableLiveData = new MutableLiveData<>();
         singleEventMutableLiveData = new MutableLiveData<>();
         placeEventsMutableLiveData = new MutableLiveData<>();
+        eventsDateMutableLiveData= new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
         this.eventsLocalDataSource = eventsLocalDataSource;
@@ -84,6 +87,12 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     public MutableLiveData<Result> getSingleEvent(long id) {
         eventsLocalDataSource.getSingleEvent(id);
         return singleEventMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<List<String>> getEventsDates(String name) {
+       eventsLocalDataSource.getEventsDates(name);
+       return eventsDateMutableLiveData;
     }
 
     @Override
@@ -153,6 +162,13 @@ public class EventsRepositoryWithLiveData implements IEventsRepositoryWithLiveDa
     @Override
     public void onSingleEvent(Events event) {
 
+    }
+
+    @Override
+    public void onEventsDates(List<String> dates) {
+       if(dates.size()>1){
+           eventsDateMutableLiveData.postValue(dates);
+       }
     }
 
     @Override

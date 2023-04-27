@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:clipToPadding="true"
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/tap_action_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:padding="10sp">
+
+            <ImageView
+                android:layout_width="20sp"
+                android:layout_height="20sp"
+                android:layout_marginRight="10sp"
+                android:src="@drawable/ic_dns_red_400_24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/detailsTextView"
+                android:layout_height="wrap_content"
+                android:text="Tap to see place's details" />
+
+        </LinearLayout>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="200sp"
+            android:layout_height="200sp"
+            android:layout_gravity="center"
+            android:id="@+id/placeImageView"
+            />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="10sp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="15sp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="60sp"
+                            android:layout_height="60sp"
+                            android:layout_gravity="center"
+                            android:layout_margin="10sp"
+                            android:background="@drawable/circleshape"
+                            android:gravity="center"
+                            android:padding="10sp">
+
+                            <ImageView
+                                android:id="@+id/carImageView"
+                                android:layout_width="35sp"
+                                android:layout_height="35sp"
+                                android:src="@drawable/ic_baseline_directions_car_24" />
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="Drive"
+                            android:textColor="@color/grey" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="60sp"
+                            android:layout_height="60sp"
+                            android:layout_gravity="center"
+                            android:layout_margin="10sp"
+                            android:background="@drawable/circleshape"
+                            android:gravity="center"
+                            android:padding="10sp">
+
+                            <ImageView
+                                android:layout_width="35sp"
+                                android:layout_height="35sp"
+                                android:id="@+id/mapsImageView"
+                                android:src="@drawable/ic_maps" />
+
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="Open in Google Maps"
+                            android:textColor="@color/grey" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="60sp"
+                            android:layout_height="60sp"
+                            android:layout_gravity="center"
+                            android:layout_margin="10sp"
+                            android:background="@drawable/circleshape"
+                            android:gravity="center"
+                            android:padding="10sp">
+
+                            <ImageView
+                                android:layout_width="35sp"
+                                android:layout_height="35sp"
+                                android:id="@+id/callImageView"
+                                android:src="@drawable/ic_baseline_call_24" />
+
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="Call"
+                            android:textColor="@color/grey" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <RelativeLayout
+                            android:layout_width="60sp"
+                            android:layout_height="60sp"
+                            android:layout_gravity="center"
+                            android:layout_margin="10sp"
+                            android:background="@drawable/circleshape"
+                            android:gravity="center"
+                            android:padding="10sp">
+
+                            <ImageView
+                                android:layout_width="35sp"
+                                android:layout_height="35sp"
+                                android:id="@+id/favoriteImageView"
+                                android:src="@drawable/ic_baseline_favorite_24" />
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="Add to favourite"
+                            android:textColor="@color/grey" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Events in this location"
+            android:layout_margin="10sp"
+            android:textSize="25sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview_events"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:orientation="horizontal"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/place_events" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </LinearLayout>
+
+
+</androidx.core.widget.NestedScrollView>

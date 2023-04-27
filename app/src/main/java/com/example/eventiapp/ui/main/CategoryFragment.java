@@ -220,10 +220,10 @@ public class CategoryFragment extends Fragment {
                                     dy > 0 &&
                                     !eventsViewModel.isLoading()
                             ) &&
-                                    eventsViewModel.getEventsResponseLiveData().getValue() != null &&
+                                    eventsViewModel.getCategoryEventsLiveData(category).getValue() != null &&
                                     eventsViewModel.getCurrentResults() != eventsViewModel.getTotalResults()
                     ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getEventsResponseLiveData();
+                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getCategoryEventsLiveData(category);
 
                         if (eventsListMutableLiveData.getValue() != null &&
                                 eventsListMutableLiveData.getValue().isSuccess()) {

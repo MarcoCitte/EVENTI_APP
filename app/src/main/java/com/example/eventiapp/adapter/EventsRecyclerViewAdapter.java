@@ -24,8 +24,6 @@ import com.example.eventiapp.util.DateTimeUtil;
 import java.util.List;
 
 public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-
     private int typeOfView;
 
     public interface OnItemClickListener {
@@ -123,8 +121,13 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
-            String fromTO = "FROM: " + DateTimeUtil.getDate(events.getStart()) + " \nTO: " + DateTimeUtil.getDate(events.getStart());
-            textViewDate.setText(fromTO);
+            //EVENTI UCI ED EVENTI PIRELLI HANGAR NON HANNO FINE DATA
+            if(events.getEnd()!=null) {
+                String fromTO = DateTimeUtil.getDate(events.getStart()) + " - " + DateTimeUtil.getDate(events.getStart());
+                textViewDate.setText(fromTO);
+            }else{
+                textViewDate.setText(events.getStart());
+            }
             textViewCategory.setText(events.getCategory());
             //setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
         }

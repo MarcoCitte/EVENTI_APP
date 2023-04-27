@@ -11,6 +11,7 @@ import com.example.eventiapp.source.BaseEventsLocalDataSource;
 import com.example.eventiapp.source.BaseEventsRemoteDataSource;
 import com.example.eventiapp.source.EventsLocalDataSource;
 import com.example.eventiapp.source.EventsRemoteDataSource;
+import com.example.eventiapp.source.JsoupDataSource;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

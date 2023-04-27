@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Result;
 
+import java.util.List;
+
 public interface IEventsRepositoryWithLiveData {
 
     MutableLiveData<Result> fetchEvents(String country, String location, String date, String sort, int limit, long lastUpdate);
@@ -18,6 +20,8 @@ public interface IEventsRepositoryWithLiveData {
     MutableLiveData<Result> getPlaceEvents(String id);
 
     MutableLiveData<Result> getSingleEvent(long id);
+
+    MutableLiveData<List<String>> getEventsDates(String name);
 
     void updateEvents(Events events);
 

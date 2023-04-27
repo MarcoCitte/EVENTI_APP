@@ -19,7 +19,12 @@ import com.example.eventiapp.util.ServiceLocator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +53,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
             public void onResponse(@NonNull Call<EventsApiResponse> call,
                                    @NonNull Response<EventsApiResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
-                    Log.i("RESPONSE BODY: ",response.body() + " FINE ");
+                    getEventsFromJsoup();
                     eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
                 } else {
                     eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));
@@ -60,6 +65,12 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
                 eventsCallback.onFailureFromRemote(new Exception(RETROFIT_ERROR));
             }
         });
+    }
+
+    @Override
+    public void getEventsFromJsoup() {
+       JsoupDataSource jsoupDataSource=new JsoupDataSource();
+       jsoupDataSource.execute();
     }
 
 }

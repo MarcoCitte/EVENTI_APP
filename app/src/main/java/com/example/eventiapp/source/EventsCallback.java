@@ -13,6 +13,7 @@ public interface EventsCallback {
     void onEventsCategory(List<Events> events);
     void onEventsPlace(List <Events> events);
     void onSingleEvent(Events event);
+    void onEventsDates(List<String> dates);
     void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
     void onEventsFavoriteStatusChanged(List<Events> events);
     void onDeleteFavoriteEventsSuccess(List<Events> favoriteEvents);

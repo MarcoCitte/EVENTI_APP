@@ -10,6 +10,8 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IEventsRepository;
 import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
 
+import java.util.List;
+
 public class EventsViewModel extends ViewModel {
 
     private static final String TAG = EventsViewModel.class.getSimpleName();
@@ -55,12 +57,19 @@ public class EventsViewModel extends ViewModel {
     }
 
     public MutableLiveData<Result> getPlaceEventsLiveData(String id) {
-        return iEventsRepositoryWithLiveData.getPlaceEvents(id);
+        if(placeEventsLiveData == null) {
+            return iEventsRepositoryWithLiveData.getPlaceEvents(id);
+        }
+        return placeEventsLiveData;
     }
 
     public MutableLiveData<Result> getSingleEvent(long id) {
         eventLiveData = iEventsRepositoryWithLiveData.getSingleEvent(id);
         return eventLiveData;
+    }
+
+    public MutableLiveData<List<String>> getEventsDates(String name){
+        return iEventsRepositoryWithLiveData.getEventsDates(name);
     }
 
     public void deleteEvents() {

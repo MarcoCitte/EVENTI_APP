@@ -30,6 +30,7 @@ public class Events implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private long id_db;
+    private EventSource eventSource;
     private String title;
     private String description;
     private String category;
@@ -45,6 +46,7 @@ public class Events implements Parcelable {
     @ColumnInfo(name = "startDate")
     private String start;
     private String end;
+    private String[] hours;
     private String timezone;
     @SerializedName("location")
     private double[] coordinates; //COORDINATE
@@ -57,76 +59,30 @@ public class Events implements Parcelable {
     @ColumnInfo(name = "is_synchronized")
     private boolean isSynchronized;
 
-    public Events() {}
-
-    public Events(String title, String description, String category, String[] labels, int rank, int localRank, int attendance, List<Place> places, int duration,
-                  String start, String end, String timezone, double[] coordinates, String country, String state, boolean isPrivate, boolean isFavorite, boolean isSynchronized) {
-        this.title = title;
-        this.description = description;
-        this.category = category;
-        this.labels = labels;
-        this.rank = rank;
-        this.localRank = localRank;
-        this.attendance = attendance;
-        this.places = places;
-        this.duration = duration;
-        this.start = start;
-        this.end = end;
-        this.timezone = timezone;
-        this.coordinates = coordinates;
-        this.country = country;
-        this.state = state;
-        this.isPrivate = isPrivate;
-        this.isFavorite = isFavorite;
-        this.isSynchronized = isSynchronized;
+    public Events() {
     }
+
 
     protected Events(Parcel in) {
-        this.id_db = in.readLong();
-        this.title = in.readString();
-        this.description = in.readString();
-        this.category = in.readString();
-        this.labels = in.createStringArray();
-        this.rank = in.readInt();
-        this.localRank = in.readInt();
-        this.attendance = in.readInt();
-        this.duration = in.readInt();
-        this.start = in.readString();
-        this.end = in.readString();
-        this.timezone = in.readString();
-        this.coordinates = in.createDoubleArray();
-        this.country = in.readString();
-        this.state = in.readString();
-        this.isPrivate = in.readByte() != 0;
-        this.isFavorite = in.readByte() != 0;
-        this.isSynchronized = in.readByte() != 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.id_db);
-        dest.writeString(this.title);
-        dest.writeString(this.description);
-        dest.writeString(this.category);
-        dest.writeStringArray(this.labels);
-        dest.writeInt(this.rank);
-        dest.writeInt(this.localRank);
-        dest.writeInt(this.attendance);
-        dest.writeInt(this.duration);
-        dest.writeString(this.start);
-        dest.writeString(this.end);
-        dest.writeString(this.timezone);
-        dest.writeDoubleArray(this.coordinates);
-        dest.writeString(this.country);
-        dest.writeString(this.state);
-        dest.writeByte((byte) (this.isPrivate ? 1 : 0));
-        dest.writeByte((byte) (this.isFavorite ? 1 : 0));
-        dest.writeByte((byte) (this.isSynchronized ? 1 : 0));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        id_db = in.readLong();
+        title = in.readString();
+        description = in.readString();
+        category = in.readString();
+        labels = in.createStringArray();
+        rank = in.readInt();
+        localRank = in.readInt();
+        attendance = in.readInt();
+        duration = in.readInt();
+        start = in.readString();
+        end = in.readString();
+        hours = in.createStringArray();
+        timezone = in.readString();
+        coordinates = in.createDoubleArray();
+        country = in.readString();
+        state = in.readString();
+        isPrivate = in.readByte() != 0;
+        isFavorite = in.readByte() != 0;
+        isSynchronized = in.readByte() != 0;
     }
 
     public static final Creator<Events> CREATOR = new Creator<Events>() {
@@ -140,6 +96,14 @@ public class Events implements Parcelable {
             return new Events[size];
         }
     };
+
+    public EventSource getEventSource() {
+        return eventSource;
+    }
+
+    public void setEventSource(EventSource eventSource) {
+        this.eventSource = eventSource;
+    }
 
     public long getId_db() {
         return id_db;
@@ -206,7 +170,7 @@ public class Events implements Parcelable {
     }
 
     public List<Place> getPlaces() {
-       return places;
+        return places;
     }
 
     public void setPlaces(List<Place> places) {
@@ -235,6 +199,14 @@ public class Events implements Parcelable {
 
     public void setEnd(String end) {
         this.end = end;
+    }
+
+    public String[] getHours() {
+        return hours;
+    }
+
+    public void setHours(String[] hours) {
+        this.hours = hours;
     }
 
     public String getTimezone() {
@@ -293,18 +265,48 @@ public class Events implements Parcelable {
         isSynchronized = aSynchronized;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeLong(id_db);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(category);
+        dest.writeStringArray(labels);
+        dest.writeInt(rank);
+        dest.writeInt(localRank);
+        dest.writeInt(attendance);
+        dest.writeInt(duration);
+        dest.writeString(start);
+        dest.writeString(end);
+        dest.writeStringArray(hours);
+        dest.writeString(timezone);
+        dest.writeDoubleArray(coordinates);
+        dest.writeString(country);
+        dest.writeString(state);
+        dest.writeByte((byte) (isPrivate ? 1 : 0));
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
+        dest.writeByte((byte) (isSynchronized ? 1 : 0));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Events events = (Events) o;
-        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && isPrivate == events.isPrivate && isFavorite == events.isFavorite && isSynchronized == events.isSynchronized && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Arrays.equals(labels, events.labels) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(timezone, events.timezone) && Arrays.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state);
+        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && isPrivate == events.isPrivate && isFavorite == events.isFavorite && isSynchronized == events.isSynchronized && Objects.equals(eventSource, events.eventSource) && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Arrays.equals(labels, events.labels) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Arrays.equals(hours, events.hours) && Objects.equals(timezone, events.timezone) && Arrays.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(title, description, category, rank, localRank, attendance, places, duration, start, end, timezone, country, state, isPrivate, isFavorite, isSynchronized);
+        int result = Objects.hash(eventSource, title, description, category, rank, localRank, attendance, places, duration, start, end, timezone, country, state, isPrivate, isFavorite, isSynchronized);
         result = 31 * result + Arrays.hashCode(labels);
+        result = 31 * result + Arrays.hashCode(hours);
         result = 31 * result + Arrays.hashCode(coordinates);
         return result;
     }
@@ -313,6 +315,7 @@ public class Events implements Parcelable {
     public String toString() {
         return "Events{" +
                 "id_db=" + id_db +
+                ", eventSource=" + eventSource +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", category='" + category + '\'' +
@@ -324,6 +327,7 @@ public class Events implements Parcelable {
                 ", duration=" + duration +
                 ", start='" + start + '\'' +
                 ", end='" + end + '\'' +
+                ", hours=" + Arrays.toString(hours) +
                 ", timezone='" + timezone + '\'' +
                 ", coordinates=" + Arrays.toString(coordinates) +
                 ", country='" + country + '\'' +
@@ -334,3 +338,4 @@ public class Events implements Parcelable {
                 '}';
     }
 }
+

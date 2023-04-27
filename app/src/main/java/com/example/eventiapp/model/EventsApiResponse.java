@@ -23,6 +23,10 @@ public class EventsApiResponse extends EventsResponse{
         this.previous = previous;
     }
 
+    public EventsApiResponse(List<Events> eventsList){
+        super(eventsList);
+    }
+
     public int getCount() {
         return count;
     }

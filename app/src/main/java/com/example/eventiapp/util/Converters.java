@@ -3,6 +3,7 @@ package com.example.eventiapp.util;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
+import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Place;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -74,5 +75,20 @@ public class Converters {
         String json = gson.toJson(list);
         return json;
     }
+
+    @TypeConverter
+    public static String fromObjectToString(EventSource eventSource){
+        Gson gson = new Gson();
+        String json = gson.toJson(eventSource);
+        return json;
+    }
+
+    @TypeConverter
+    public static EventSource fromStringToObject(String value){
+        Gson gson = new Gson();
+        EventSource json = gson.fromJson(value,EventSource.class);
+        return json;
+    }
+
 
 }

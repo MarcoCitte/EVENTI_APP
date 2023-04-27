@@ -4,8 +4,10 @@ import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,8 +33,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
-import com.example.eventiapp.databinding.FragmentSinglePlaceBinding;
 import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
@@ -52,11 +54,12 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class PlaceFragment extends Fragment {
 
-    private FragmentSinglePlaceBinding fragmentSinglePlaceBinding;
+    private com.example.eventiapp.databinding.FragmentSinglePlaceBinding fragmentSinglePlaceBinding;
     private EventsViewModel eventsViewModel;
 
     MapView mMapView;
@@ -84,29 +87,14 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
-                ServiceLocator.getInstance().getEventsRepository(
-                        requireActivity().getApplication()
-                );
-
-        if (eventsRepositoryWithLiveData != null) {
-            eventsViewModel = new ViewModelProvider(
-                    requireActivity(),
-                    new EventsViewModelFactory(eventsRepositoryWithLiveData)).get(EventsViewModel.class);
-        } else {
-            Snackbar.make(requireActivity().findViewById(android.R.id.content),
-                    R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
-        }
+        eventsViewModel=new ViewModelProvider(requireActivity()).get(EventsViewModel.class);
         eventsList = new ArrayList<>();
-
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        fragmentSinglePlaceBinding = FragmentSinglePlaceBinding.inflate(inflater, container, false);
+        fragmentSinglePlaceBinding = com.example.eventiapp.databinding.FragmentSinglePlaceBinding.inflate(inflater, container, false);
         return fragmentSinglePlaceBinding.getRoot();
     }
 
@@ -165,6 +153,15 @@ public class PlaceFragment extends Fragment {
                     }
                 });
 
+                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(@NonNull LatLng latLng) {
+                        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latLng.latitude, latLng.longitude);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        startActivity(intent);
+                    }
+                });
+
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -203,49 +200,62 @@ public class PlaceFragment extends Fragment {
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
 
         String lastUpdate = "0";
+        String id=events.getPlaces().get(0).getId();
         fragmentSinglePlaceBinding.progressBar.setVisibility(View.VISIBLE);
 
-        eventsViewModel.getPlaceEventsLiveData(events.getPlaces().get(0).getId()).observe(getViewLifecycleOwner(), result -> {
+        eventsViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
+          if(result!=null) {
+              if (result.isSuccess()) {
+                  Log.i("SUCCESSO", "SUCCESSO");
 
-            if (result.isSuccess()) {
-                Log.i("SUCCESSO", "SUCCESSO");
+                  eventsList.clear();
+                  EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                  List<Events> fetchedEvents = eventsResponse.getEventsList();
 
-                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
-                List<Events> fetchedEvents = eventsResponse.getEventsList();
+                  if (!eventsViewModel.isLoading()) {
+                      if(eventsViewModel.isFirstLoading()) {
+                          eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
+                          eventsViewModel.setFirstLoading(false);
+                          this.eventsList.addAll(fetchedEvents);
+                          eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
+                                  this.eventsList.size());
+                      }else{
+                          eventsList.clear();
+                          eventsList.addAll(fetchedEvents);
+                          eventsRecyclerViewAdapter.notifyItemChanged(0,fetchedEvents.size());
+                      }
+                      fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
+                  } else {
+                      eventsViewModel.setLoading(false);
+                      eventsViewModel.setCurrentResults(eventsList.size());
 
-                if (!eventsViewModel.isLoading()) {
-                    this.eventsList.addAll(fetchedEvents);
-                    eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
-                            this.eventsList.size());
-                    fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
-                } else {
-                    eventsViewModel.setLoading(false);
-                    eventsViewModel.setCurrentResults(eventsList.size());
+                      int initialSize = eventsList.size();
 
-                    int initialSize = eventsList.size();
+                      for (int i = 0; i < eventsList.size(); i++) {
+                          if (eventsList.get(i) == null) {
+                              eventsList.remove(eventsList.get(i));
+                          }
+                      }
+                      int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                              EVENTS_PAGE_SIZE_VALUE;
+                      for (int i = startIndex; i < fetchedEvents.size(); i++) {
+                          eventsList.add(fetchedEvents.get(i));
+                      }
+                      eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
+                  }
+              } else {
+                  Log.i("FALLITO", "FALLITO");
 
-                    for (int i = 0; i < eventsList.size(); i++) {
-                        if (eventsList.get(i) == null) {
-                            eventsList.remove(eventsList.get(i));
-                        }
-                    }
-                    int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
-                            EVENTS_PAGE_SIZE_VALUE;
-                    for (int i = startIndex; i < fetchedEvents.size(); i++) {
-                        eventsList.add(fetchedEvents.get(i));
-                    }
-                    eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
-                }
-            } else {
-                Log.i("FALLITO", "FALLITO");
-
-                ErrorMessageUtil errorMessagesUtil =
-                        new ErrorMessageUtil(requireActivity().getApplication());
-                Snackbar.make(view, errorMessagesUtil.
-                                getErrorMessage(((Result.Error) result).getMessage()),
-                        Snackbar.LENGTH_SHORT).show();
-                fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
-            }
+                  ErrorMessageUtil errorMessagesUtil =
+                          new ErrorMessageUtil(requireActivity().getApplication());
+                  Snackbar.make(view, errorMessagesUtil.
+                                  getErrorMessage(((Result.Error) result).getMessage()),
+                          Snackbar.LENGTH_SHORT).show();
+                  fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
+              }
+          }else{
+              //NON CI SONO EVENTI IN QUEL LOCALE
+          }
         });
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -265,10 +275,10 @@ public class PlaceFragment extends Fragment {
                                     dy > 0 &&
                                     !eventsViewModel.isLoading()
                             ) &&
-                                    eventsViewModel.getEventsResponseLiveData().getValue() != null &&
+                                    eventsViewModel.getPlaceEventsLiveData(id).getValue() != null &&
                                     eventsViewModel.getCurrentResults() != eventsViewModel.getTotalResults()
                     ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getEventsResponseLiveData();
+                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getPlaceEventsLiveData(id);
 
                         if (eventsListMutableLiveData.getValue() != null &&
                                 eventsListMutableLiveData.getValue().isSuccess()) {
@@ -280,7 +290,7 @@ public class PlaceFragment extends Fragment {
 
                             int page = eventsViewModel.getPage() + 1;
                             eventsViewModel.setPage(page);
-                            eventsViewModel.getPlaceEventsLiveData(events.getPlaces().get(0).getId());
+                            eventsViewModel.getPlaceEventsLiveData(id);
                         }
                     }
                 }

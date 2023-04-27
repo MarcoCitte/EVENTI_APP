@@ -25,6 +25,18 @@ public class EventsResponse implements Parcelable {
         eventsList = in.createTypedArrayList(Events.CREATOR);
     }
 
+    public static final Creator<EventsResponse> CREATOR = new Creator<EventsResponse>() {
+        @Override
+        public EventsResponse createFromParcel(Parcel in) {
+            return new EventsResponse(in);
+        }
+
+        @Override
+        public EventsResponse[] newArray(int size) {
+            return new EventsResponse[size];
+        }
+    };
+
     public List<Events> getEventsList() {
         return eventsList;
     }

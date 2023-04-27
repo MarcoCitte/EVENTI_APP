@@ -23,6 +23,8 @@ public abstract class BaseEventsLocalDataSource {
 
     public abstract void getPlaceEvent(String id);
 
+    public abstract void getEventsDates(String name);
+
     public abstract void updateEvents(Events events);
 
     public abstract void deleteFavoriteEvents();

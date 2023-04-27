@@ -7,11 +7,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardElevation="5dp"
-    app:shapeAppearance="?attr/shapeAppearanceMediumComponent"
     android:checkable="true"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    app:cardElevation="5dp"
+    app:shapeAppearance="?attr/shapeAppearanceMediumComponent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,33 +26,33 @@
 
             <!-- Title, secondary and supporting text -->
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/textview_title"
-                android:text="TITLE"
-                android:textSize="30sp"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                />
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:id="@+id/textview_date"
-                android:text="DATE"
-                android:textSize="20sp"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
-                />
+                android:text="TITLE"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textSize="30sp" />
+
             <TextView
+                android:id="@+id/textview_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="CATEGORY"
-                android:id="@+id/textview_category"
-                android:textSize="20sp"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?android:attr/textColorSecondary"
-                />
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/textview_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="DATE"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="20sp" />
+
 
         </LinearLayout>
 
@@ -63,21 +63,20 @@
             android:layout_marginLeft="60sp"
             android:gravity="center"
             android:orientation="horizontal">
+
             <com.google.android.material.button.MaterialButton
+                style="?attr/materialButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AGGIUNGI AI \nPREFERITI"
-                style="?attr/materialButtonStyle"
-                />
+                android:text="AGGIUNGI AI \nPREFERITI" />
+
             <com.google.android.material.button.MaterialButton
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10sp"
-                android:text="ESPORTA SU \nCALENDARIO"
-                style="?attr/materialIconButtonStyle"
-                />
+                android:text="ESPORTA SU \nCALENDARIO" />
         </LinearLayout>
-
 
 
         <ImageView
