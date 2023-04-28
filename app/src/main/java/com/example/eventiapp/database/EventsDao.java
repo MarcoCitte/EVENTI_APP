@@ -34,6 +34,9 @@ public interface EventsDao {
     @Query("SELECT startDate FROM events WHERE title = :name")
     List<String> getEventsDates(String name);
 
+    @Query("SELECT hours FROM events WHERE title = :name")
+    String[] getMoviesHours(String name);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     List<Long> insertEventsList(List<Events> eventsList);
 

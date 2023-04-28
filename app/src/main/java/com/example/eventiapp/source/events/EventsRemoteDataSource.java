@@ -1,32 +1,15 @@
-package com.example.eventiapp.source;
+package com.example.eventiapp.source.events;
 
 import static com.example.eventiapp.util.Constants.API_KEY_ERROR;
 import static com.example.eventiapp.util.Constants.CONTENT_TYPE_VALUE;
 import static com.example.eventiapp.util.Constants.RETROFIT_ERROR;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-import android.app.Application;
 
-import com.example.eventiapp.R;
-import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
-import com.example.eventiapp.model.Place;
 import com.example.eventiapp.service.EventsApiService;
+import com.example.eventiapp.source.jsoup.JsoupDataSource;
 import com.example.eventiapp.util.ServiceLocator;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;

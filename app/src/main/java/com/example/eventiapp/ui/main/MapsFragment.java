@@ -1,7 +1,6 @@
 package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
-import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 
 import android.content.Context;
 import android.content.Intent;
@@ -34,10 +33,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.common.api.ApiException;
@@ -55,7 +53,6 @@ import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
@@ -64,19 +61,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 public class MapsFragment extends Fragment {
 
-    private EventsViewModel eventsViewModel;
-    private List<Events> eventsList;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
+    private List<com.example.eventiapp.model.Place> placesList;
     private List<Events> placeEventsList;
     private Marker marker;
     private UiSettings mUiSettings;
+    GoogleMap myGoogleMap;
     private Geocoder geoCoder;
     private PlacesClient placesClient;
     private BottomSheetBehavior mBottomSheetBehavior1;
@@ -110,35 +106,24 @@ public class MapsFragment extends Fragment {
          */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            mUiSettings = googleMap.getUiSettings();
+            myGoogleMap = googleMap;
+            mUiSettings = myGoogleMap.getUiSettings();
             mUiSettings.setZoomControlsEnabled(true);
             mUiSettings.setMapToolbarEnabled(true);
 
 
             LatLng bicocca = new LatLng(45.51851, 9.2075123);
            /*
-            googleMap.addMarker(new MarkerOptions().position(bicocca).title("Marker in Bicocca"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(bicocca));
+            myGoogleMap.addMarker(new MarkerOptions().position(bicocca).title("Marker in Bicocca"));
+            myGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(bicocca));
             */
 
             float zoomLevel = 15.0f; //This goes up to 21
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bicocca, zoomLevel));
+            myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bicocca, zoomLevel));
 
             int count = 0;
 
-            //RIMUOVE LUOGHI DUPLICATI E SENZA COORDINATE COSI DA NON AVERE COORDINATE UGUALI
-            Map<String, Events> map = new HashMap<String, Events>();
-            for (Events e : eventsList) {
-                if (!e.getPlaces().isEmpty() && !e.getCategory().equals("severe-weather") && !e.getCategory().equals("airport-delays")) {
-                    String idPlace = e.getPlaces().get(0).getId();
-                    if (!map.containsKey(idPlace)) {
-                        map.put(idPlace, e);
-                    }
-                }
-            }
-
-            List<Events> placesList = new ArrayList<>(map.values());
-            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            myGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Nullable
                 @Override
                 public View getInfoContents(@NonNull Marker marker) {
@@ -162,146 +147,28 @@ public class MapsFragment extends Fragment {
             });
 
             geoCoder = new Geocoder(getContext(), Locale.getDefault());
-
-            for (int i = 0; i < placesList.size(); i++) {
-                count++;
-                LatLng latLng = getCoordinates(placesList.get(i).getPlaces().get(0).getName());
-                if (latLng != null) {
-                    //GEOCODER HA TROVATO LE COORDINATE DEL LUOGO
-                } else {
-                    //USA COORDINATE ESTRATTE DALLE API
-                    double[] location = placesList.get(i).getCoordinates();
-                    latLng = new LatLng(location[1], location[0]);
-                }
-                marker = googleMap.addMarker(new MarkerOptions().
-                        position(latLng).
-                        title(placesList.get(i).getPlaces().get(0).getName() + ":" + placesList.get(i).getPlaces().get(0).getId()).
-                        snippet(getAddress(placesList.get(i).getPlaces().get(0).getName())));
-                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(@NonNull Marker marker) {
-                        tapactionlayout.setVisibility(View.VISIBLE);
-                        LatLng position = marker.getPosition();
-                        CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(20).build();
-                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        marker.showInfoWindow();
-
-                        String[] parts = Objects.requireNonNull(marker.getTitle()).split(":");
-                        String idPlace = parts[1];
-                        getEventsOfPlace(idPlace);
-
-                        //SETTA FOTO LUOGO
-
-                        List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
-                        FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(idPlace, fields);
-
-                        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-                            Place place = response.getPlace();
-
-                            // Get the photo metadata.
-                            List<PhotoMetadata> metadata = place.getPhotoMetadatas();
-                            if (metadata == null || metadata.isEmpty()) {
-                                Log.w("TAG", "No photo metadata.");
-                                return;
-                            }
-                            PhotoMetadata photoMetadata = metadata.get(0);
-
-                            // Get the attribution text.
-                            String attributions = photoMetadata.getAttributions();
-
-                            // Create a FetchPhotoRequest.
-                            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                                    .setMaxWidth(1000) // Optional.
-                                    .setMaxHeight(1000) // Optional.
-                                    .build();
-                            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                                Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                                placeImageView.setImageBitmap(bitmap);
-                            }).addOnFailureListener((exception) -> {
-                                if (exception instanceof ApiException) {
-                                    ApiException apiException = (ApiException) exception;
-                                    Log.e("ERROR", "Place not found: " + exception.getMessage());
-                                    int statusCode = apiException.getStatusCode();
-                                }
-                            });
-                        });
-
-
-                        carImageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //NAVIGAZIONE
-                                String uri = String.format(Locale.ENGLISH, "google.navigation:q=%f,%f", position.latitude, position.longitude);
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                                startActivity(intent);
-                            }
-                        });
-
-                        mapsImageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //APRI SU GOOGLE MAPS
-                                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", position.latitude, position.longitude);
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                                startActivity(intent);
-                            }
-                        });
-
-                        callImageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //CHIAMA POSTO
-
-                                List<Place.Field> placeFields = Arrays.asList(Place.Field.PHONE_NUMBER);
-                                final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance("ChIJ3QKsnCXHhkcR3pA-eU_d9io", placeFields);
-                                placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-                                    final Place place = response.getPlace();
-                                    Log.i("TAG", "Phone found: " + place.getPhoneNumber());
-                                    String number = place.getPhoneNumber();
-                                    if (number != null) {
-                                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
-                                        startActivity(intent);
-                                    } else {
-                                        Toast.makeText(requireContext(), "NUMERO NON TROVATO", Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        });
-
-                        favoriteImageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //AGGIUNGI POSTO AI FAVORITI DELL' UTENTE
-                            }
-                        });
-                        return true;
-                    }
-                });
-            }
-
-
-            Log.i("NUMERO COORDINATE: ", count + " ");
+            setMarkers();
         }
     };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
-                ServiceLocator.getInstance().getEventsRepository(
+        IRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
                         requireActivity().getApplication()
                 );
 
         if (eventsRepositoryWithLiveData != null) {
-            eventsViewModel = new ViewModelProvider(
+            eventsAndPlacesViewModel = new ViewModelProvider(
                     requireActivity(),
-                    new EventsViewModelFactory(eventsRepositoryWithLiveData)).get(EventsViewModel.class);
+                    new EventsAndPlacesViewModelFactory(eventsRepositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
         } else {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
-        eventsList = new ArrayList<>();
-        placeEventsList = new ArrayList<>();
+        placesList = new ArrayList<com.example.eventiapp.model.Place>();
+        placeEventsList = new ArrayList<>(); //EVENTI DI UN SINGOLO LUOGO
         Places.initialize(getContext(), "AIzaSyBfUbHrX9y475T-c7v--HuxDmxjUMldAE8");
         placesClient = Places.createClient(getContext());
     }
@@ -326,47 +193,29 @@ public class MapsFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_bar);
         recyclerView = view.findViewById(R.id.recyclerview_events);
 
+        eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
 
-        String country = "IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
-        String location = "45.51851, 9.2075123"; //BICOCCA
-        double radius = 4.2;
-        String sort = "start";
-        String date = AllEventsFragment.currentDate();
-        int limit = 5000;
-        String lastUpdate = "0";
+            if (result != null) {
+                Log.i("SUCCESSO", "SUCCESSO");
+                List<com.example.eventiapp.model.Place> fetchedPlaces = new ArrayList<>(result);
 
-
-        eventsViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
-
-            if (result.isSuccess()) {
-                Log.i("SUCCESSO", "SUCCESSO IN MAPS FRAGMENT");
-
-                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
-                List<Events> fetchedEvents = eventsResponse.getEventsList();
-                Log.i("COUNT RESULTS: ", ((EventsApiResponse) eventsResponse).getCount() + " ");
-                Log.i("FETCHED EVENTS", fetchedEvents.toString());
-
-                if (!eventsViewModel.isLoading()) {
-
-                    eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                    eventsViewModel.setFirstLoading(false);
-                    this.eventsList.addAll(fetchedEvents);
-
-                } else {
-                    eventsViewModel.setLoading(false);
-                    eventsViewModel.setCurrentResults(eventsList.size());
-
-                    int initialSize = eventsList.size();
-
-                    for (int i = 0; i < eventsList.size(); i++) {
-                        if (eventsList.get(i) == null) {
-                            eventsList.remove(eventsList.get(i));
-                        }
+                if (!eventsAndPlacesViewModel.isLoading()) {
+                    if (eventsAndPlacesViewModel.isFirstLoading()) {
+                        eventsAndPlacesViewModel.setTotalResults(fetchedPlaces.size());
+                        eventsAndPlacesViewModel.setFirstLoading(false);
+                        this.placesList.addAll(fetchedPlaces);
+                    } else {
+                        // Updates related to the favorite status of the places
+                        placesList.clear();
+                        placesList.addAll(fetchedPlaces);
                     }
-                    int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
-                            EVENTS_PAGE_SIZE_VALUE;
-                    for (int i = startIndex; i < fetchedEvents.size(); i++) {
-                        eventsList.add(fetchedEvents.get(i));
+                } else {
+                    eventsAndPlacesViewModel.setLoading(false);
+                    eventsAndPlacesViewModel.setCurrentResults(placesList.size());
+                    for (int i = 0; i < placesList.size(); i++) {
+                        if (placesList.get(i) == null) {
+                            placesList.remove(placesList.get(i));
+                        }
                     }
                 }
             } else {
@@ -375,7 +224,7 @@ public class MapsFragment extends Fragment {
                 ErrorMessageUtil errorMessagesUtil =
                         new ErrorMessageUtil(requireActivity().getApplication());
                 Snackbar.make(view, errorMessagesUtil.
-                                getErrorMessage(((Result.Error) result).getMessage()),
+                                getErrorMessage("ERRORE"),
                         Snackbar.LENGTH_SHORT).show();
             }
         });
@@ -437,7 +286,7 @@ public class MapsFragment extends Fragment {
                         LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(placeEventsList,
-                requireActivity().getApplication(), EVENTS_VIEW_TYPE,
+                requireActivity().getApplication(),
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -449,11 +298,6 @@ public class MapsFragment extends Fragment {
                     }
 
                     @Override
-                    public void onPlacesItemClick(Events events) {
-
-                    }
-
-                    @Override
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
                     }
@@ -462,7 +306,7 @@ public class MapsFragment extends Fragment {
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
 
 
-        eventsViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
 
             if (result.isSuccess()) {
                 Log.i("SUCCESSO", "SUCCESSO");
@@ -470,14 +314,14 @@ public class MapsFragment extends Fragment {
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
 
-                if (!eventsViewModel.isLoading()) {
+                if (!eventsAndPlacesViewModel.isLoading()) {
                     this.placeEventsList.addAll(fetchedEvents);
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
                             this.placeEventsList.size());
                     progressBar.setVisibility(View.GONE);
                 } else {
-                    eventsViewModel.setLoading(false);
-                    eventsViewModel.setCurrentResults(placeEventsList.size());
+                    eventsAndPlacesViewModel.setLoading(false);
+                    eventsAndPlacesViewModel.setCurrentResults(placeEventsList.size());
 
                     int initialSize = placeEventsList.size();
 
@@ -486,7 +330,7 @@ public class MapsFragment extends Fragment {
                             placeEventsList.remove(placeEventsList.get(i));
                         }
                     }
-                    int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                    int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
                             EVENTS_PAGE_SIZE_VALUE;
                     for (int i = startIndex; i < fetchedEvents.size(); i++) {
                         placeEventsList.add(fetchedEvents.get(i));
@@ -511,7 +355,7 @@ public class MapsFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 boolean isConnected = isConnected();
 
-                if (isConnected && totalItemCount != eventsViewModel.getTotalResults()) {
+                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
 
                     totalItemCount = layoutManager.getItemCount();
                     lastVisibleItem = layoutManager.findLastVisibleItemPosition();
@@ -520,24 +364,24 @@ public class MapsFragment extends Fragment {
                     if (totalItemCount == visibleItemCount ||
                             (totalItemCount <= (lastVisibleItem + threshold) &&
                                     dy > 0 &&
-                                    !eventsViewModel.isLoading()
+                                    !eventsAndPlacesViewModel.isLoading()
                             ) &&
-                                    eventsViewModel.getPlaceEventsLiveData(id).getValue() != null &&
-                                    eventsViewModel.getCurrentResults() != eventsViewModel.getTotalResults()
+                                    eventsAndPlacesViewModel.getPlaceEventsLiveData(id).getValue() != null &&
+                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
                     ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getPlaceEventsLiveData(id);
+                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getPlaceEventsLiveData(id);
 
                         if (eventsListMutableLiveData.getValue() != null &&
                                 eventsListMutableLiveData.getValue().isSuccess()) {
 
-                            eventsViewModel.setLoading(true);
+                            eventsAndPlacesViewModel.setLoading(true);
                             placeEventsList.add(null);
                             eventsRecyclerViewAdapter.notifyItemRangeInserted(placeEventsList.size(),
                                     placeEventsList.size() + 1);
 
-                            int page = eventsViewModel.getPage() + 1;
-                            eventsViewModel.setPage(page);
-                            eventsViewModel.getPlaceEventsLiveData(id);
+                            int page = eventsAndPlacesViewModel.getPage() + 1;
+                            eventsAndPlacesViewModel.setPage(page);
+                            eventsAndPlacesViewModel.getPlaceEventsLiveData(id);
                         }
                     }
                 }
@@ -631,6 +475,135 @@ public class MapsFragment extends Fragment {
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (myGoogleMap != null) { //prevent crashing if the map doesn't exist yet (eg. on starting activity)
+            myGoogleMap.clear();
+
+            // add markers from database to the map
+            setMarkers();
+        }
+    }
+
+    private void setMarkers() {
+        for (int i = 0; i < placesList.size(); i++) {
+            LatLng latLng = getCoordinates(placesList.get(i).getName()); //PRENDE COORDINATE DA API GOOGLE
+            if (latLng != null) {
+                //GEOCODER HA TROVATO LE COORDINATE DEL LUOGO
+            } else {
+                //USA COORDINATE ESTRATTE DALLE API
+                double[] location = placesList.get(i).getCoordinates();
+                latLng = new LatLng(location[1], location[0]);
+            }
+            marker = myGoogleMap.addMarker(new MarkerOptions().
+                    position(latLng).
+                    title(placesList.get(i).getName() + ":" + placesList.get(i).getId()).
+                    snippet(getAddress(placesList.get(i).getName())));
+            myGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(@NonNull Marker marker) {
+                    tapactionlayout.setVisibility(View.VISIBLE);
+                    LatLng position = marker.getPosition();
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(20).build();
+                    myGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    marker.showInfoWindow();
+
+                    String[] parts = Objects.requireNonNull(marker.getTitle()).split(":");
+                    String idPlace = parts[1];
+                    getEventsOfPlace(idPlace);
+
+                    //SETTA FOTO LUOGO
+
+                    List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
+                    FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(idPlace, fields);
+
+                    placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+                        Place place = response.getPlace();
+
+                        // Get the photo metadata.
+                        List<PhotoMetadata> metadata = place.getPhotoMetadatas();
+                        if (metadata == null || metadata.isEmpty()) {
+                            Log.w("TAG", "No photo metadata.");
+                            return;
+                        }
+                        PhotoMetadata photoMetadata = metadata.get(0);
+
+                        // Get the attribution text.
+                        String attributions = photoMetadata.getAttributions();
+
+                        // Create a FetchPhotoRequest.
+                        FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                                .setMaxWidth(1000) // Optional.
+                                .setMaxHeight(1000) // Optional.
+                                .build();
+                        placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                            Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                            placeImageView.setImageBitmap(bitmap);
+                        }).addOnFailureListener((exception) -> {
+                            if (exception instanceof ApiException) {
+                                ApiException apiException = (ApiException) exception;
+                                Log.e("ERROR", "Place not found: " + exception.getMessage());
+                                int statusCode = apiException.getStatusCode();
+                            }
+                        });
+                    });
+
+
+                    carImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //NAVIGAZIONE
+                            String uri = String.format(Locale.ENGLISH, "google.navigation:q=%f,%f", position.latitude, position.longitude);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(intent);
+                        }
+                    });
+
+                    mapsImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //APRI SU GOOGLE MAPS
+                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", position.latitude, position.longitude);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(intent);
+                        }
+                    });
+
+                    callImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //CHIAMA POSTO
+
+                            List<Place.Field> placeFields = Arrays.asList(Place.Field.PHONE_NUMBER);
+                            final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance("ChIJ3QKsnCXHhkcR3pA-eU_d9io", placeFields);
+                            placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+                                final Place place = response.getPlace();
+                                Log.i("TAG", "Phone found: " + place.getPhoneNumber());
+                                String number = place.getPhoneNumber();
+                                if (number != null) {
+                                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(requireContext(), "NUMERO NON TROVATO", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
+
+                    favoriteImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //AGGIUNGI POSTO AI FAVORITI DELL' UTENTE
+                        }
+                    });
+                    return true;
+                }
+            });
+        }
     }
 
 

@@ -13,10 +13,9 @@ import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
-import com.example.eventiapp.databinding.FragmentCategoryBinding;
 import com.example.eventiapp.databinding.FragmentMyEventsBinding;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -36,7 +35,7 @@ public class MyEventsFragment extends Fragment {
 
     private List<Events> eventsList;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
-    private EventsViewModel eventsViewModel;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
 
     private int totalItemCount; // Total number of events
@@ -57,15 +56,15 @@ public class MyEventsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
-                ServiceLocator.getInstance().getEventsRepository(
+        IRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
                         requireActivity().getApplication()
                 );
 
         if (eventsRepositoryWithLiveData != null) {
-            eventsViewModel = new ViewModelProvider(
+            eventsAndPlacesViewModel = new ViewModelProvider(
                     requireActivity(),
-                    new EventsViewModelFactory(eventsRepositoryWithLiveData)).get(EventsViewModel.class);
+                    new EventsAndPlacesViewModelFactory(eventsRepositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
         } else {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
@@ -82,6 +81,6 @@ public class MyEventsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        eventsViewModel.deleteEvents();
+        eventsAndPlacesViewModel.deleteEvents();
     }
 }

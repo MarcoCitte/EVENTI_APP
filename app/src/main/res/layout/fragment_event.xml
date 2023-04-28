@@ -122,6 +122,27 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/otherHoursTextView"
+            android:visibility="gone"
+            android:text="Orari del film" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            android:scrollbars="horizontal">
+            <LinearLayout
+                android:id="@+id/otherHoursLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"

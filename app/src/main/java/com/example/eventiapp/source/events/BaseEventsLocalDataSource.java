@@ -1,4 +1,4 @@
-package com.example.eventiapp.source;
+package com.example.eventiapp.source.events;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
@@ -25,6 +25,8 @@ public abstract class BaseEventsLocalDataSource {
 
     public abstract void getEventsDates(String name);
 
+    public abstract void getMoviesHours(String name);
+
     public abstract void updateEvents(Events events);
 
     public abstract void deleteFavoriteEvents();
@@ -32,6 +34,8 @@ public abstract class BaseEventsLocalDataSource {
     public abstract void insertEvents(EventsApiResponse eventsApiResponse);
 
     public abstract void insertEvents(List<Events> eventsList);
+
+    public abstract void getCount();
 
     public abstract void deleteAll();
 }

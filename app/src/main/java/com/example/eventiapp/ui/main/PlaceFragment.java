@@ -37,9 +37,7 @@ import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
-import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -60,7 +58,7 @@ import java.util.Locale;
 public class PlaceFragment extends Fragment {
 
     private com.example.eventiapp.databinding.FragmentSinglePlaceBinding fragmentSinglePlaceBinding;
-    private EventsViewModel eventsViewModel;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -87,7 +85,7 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        eventsViewModel=new ViewModelProvider(requireActivity()).get(EventsViewModel.class);
+        eventsAndPlacesViewModel =new ViewModelProvider(requireActivity()).get(EventsAndPlacesViewModel.class);
         eventsList = new ArrayList<>();
     }
 
@@ -176,7 +174,7 @@ public class PlaceFragment extends Fragment {
                         LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(), EVENTS_VIEW_TYPE,
+                requireActivity().getApplication(),
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -186,10 +184,6 @@ public class PlaceFragment extends Fragment {
                         Navigation.findNavController(view).navigate(R.id.action_placeFragment_to_eventFragment, bundle);
                     }
 
-                    @Override
-                    public void onPlacesItemClick(Events events) {
-
-                    }
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
@@ -203,7 +197,7 @@ public class PlaceFragment extends Fragment {
         String id=events.getPlaces().get(0).getId();
         fragmentSinglePlaceBinding.progressBar.setVisibility(View.VISIBLE);
 
-        eventsViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
           if(result!=null) {
               if (result.isSuccess()) {
                   Log.i("SUCCESSO", "SUCCESSO");
@@ -212,10 +206,10 @@ public class PlaceFragment extends Fragment {
                   EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                   List<Events> fetchedEvents = eventsResponse.getEventsList();
 
-                  if (!eventsViewModel.isLoading()) {
-                      if(eventsViewModel.isFirstLoading()) {
-                          eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                          eventsViewModel.setFirstLoading(false);
+                  if (!eventsAndPlacesViewModel.isLoading()) {
+                      if(eventsAndPlacesViewModel.isFirstLoading()) {
+                          eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
+                          eventsAndPlacesViewModel.setFirstLoading(false);
                           this.eventsList.addAll(fetchedEvents);
                           eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
                                   this.eventsList.size());
@@ -226,8 +220,8 @@ public class PlaceFragment extends Fragment {
                       }
                       fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
                   } else {
-                      eventsViewModel.setLoading(false);
-                      eventsViewModel.setCurrentResults(eventsList.size());
+                      eventsAndPlacesViewModel.setLoading(false);
+                      eventsAndPlacesViewModel.setCurrentResults(eventsList.size());
 
                       int initialSize = eventsList.size();
 
@@ -236,7 +230,7 @@ public class PlaceFragment extends Fragment {
                               eventsList.remove(eventsList.get(i));
                           }
                       }
-                      int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                      int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
                               EVENTS_PAGE_SIZE_VALUE;
                       for (int i = startIndex; i < fetchedEvents.size(); i++) {
                           eventsList.add(fetchedEvents.get(i));
@@ -264,7 +258,7 @@ public class PlaceFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 boolean isConnected = isConnected();
 
-                if (isConnected && totalItemCount != eventsViewModel.getTotalResults()) {
+                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
 
                     totalItemCount = layoutManager.getItemCount();
                     lastVisibleItem = layoutManager.findLastVisibleItemPosition();
@@ -273,24 +267,24 @@ public class PlaceFragment extends Fragment {
                     if (totalItemCount == visibleItemCount ||
                             (totalItemCount <= (lastVisibleItem + threshold) &&
                                     dy > 0 &&
-                                    !eventsViewModel.isLoading()
+                                    !eventsAndPlacesViewModel.isLoading()
                             ) &&
-                                    eventsViewModel.getPlaceEventsLiveData(id).getValue() != null &&
-                                    eventsViewModel.getCurrentResults() != eventsViewModel.getTotalResults()
+                                    eventsAndPlacesViewModel.getPlaceEventsLiveData(id).getValue() != null &&
+                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
                     ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getPlaceEventsLiveData(id);
+                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getPlaceEventsLiveData(id);
 
                         if (eventsListMutableLiveData.getValue() != null &&
                                 eventsListMutableLiveData.getValue().isSuccess()) {
 
-                            eventsViewModel.setLoading(true);
+                            eventsAndPlacesViewModel.setLoading(true);
                             eventsList.add(null);
                             eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
                                     eventsList.size() + 1);
 
-                            int page = eventsViewModel.getPage() + 1;
-                            eventsViewModel.setPage(page);
-                            eventsViewModel.getPlaceEventsLiveData(id);
+                            int page = eventsAndPlacesViewModel.getPage() + 1;
+                            eventsAndPlacesViewModel.setPage(page);
+                            eventsAndPlacesViewModel.getPlaceEventsLiveData(id);
                         }
                     }
                 }
@@ -319,8 +313,8 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        eventsViewModel.setFirstLoading(true);
-        eventsViewModel.setLoading(false);
+        eventsAndPlacesViewModel.setFirstLoading(true);
+        eventsAndPlacesViewModel.setLoading(false);
         mMapView.onDestroy();
     }
 

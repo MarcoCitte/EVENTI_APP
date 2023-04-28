@@ -34,7 +34,7 @@ import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -52,7 +52,7 @@ public class CategoryFragment extends Fragment {
 
     private List<Events> eventsList;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
-    private EventsViewModel eventsViewModel;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
 
     private int totalItemCount; // Total number of events
@@ -75,15 +75,15 @@ public class CategoryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
-                ServiceLocator.getInstance().getEventsRepository(
+        IRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
                         requireActivity().getApplication()
                 );
 
         if (eventsRepositoryWithLiveData != null) {
-            eventsViewModel = new ViewModelProvider(
+            eventsAndPlacesViewModel = new ViewModelProvider(
                     requireActivity(),
-                    new EventsViewModelFactory(eventsRepositoryWithLiveData)).get(EventsViewModel.class);
+                    new EventsAndPlacesViewModelFactory(eventsRepositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
         } else {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
@@ -123,7 +123,7 @@ public class CategoryFragment extends Fragment {
                         LinearLayoutManager.VERTICAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),EVENTS_VIEW_TYPE,
+                requireActivity().getApplication(),
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -131,11 +131,6 @@ public class CategoryFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("event", events);
                         Navigation.findNavController(view).navigate(R.id.action_categoryFragment_to_eventFragment, bundle);
-                    }
-
-                    @Override
-                    public void onPlacesItemClick(Events events) {
-
                     }
 
                     @Override
@@ -150,7 +145,7 @@ public class CategoryFragment extends Fragment {
 
         fragmentCategoryBinding.progressBar.setVisibility(View.VISIBLE);
 
-        eventsViewModel.getCategoryEventsLiveData(category).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getCategoryEventsLiveData(category).observe(getViewLifecycleOwner(), result -> {
 
             if (result.isSuccess()) {
                 Log.i("SUCCESSO", "SUCCESSO");
@@ -159,10 +154,10 @@ public class CategoryFragment extends Fragment {
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
 
 
-                if (!eventsViewModel.isLoading()) {
-                    if (eventsViewModel.isFirstLoading()) {
-                        eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                        eventsViewModel.setFirstLoading(false);
+                if (!eventsAndPlacesViewModel.isLoading()) {
+                    if (eventsAndPlacesViewModel.isFirstLoading()) {
+                        eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
+                        eventsAndPlacesViewModel.setFirstLoading(false);
                         this.eventsList.addAll(fetchedEvents);
                         eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
                                 this.eventsList.size());
@@ -174,8 +169,8 @@ public class CategoryFragment extends Fragment {
                     }
                     fragmentCategoryBinding.progressBar.setVisibility(View.GONE);
                 } else {
-                    eventsViewModel.setLoading(false);
-                    eventsViewModel.setCurrentResults(eventsList.size());
+                    eventsAndPlacesViewModel.setLoading(false);
+                    eventsAndPlacesViewModel.setCurrentResults(eventsList.size());
 
                     int initialSize = eventsList.size();
 
@@ -184,7 +179,7 @@ public class CategoryFragment extends Fragment {
                             eventsList.remove(eventsList.get(i));
                         }
                     }
-                    int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                    int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
                             EVENTS_PAGE_SIZE_VALUE;
                     for (int i = startIndex; i < fetchedEvents.size(); i++) {
                         eventsList.add(fetchedEvents.get(i));
@@ -209,7 +204,7 @@ public class CategoryFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 boolean isConnected = isConnected();
 
-                if (isConnected && totalItemCount != eventsViewModel.getTotalResults()) {
+                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
 
                     totalItemCount = layoutManager.getItemCount();
                     lastVisibleItem = layoutManager.findLastVisibleItemPosition();
@@ -218,24 +213,24 @@ public class CategoryFragment extends Fragment {
                     if (totalItemCount == visibleItemCount ||
                             (totalItemCount <= (lastVisibleItem + threshold) &&
                                     dy > 0 &&
-                                    !eventsViewModel.isLoading()
+                                    !eventsAndPlacesViewModel.isLoading()
                             ) &&
-                                    eventsViewModel.getCategoryEventsLiveData(category).getValue() != null &&
-                                    eventsViewModel.getCurrentResults() != eventsViewModel.getTotalResults()
+                                    eventsAndPlacesViewModel.getCategoryEventsLiveData(category).getValue() != null &&
+                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
                     ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getCategoryEventsLiveData(category);
+                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getCategoryEventsLiveData(category);
 
                         if (eventsListMutableLiveData.getValue() != null &&
                                 eventsListMutableLiveData.getValue().isSuccess()) {
 
-                            eventsViewModel.setLoading(true);
+                            eventsAndPlacesViewModel.setLoading(true);
                             eventsList.add(null);
                             eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
                                     eventsList.size() + 1);
 
-                            int page = eventsViewModel.getPage() + 1;
-                            eventsViewModel.setPage(page);
-                            eventsViewModel.getCategoryEventsLiveData(category);
+                            int page = eventsAndPlacesViewModel.getPage() + 1;
+                            eventsAndPlacesViewModel.setPage(page);
+                            eventsAndPlacesViewModel.getCategoryEventsLiveData(category);
                         }
                     }
                 }
@@ -266,8 +261,8 @@ public class CategoryFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        eventsViewModel.setFirstLoading(true);
-        eventsViewModel.setLoading(false);
+        eventsAndPlacesViewModel.setFirstLoading(true);
+        eventsAndPlacesViewModel.setLoading(false);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.example.eventiapp.ui.main;
 
-import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -30,11 +28,7 @@ import com.bumptech.glide.Glide;
 import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentEventBinding;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.model.EventsApiResponse;
-import com.example.eventiapp.model.EventsResponse;
-import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
-import com.example.eventiapp.util.ErrorMessageUtil;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -49,15 +43,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class EventFragment extends Fragment {
 
     private FragmentEventBinding fragmentEventBinding;
-    private EventsViewModel eventsViewModel;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -73,15 +65,15 @@ public class EventFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
-                ServiceLocator.getInstance().getEventsRepository(
+        IRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
                         requireActivity().getApplication()
                 );
 
         if (eventsRepositoryWithLiveData != null) {
-            eventsViewModel = new ViewModelProvider(
+            eventsAndPlacesViewModel = new ViewModelProvider(
                     requireActivity(),
-                    new EventsViewModelFactory(eventsRepositoryWithLiveData)).get(EventsViewModel.class);
+                    new EventsAndPlacesViewModelFactory(eventsRepositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
         } else {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
@@ -135,12 +127,20 @@ public class EventFragment extends Fragment {
             fragmentEventBinding.eventLocation.setVisibility(View.GONE);
         }
 
-        eventsViewModel.getEventsDates(events.getTitle()).observe(getViewLifecycleOwner(), result -> {
-
-            if (result.size() > 1) {
-                showAllEventsDate(result);
-            }
-        });
+        if(!events.getCategory().equals("movies")) { //PER ORA I MOVIES SON SOLO QUELLI DEL GIORNO CORRENTE
+            eventsAndPlacesViewModel.getEventsDates(events.getTitle()).observe(getViewLifecycleOwner(), result -> {
+                if (result.size() > 1) {
+                    showAllEventsDate(result);
+                }
+            });
+        }else{ //MOSTRA ORARI FILM DEL GIORNO CORRENTE
+            //Log.i("NUMERO ROWS DB: ", String.valueOf(eventsAndPlacesViewModel.getCount()));
+            eventsAndPlacesViewModel.getMoviesHours(events.getTitle()).observe(getViewLifecycleOwner(), result -> {
+                if (result.length > 1) {
+                    showAllHoursMovie(result);
+                }
+            });
+        }
 
 
         //GOOGLE MAPS
@@ -226,7 +226,31 @@ public class EventFragment extends Fragment {
             button.setCornerRadius(30);
             button.setText(date);
             button.setOnClickListener(v -> {
-                //VAI AGLI EVENTI CON QUELLA LABEL
+                //VA ALLO STESSO EVENTO MA CON DATA DIVERSA
+            });
+            linearLayout.addView(button);
+        }
+    }
+
+    private void showAllHoursMovie(String[] hours){
+        LinearLayout linearLayout = fragmentEventBinding.otherHoursLayout;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMarginEnd(20);
+        TextView textView = fragmentEventBinding.otherHoursTextView;
+        textView.setVisibility(View.VISIBLE);
+
+        for (String hour : hours) {
+            MaterialButton button = new MaterialButton(requireContext());
+            button.setLayoutParams(params);
+            button.setTextSize(16);
+            button.setPadding(15, 15, 15, 15);
+            button.setCornerRadius(30);
+            button.setText(hour);
+            button.setOnClickListener(v -> {
+                //IN TEORIA NON DOVREBBE FAR NIENTE
             });
             linearLayout.addView(button);
         }

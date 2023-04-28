@@ -3,18 +3,16 @@ package com.example.eventiapp.util;
 import android.app.Application;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.database.EventsRoomDatabase;
-import com.example.eventiapp.repository.events.EventsRepositoryWithLiveData;
-import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
+import com.example.eventiapp.database.RoomDatabase;
+import com.example.eventiapp.repository.events.RepositoryWithLiveData;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.service.EventsApiService;
-import com.example.eventiapp.source.BaseEventsLocalDataSource;
-import com.example.eventiapp.source.BaseEventsRemoteDataSource;
-import com.example.eventiapp.source.EventsLocalDataSource;
-import com.example.eventiapp.source.EventsRemoteDataSource;
-import com.example.eventiapp.source.JsoupDataSource;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import com.example.eventiapp.source.events.BaseEventsLocalDataSource;
+import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
+import com.example.eventiapp.source.events.EventsLocalDataSource;
+import com.example.eventiapp.source.events.EventsRemoteDataSource;
+import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
+import com.example.eventiapp.source.places.PlacesLocalDataSource;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -42,19 +40,20 @@ public class ServiceLocator {
         return retrofit.create(EventsApiService.class);
     }
 
-    public EventsRoomDatabase getEventsDao(Application application) {
-        return EventsRoomDatabase.getDatabase(application);
+    public RoomDatabase getDao(Application application) {
+        return RoomDatabase.getDatabase(application);
     }
 
-    public IEventsRepositoryWithLiveData getEventsRepository(Application application) {
+    public IRepositoryWithLiveData getRepository(Application application) {
         BaseEventsRemoteDataSource eventsRemoteDataSource;
         BaseEventsLocalDataSource eventsLocalDataSource;
+        BasePlacesLocalDataSource placesLocalDataSource;
         SharedPreferencesUtil sharedPreferencesUtil=new SharedPreferencesUtil(application);
         DataEncryptionUtil dataEncryptionUtil=new DataEncryptionUtil(application);
 
         eventsRemoteDataSource = new EventsRemoteDataSource(application.getString(R.string.events_api_key));
-        eventsLocalDataSource=new EventsLocalDataSource(getEventsDao(application),sharedPreferencesUtil,dataEncryptionUtil);
-
-        return new EventsRepositoryWithLiveData(eventsRemoteDataSource,eventsLocalDataSource);
+        eventsLocalDataSource=new EventsLocalDataSource(getDao(application),sharedPreferencesUtil,dataEncryptionUtil);
+        placesLocalDataSource=new PlacesLocalDataSource(getDao(application),sharedPreferencesUtil,dataEncryptionUtil);
+        return new RepositoryWithLiveData(eventsRemoteDataSource,eventsLocalDataSource,placesLocalDataSource);
     }
 }

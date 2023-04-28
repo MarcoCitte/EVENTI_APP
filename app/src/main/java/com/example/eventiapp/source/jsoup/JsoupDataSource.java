@@ -1,4 +1,4 @@
-package com.example.eventiapp.source;
+package com.example.eventiapp.source.jsoup;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -7,6 +7,7 @@ import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.Place;
+import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
 import com.example.eventiapp.ui.main.AllEventsFragment;
 
 import org.jsoup.Jsoup;
@@ -56,8 +57,6 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                 Element href = movie.select("a").first();
                 String name = href.text();
                 String urlMovie = "https://www.ucicinemas.it" + href.attr("href");
-                Log.i("NOME FILM: ", name);
-                Log.i("URL FILM: ", urlMovie);
 
                 //ORARI FILM
                 ArrayList<String> hours = new ArrayList<>();
@@ -65,7 +64,6 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                 for (Element o : times) {
                     String hour = o.text();
                     hours.add(hour);
-                    Log.i("ORARIO FILM", hour);
                 }
 
                 //DESCRIZIONE FILM
@@ -99,9 +97,10 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                 double[] coordinates = {45.5220145, 9.2133497}; //COORDINATE UCI BICOCCA
                 event.setCoordinates(coordinates);
                 List<Place> placeList = new ArrayList<>();
-                Place place = new Place("ChIJUQcYMFvHhkcR2bA0VH8rzJw", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy");
+                Place place = new Place("ChIJUQcYMFvHhkcR2bA0VH8rzJw", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy",coordinates);
                 placeList.add(place);
                 event.setPlaces(placeList);
+                Log.i("UCI MOVIE: " , event.toString());
                 events.add(event);
             }
 
@@ -136,7 +135,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                 List<Place> placeList=new ArrayList<>();
                 double[] coordinates={45.5203608,9.2160497};
                 event.setCoordinates(coordinates);
-                Place place=new Place("ChIJX19ryKPGhkcR5i34n6bQsyI","Pirelli HangarBicocca","venue","Via Chiese, 2, 20126 Milan MI, Italy");
+                Place place=new Place("ChIJX19ryKPGhkcR5i34n6bQsyI","Pirelli HangarBicocca","venue","Via Chiese, 2, 20126 Milan MI, Italy",coordinates);
                 placeList.add(place);
                 event.setPlaces(placeList);
                 Log.i("PIRELLI EVENT: " , event.toString());

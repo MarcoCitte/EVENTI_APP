@@ -1,8 +1,8 @@
-package com.example.eventiapp.source;
+package com.example.eventiapp.source.events;
 
 public abstract class BaseEventsRemoteDataSource {
 
-    protected static EventsCallback eventsCallback;
+    public static EventsCallback eventsCallback;
 
     public void setEventsCallback(EventsCallback eventsCallback){
         this.eventsCallback=eventsCallback;

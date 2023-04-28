@@ -1,4 +1,4 @@
-package com.example.eventiapp.source;
+package com.example.eventiapp.source.events;
 
 
 import static com.example.eventiapp.util.Constants.ENCRYPTED_DATA_FILE_NAME;
@@ -9,7 +9,7 @@ import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
 import android.util.Log;
 
 import com.example.eventiapp.database.EventsDao;
-import com.example.eventiapp.database.EventsRoomDatabase;
+import com.example.eventiapp.database.RoomDatabase;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.util.DataEncryptionUtil;
@@ -23,15 +23,15 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     private final SharedPreferencesUtil sharedPreferences;
     private final DataEncryptionUtil dataEncryptionUtil;
 
-    public EventsLocalDataSource(EventsRoomDatabase eventsRoomDatabase, SharedPreferencesUtil sharedPreferences, DataEncryptionUtil dataEncryptionUtil) {
-        this.eventsDao = eventsRoomDatabase.eventsDao();
+    public EventsLocalDataSource(RoomDatabase roomDatabase, SharedPreferencesUtil sharedPreferences, DataEncryptionUtil dataEncryptionUtil) {
+        this.eventsDao = roomDatabase.eventsDao();
         this.sharedPreferences = sharedPreferences;
         this.dataEncryptionUtil = dataEncryptionUtil;
     }
 
     @Override
     public void getEvents() {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             EventsApiResponse eventsApiResponse = new EventsApiResponse();
             eventsApiResponse.setEventsList(eventsDao.getAll());
             eventsCallback.onSuccessFromLocal(eventsApiResponse);
@@ -40,7 +40,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     @Override
     public void getFavoriteEvents() {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             List<Events> favoriteEvents = eventsDao.getFavoriteEvents();
             eventsCallback.onEventsFavoriteStatusChanged(favoriteEvents);
         });
@@ -48,7 +48,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     @Override
     public void getCategoryEvents(String category) {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             List<Events> categoryEvents = eventsDao.getCategoryEvents(category);
             eventsCallback.onEventsCategory(categoryEvents);
         });
@@ -56,7 +56,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     @Override
     public void getSingleEvent(long id) {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
           Events event =eventsDao.getEvents(id);
           eventsCallback.onSingleEvent(event);
         });
@@ -64,7 +64,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     @Override
     public void getPlaceEvent(String id) {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             List<Events> events=eventsDao.getPlaceEvents(id);
             eventsCallback.onEventsPlace(events);
         });
@@ -72,15 +72,23 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     @Override
     public void getEventsDates(String name) {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             List<String> dates=eventsDao.getEventsDates(name);
             eventsCallback.onEventsDates(dates);
         });
     }
 
     @Override
+    public void getMoviesHours(String name) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            String[] hours=eventsDao.getMoviesHours(name);
+            eventsCallback.onMoviesHours(hours);
+        });
+    }
+
+    @Override
     public void updateEvents(Events events) {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             if (events != null) {
                 int rowUpdatedCounter = eventsDao.updateSingleFavoriteEvents(events);
                 if (rowUpdatedCounter == 1) {
@@ -101,7 +109,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     @Override
     public void deleteFavoriteEvents() {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             List<Events> favoriteEvents = eventsDao.getFavoriteEvents();
             for (Events events : favoriteEvents) {
                 events.setFavorite(false);
@@ -117,7 +125,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     @Override
     public void insertEvents(EventsApiResponse eventsApiResponse) {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             List<Events> allEvents = eventsDao.getAll();
             List<Events> eventsList = eventsApiResponse.getEventsList();
 
@@ -142,7 +150,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
     @Override
     public void insertEvents(List<Events> eventsList) {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             if (eventsList != null) {
                 List<Events> allEvents = eventsDao.getAll();
 
@@ -166,8 +174,16 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     }
 
     @Override
+    public void getCount() {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            int count=eventsDao.count();
+            eventsCallback.onCount(count);
+        });
+    }
+
+    @Override
     public void deleteAll() {
-        EventsRoomDatabase.databaseWriteExecutor.execute(() -> {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
             int eventsCounter = eventsDao.getAll().size();
             int deletedEvents = eventsDao.deleteAll();
 

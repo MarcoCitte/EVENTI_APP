@@ -6,7 +6,6 @@ import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,23 +28,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentAllEventsBinding;
-import com.example.eventiapp.databinding.FragmentHomeBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
-import com.example.eventiapp.source.JsoupDataSource;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,7 +51,7 @@ public class AllEventsFragment extends Fragment {
 
     private List<Events> eventsList;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
-    private EventsViewModel eventsViewModel;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
 
     private int totalItemCount; // Total number of events
@@ -89,15 +80,15 @@ public class AllEventsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
-                ServiceLocator.getInstance().getEventsRepository(
+        IRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
                         requireActivity().getApplication()
                 );
 
         if (eventsRepositoryWithLiveData != null) {
-            eventsViewModel = new ViewModelProvider(
+            eventsAndPlacesViewModel = new ViewModelProvider(
                     requireActivity(),
-                    new EventsViewModelFactory(eventsRepositoryWithLiveData)).get(EventsViewModel.class);
+                    new EventsAndPlacesViewModelFactory(eventsRepositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
         } else {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
@@ -142,7 +133,7 @@ public class AllEventsFragment extends Fragment {
                         LinearLayoutManager.VERTICAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),EVENTS_VIEW_TYPE,
+                requireActivity().getApplication(),
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -150,11 +141,6 @@ public class AllEventsFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("event", events);
                         Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_eventFragment, bundle);
-                    }
-
-                    @Override
-                    public void onPlacesItemClick(Events events) {
-
                     }
 
                     @Override
@@ -170,7 +156,7 @@ public class AllEventsFragment extends Fragment {
         fragmentAllEventsBinding.progressBar.setVisibility(View.VISIBLE);
 
 
-        eventsViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
 
             if (result.isSuccess()) {
                 Log.i("SUCCESSO", "SUCCESSO");
@@ -178,10 +164,10 @@ public class AllEventsFragment extends Fragment {
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
 
-                if (!eventsViewModel.isLoading()) {
-                    if (eventsViewModel.isFirstLoading()) {
-                        eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                        eventsViewModel.setFirstLoading(false);
+                if (!eventsAndPlacesViewModel.isLoading()) {
+                    if (eventsAndPlacesViewModel.isFirstLoading()) {
+                        eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
+                        eventsAndPlacesViewModel.setFirstLoading(false);
                         this.eventsList.addAll(fetchedEvents);
                         eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
                                 this.eventsList.size());
@@ -193,8 +179,8 @@ public class AllEventsFragment extends Fragment {
                     }
                     fragmentAllEventsBinding.progressBar.setVisibility(View.GONE);
                 } else {
-                    eventsViewModel.setLoading(false);
-                    eventsViewModel.setCurrentResults(eventsList.size());
+                    eventsAndPlacesViewModel.setLoading(false);
+                    eventsAndPlacesViewModel.setCurrentResults(eventsList.size());
 
                     int initialSize = eventsList.size();
 
@@ -203,7 +189,7 @@ public class AllEventsFragment extends Fragment {
                             eventsList.remove(eventsList.get(i));
                         }
                     }
-                    int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                    int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
                             EVENTS_PAGE_SIZE_VALUE;
                     for (int i = startIndex; i < fetchedEvents.size(); i++) {
                         eventsList.add(fetchedEvents.get(i));
@@ -228,7 +214,7 @@ public class AllEventsFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 boolean isConnected = isConnected();
 
-                if (isConnected && totalItemCount != eventsViewModel.getTotalResults()) {
+                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
 
                     totalItemCount = layoutManager.getItemCount();
                     lastVisibleItem = layoutManager.findLastVisibleItemPosition();
@@ -237,24 +223,24 @@ public class AllEventsFragment extends Fragment {
                     if (totalItemCount == visibleItemCount ||
                             (totalItemCount <= (lastVisibleItem + threshold) &&
                                     dy > 0 &&
-                                    !eventsViewModel.isLoading()
+                                    !eventsAndPlacesViewModel.isLoading()
                             ) &&
-                                    eventsViewModel.getEventsResponseLiveData().getValue() != null &&
-                                    eventsViewModel.getCurrentResults() != eventsViewModel.getTotalResults()
+                                    eventsAndPlacesViewModel.getEventsResponseLiveData().getValue() != null &&
+                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
                     ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getEventsResponseLiveData();
+                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getEventsResponseLiveData();
 
                         if (eventsListMutableLiveData.getValue() != null &&
                                 eventsListMutableLiveData.getValue().isSuccess()) {
 
-                            eventsViewModel.setLoading(true);
+                            eventsAndPlacesViewModel.setLoading(true);
                             eventsList.add(null);
                             eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
                                     eventsList.size() + 1);
 
-                            int page = eventsViewModel.getPage() + 1;
-                            eventsViewModel.setPage(page);
-                            eventsViewModel.fetchEvents(country, radius + "km@" + location, date, sort, limit);
+                            int page = eventsAndPlacesViewModel.getPage() + 1;
+                            eventsAndPlacesViewModel.setPage(page);
+                            eventsAndPlacesViewModel.fetchEvents(country, radius + "km@" + location, date, sort, limit);
                         }
                     }
                 }
@@ -267,8 +253,8 @@ public class AllEventsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        eventsViewModel.setFirstLoading(true);
-        eventsViewModel.setLoading(false);
+        eventsAndPlacesViewModel.setFirstLoading(true);
+        eventsAndPlacesViewModel.setLoading(false);
     }
 
     @Override

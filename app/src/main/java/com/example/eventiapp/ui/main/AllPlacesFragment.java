@@ -1,7 +1,6 @@
 package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
-import static com.example.eventiapp.util.Constants.PLACES_VIEW_TYPE;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -26,25 +25,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
-import com.example.eventiapp.databinding.FragmentAllEventsBinding;
+import com.example.eventiapp.adapter.PlacesRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentPlacesBinding;
-import com.example.eventiapp.model.Events;
-import com.example.eventiapp.model.EventsApiResponse;
-import com.example.eventiapp.model.EventsResponse;
-import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IEventsRepositoryWithLiveData;
+import com.example.eventiapp.model.Place;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AllPlacesFragment extends Fragment {
 
@@ -53,16 +43,16 @@ public class AllPlacesFragment extends Fragment {
 
     private FragmentPlacesBinding fragmentPlacesBinding;
 
-    private List<Events> eventsList;
-    private EventsRecyclerViewAdapter placesRecyclerViewAdapter;
-    private EventsViewModel eventsViewModel;
+    private List<Place> placesList;
+    private PlacesRecyclerViewAdapter placesRecyclerViewAdapter;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
 
-    private int totalItemCount; // Total number of events
-    private int lastVisibleItem; // The position of the last visible event item
-    private int visibleItemCount; // Number or total visible event items
+    private int totalItemCount; // Total number of places
+    private int lastVisibleItem; // The position of the last visible place item
+    private int visibleItemCount; // Number or total visible place items
 
-    // Based on this value, the process of loading more events is anticipated or postponed
+    // Based on this value, the process of loading more places is anticipated or postponed
     private final int threshold = 1;
 
 
@@ -78,20 +68,20 @@ public class AllPlacesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        IEventsRepositoryWithLiveData eventsRepositoryWithLiveData =
-                ServiceLocator.getInstance().getEventsRepository(
+        IRepositoryWithLiveData repositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
                         requireActivity().getApplication()
                 );
 
-        if (eventsRepositoryWithLiveData != null) {
-            eventsViewModel = new ViewModelProvider(
+        if (repositoryWithLiveData != null) {
+            eventsAndPlacesViewModel = new ViewModelProvider(
                     requireActivity(),
-                    new EventsViewModelFactory(eventsRepositoryWithLiveData)).get(EventsViewModel.class);
+                    new EventsAndPlacesViewModelFactory(repositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
         } else {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
-        eventsList = new ArrayList<>();
+        placesList = new ArrayList<>();
 
     }
 
@@ -130,27 +120,23 @@ public class AllPlacesFragment extends Fragment {
                 new LinearLayoutManager(requireContext(),
                         LinearLayoutManager.VERTICAL, false);
 
-        placesRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),PLACES_VIEW_TYPE,
-                new EventsRecyclerViewAdapter.OnItemClickListener() {
+        placesRecyclerViewAdapter = new PlacesRecyclerViewAdapter(placesList,
+                requireActivity().getApplication(),
+                new PlacesRecyclerViewAdapter.OnItemClickListener() {
                     @Override
-                    public void onEventsItemClick(Events events) {
-                    }
-
-                    @Override
-                    public void onPlacesItemClick(Events events) {
+                    public void onPlacesItemClick(Place place) {
                         //VAI AI DETTAGLI DEL POSTO
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable("event", events);
+                        bundle.putParcelable("place", place);
                         Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_placeFragment, bundle);
                     }
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-                        //SETTA EVENTO COME PREFERITO
+
                     }
                 });
-        recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(placesRecyclerViewAdapter);
 
         String lastUpdate = "0";
@@ -158,58 +144,44 @@ public class AllPlacesFragment extends Fragment {
         fragmentPlacesBinding.progressBar.setVisibility(View.VISIBLE);
 
 
-        eventsViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
 
-            if (result.isSuccess()) {
+            if (result!=null) {
                 Log.i("SUCCESSO", "SUCCESSO");
 
-                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
-                List<Events> fetchedEvents = eventsResponse.getEventsList();
+                List<Place> fetchedPlaces = new ArrayList<>(result);
 
-                //RIMUOVE LUOGHI DUPLICATI COSI DA NON AVERE LUOGHI UGUALI
-                Map<String, Events> map = new HashMap<String, Events>();
-                for (Events e : fetchedEvents) {
-                    if(!e.getPlaces().isEmpty() && !e.getCategory().equals("severe-weather") && !e.getCategory().equals("airport-delays")) {
-                        String idPlace = e.getPlaces().get(0).getId();
-                        if (!map.containsKey(idPlace)) {
-                            map.put(idPlace, e);
-                        }
-                    }
-                }
-                List<Events> placesList=new ArrayList<>(map.values());
-
-
-                if (!eventsViewModel.isLoading()) {
-                    if (eventsViewModel.isFirstLoading()) {
-                        eventsViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                        eventsViewModel.setFirstLoading(false);
-                        this.eventsList.addAll(placesList);
+                if (!eventsAndPlacesViewModel.isLoading()) {
+                    if (eventsAndPlacesViewModel.isFirstLoading()) {
+                        eventsAndPlacesViewModel.setTotalResults(fetchedPlaces.size());
+                        eventsAndPlacesViewModel.setFirstLoading(false);
+                        this.placesList.addAll(fetchedPlaces);
                         placesRecyclerViewAdapter.notifyItemRangeInserted(0,
-                                this.eventsList.size());
+                                this.placesList.size());
                     } else {
-                        // Updates related to the favorite status of the events
-                        eventsList.clear();
-                        eventsList.addAll(placesList);
-                        placesRecyclerViewAdapter.notifyItemChanged(0, placesList.size());
+                        // Updates related to the favorite status of the places
+                        placesList.clear();
+                        placesList.addAll(fetchedPlaces);
+                        placesRecyclerViewAdapter.notifyItemChanged(0, fetchedPlaces.size());
                     }
                     fragmentPlacesBinding.progressBar.setVisibility(View.GONE);
                 } else {
-                    eventsViewModel.setLoading(false);
-                    eventsViewModel.setCurrentResults(eventsList.size());
+                    eventsAndPlacesViewModel.setLoading(false);
+                    eventsAndPlacesViewModel.setCurrentResults(placesList.size());
 
-                    int initialSize = eventsList.size();
+                    int initialSize = placesList.size();
 
-                    for (int i = 0; i < eventsList.size(); i++) {
-                        if (eventsList.get(i) == null) {
-                            eventsList.remove(eventsList.get(i));
+                    for (int i = 0; i < placesList.size(); i++) {
+                        if (placesList.get(i) == null) {
+                            placesList.remove(placesList.get(i));
                         }
                     }
-                    int startIndex = (eventsViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                    int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
                             EVENTS_PAGE_SIZE_VALUE;
-                    for (int i = startIndex; i < placesList.size(); i++) {
-                        eventsList.add(placesList.get(i));
+                    for (int i = startIndex; i < fetchedPlaces.size(); i++) {
+                        placesList.add(fetchedPlaces.get(i));
                     }
-                    placesRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
+                    placesRecyclerViewAdapter.notifyItemRangeInserted(initialSize, placesList.size());
                 }
             } else {
                 Log.i("FALLITO", "FALLITO");
@@ -217,7 +189,7 @@ public class AllPlacesFragment extends Fragment {
                 ErrorMessageUtil errorMessagesUtil =
                         new ErrorMessageUtil(requireActivity().getApplication());
                 Snackbar.make(view, errorMessagesUtil.
-                                getErrorMessage(((Result.Error) result).getMessage()),
+                                getErrorMessage("ERRORE"),
                         Snackbar.LENGTH_SHORT).show();
                 fragmentPlacesBinding.progressBar.setVisibility(View.GONE);
             }
@@ -229,7 +201,7 @@ public class AllPlacesFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 boolean isConnected = isConnected();
 
-                if (isConnected && totalItemCount != eventsViewModel.getTotalResults()) {
+                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
 
                     totalItemCount = layoutManager.getItemCount();
                     lastVisibleItem = layoutManager.findLastVisibleItemPosition();
@@ -238,24 +210,23 @@ public class AllPlacesFragment extends Fragment {
                     if (totalItemCount == visibleItemCount ||
                             (totalItemCount <= (lastVisibleItem + threshold) &&
                                     dy > 0 &&
-                                    !eventsViewModel.isLoading()
+                                    !eventsAndPlacesViewModel.isLoading()
                             ) &&
-                                    eventsViewModel.getEventsResponseLiveData().getValue() != null &&
-                                    eventsViewModel.getCurrentResults() != eventsViewModel.getTotalResults()
+                                    eventsAndPlacesViewModel.getPlacesResponseLiveData().getValue() != null &&
+                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
                     ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsViewModel.getEventsResponseLiveData();
+                        MutableLiveData<List<Place>> placeListMutableLiveData = eventsAndPlacesViewModel.getPlacesResponseLiveData();
 
-                        if (eventsListMutableLiveData.getValue() != null &&
-                                eventsListMutableLiveData.getValue().isSuccess()) {
+                        if (placeListMutableLiveData.getValue() != null) {
 
-                            eventsViewModel.setLoading(true);
-                            eventsList.add(null);
-                            placesRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
-                                    eventsList.size() + 1);
+                            eventsAndPlacesViewModel.setLoading(true);
+                            placesList.add(null);
+                            placesRecyclerViewAdapter.notifyItemRangeInserted(placesList.size(),
+                                    placesList.size() + 1);
 
-                            int page = eventsViewModel.getPage() + 1;
-                            eventsViewModel.setPage(page);
-                            eventsViewModel.fetchEvents(country, radius + "km@" + location, date, sort, limit);
+                            int page = eventsAndPlacesViewModel.getPage() + 1;
+                            eventsAndPlacesViewModel.setPage(page);
+                            eventsAndPlacesViewModel.fetchPlaces();
                         }
                     }
                 }
@@ -268,8 +239,8 @@ public class AllPlacesFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        eventsViewModel.setFirstLoading(true);
-        eventsViewModel.setLoading(false);
+        eventsAndPlacesViewModel.setFirstLoading(true);
+        eventsAndPlacesViewModel.setLoading(false);
     }
 
     @Override
