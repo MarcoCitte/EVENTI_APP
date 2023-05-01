@@ -1,6 +1,11 @@
 package com.example.eventiapp.ui.main;
 
+import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
+
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,15 +25,23 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eventiapp.R;
+import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentEventBinding;
 import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.EventsApiResponse;
+import com.example.eventiapp.model.EventsResponse;
+import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,6 +56,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +64,15 @@ public class EventFragment extends Fragment {
 
     private FragmentEventBinding fragmentEventBinding;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
+    private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
+    private List<Events> eventsList; //EVENTI SIMILI
+
+    private int totalItemCount; // Total number of events
+    private int lastVisibleItem; // The position of the last visible event item
+    private int visibleItemCount; // Number or total visible event items
+
+    // Based on this value, the process of loading more events is anticipated or postponed
+    private final int threshold = 1;
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -78,6 +101,7 @@ public class EventFragment extends Fragment {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
+        eventsList = new ArrayList<>();
     }
 
     @Override
@@ -107,18 +131,19 @@ public class EventFragment extends Fragment {
 
         Events events = getArguments().getParcelable("event", Events.class);
 
-        if (events.getEventSource()!=null && events.getEventSource().getUrlPhoto() != null) {
+        if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
+            fragmentEventBinding.eventImage.setVisibility(View.VISIBLE);
             Glide.with(this).load(events.getEventSource().getUrlPhoto()).into(fragmentEventBinding.eventImage);
         }
         fragmentEventBinding.eventTitle.setText(events.getTitle());
         fragmentEventBinding.eventCategory.setText(events.getCategory());
         //fragmentEventBinding.eventTimezone.setText(events.getTimezone());
         fragmentEventBinding.eventDescription.setText(events.getDescription());
-        if(events.getEnd()!=null) {
+        if (events.getEnd() != null) {
             String date = "FROM: " + events.getStart() + " TO: " + events.getEnd() + " (" + events.getTimezone() + ")";
             fragmentEventBinding.eventDate.setText(date);
-        }else{
-            String date=events.getStart() + " (" +events.getTimezone() +")";
+        } else {
+            String date = events.getStart() + " (" + events.getTimezone() + ")";
             fragmentEventBinding.eventDate.setText(date);
         }
         if (!events.getPlaces().isEmpty()) {
@@ -127,13 +152,13 @@ public class EventFragment extends Fragment {
             fragmentEventBinding.eventLocation.setVisibility(View.GONE);
         }
 
-        if(!events.getCategory().equals("movies")) { //PER ORA I MOVIES SON SOLO QUELLI DEL GIORNO CORRENTE
+        if (!events.getCategory().equals("movies")) { //PER ORA I MOVIES SON SOLO QUELLI DEL GIORNO CORRENTE
             eventsAndPlacesViewModel.getEventsDates(events.getTitle()).observe(getViewLifecycleOwner(), result -> {
                 if (result.size() > 1) {
                     showAllEventsDate(result);
                 }
             });
-        }else{ //MOSTRA ORARI FILM DEL GIORNO CORRENTE
+        } else { //MOSTRA ORARI FILM DEL GIORNO CORRENTE
             //Log.i("NUMERO ROWS DB: ", String.valueOf(eventsAndPlacesViewModel.getCount()));
             eventsAndPlacesViewModel.getMoviesHours(events.getTitle()).observe(getViewLifecycleOwner(), result -> {
                 if (result.length > 1) {
@@ -143,51 +168,20 @@ public class EventFragment extends Fragment {
         }
 
 
-        //GOOGLE MAPS
-        mMapView = view.findViewById(R.id.mapView);
+        //EVENTI SIMILI ---------------------------------------------------------------------
+
+        sameCategoryEvents(events);
+
+        //PLACE
+
+        getPlace(events);
+
+        //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
+
+        mMapView = requireView().findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
-
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                googleMap = mMap;
-
-                // For dropping a marker at a point on the Map
-                double[] location = events.getCoordinates();
-                LatLng latLng = new LatLng(location[1], location[0]);
-                Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(events.getPlaces().get(0).getName()));
-                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(@NonNull Marker marker) {
-                        LatLng position = marker.getPosition();
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-                        googleMap.getMaxZoomLevel();
-
-                        return true;
-                    }
-                });
-
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(@NonNull LatLng latLng) {
-                        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latLng.latitude, latLng.longitude);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        startActivity(intent);
-                    }
-                });
-
-                // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        });
+        googleMaps(events);
 
 
         NavBackStackEntry navBackStackEntry = Navigation.
@@ -232,7 +226,7 @@ public class EventFragment extends Fragment {
         }
     }
 
-    private void showAllHoursMovie(String[] hours){
+    private void showAllHoursMovie(String[] hours) {
         LinearLayout linearLayout = fragmentEventBinding.otherHoursLayout;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -254,6 +248,228 @@ public class EventFragment extends Fragment {
             });
             linearLayout.addView(button);
         }
+    }
+
+    private void sameCategoryEvents(Events events){
+
+        RecyclerView recyclerView = fragmentEventBinding.recyclerviewEvents;
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(requireContext(),
+                        LinearLayoutManager.HORIZONTAL, false);
+
+        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
+                requireActivity().getApplication(),
+                new EventsRecyclerViewAdapter.OnItemClickListener() {
+                    @Override
+                    public void onEventsItemClick(Events events) {
+                        //VAI AI DETTAGLI DELL'EVENTO
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("event", events);
+                        Navigation.findNavController(requireView()).navigate(R.id.action_eventFragment_self, bundle);
+                    }
+
+
+                    @Override
+                    public void onFavoriteButtonPressed(int position) {
+                        //SETTA EVENTO COME PREFERITO
+                    }
+                });
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(eventsRecyclerViewAdapter);
+
+        fragmentEventBinding.progressBar.setVisibility(View.VISIBLE);
+
+        eventsAndPlacesViewModel.getCategoryEventsLiveData(events.getCategory()).observe(getViewLifecycleOwner(), result -> {
+            if (result != null) {
+                if (result.isSuccess()) {
+                    Log.i("SUCCESSO", "SUCCESSO");
+                    eventsList.clear();
+                    EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                    List<Events> fetchedEvents = eventsResponse.getEventsList();
+                    fetchedEvents.remove(events); //RIMUOVI LO STESSO EVENTO
+
+                    if (fetchedEvents.size() > 0) {
+                        fragmentEventBinding.categoryEvents.setVisibility(View.VISIBLE);
+                        fragmentEventBinding.recyclerviewEvents.setVisibility(View.VISIBLE);
+                        if (!eventsAndPlacesViewModel.isLoading()) {
+                            if (eventsAndPlacesViewModel.isFirstLoading()) {
+                                eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
+                                eventsAndPlacesViewModel.setFirstLoading(false);
+                                this.eventsList.addAll(fetchedEvents);
+                                eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
+                                        this.eventsList.size());
+                            } else {
+                                eventsList.clear();
+                                eventsList.addAll(fetchedEvents);
+                                eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
+                            }
+                            fragmentEventBinding.progressBar.setVisibility(View.GONE);
+
+                        } else {
+                            eventsAndPlacesViewModel.setLoading(false);
+                            eventsAndPlacesViewModel.setCurrentResults(eventsList.size());
+
+                            int initialSize = eventsList.size();
+
+                            for (int i = 0; i < eventsList.size(); i++) {
+                                if (eventsList.get(i) == null) {
+                                    eventsList.remove(eventsList.get(i));
+                                }
+                            }
+                            int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                                    EVENTS_PAGE_SIZE_VALUE;
+                            for (int i = startIndex; i < fetchedEvents.size(); i++) {
+                                eventsList.add(fetchedEvents.get(i));
+                            }
+                            eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
+                        }
+                    } else {
+                        fragmentEventBinding.progressBar.setVisibility(View.GONE);
+                    }
+                } else {
+                    Log.i("FALLITO", "FALLITO");
+
+                    ErrorMessageUtil errorMessagesUtil =
+                            new ErrorMessageUtil(requireActivity().getApplication());
+                    Snackbar.make(requireView(), errorMessagesUtil.
+                                    getErrorMessage(((Result.Error) result).getMessage()),
+                            Snackbar.LENGTH_SHORT).show();
+                    fragmentEventBinding.progressBar.setVisibility(View.GONE);
+                }
+
+            } else {
+                //NON CI SONO EVENTI IN QUEL LOCALE
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                boolean isConnected = isConnected();
+
+                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
+
+                    totalItemCount = layoutManager.getItemCount();
+                    lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                    visibleItemCount = layoutManager.getChildCount();
+
+                    if (totalItemCount == visibleItemCount ||
+                            (totalItemCount <= (lastVisibleItem + threshold) &&
+                                    dy > 0 &&
+                                    !eventsAndPlacesViewModel.isLoading()
+                            ) &&
+                                    eventsAndPlacesViewModel.getCategoryEventsLiveData(events.getCategory()).getValue() != null &&
+                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
+                    ) {
+                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getCategoryEventsLiveData(events.getCategory());
+
+                        if (eventsListMutableLiveData.getValue() != null &&
+                                eventsListMutableLiveData.getValue().isSuccess()) {
+
+                            eventsAndPlacesViewModel.setLoading(true);
+                            eventsList.add(null);
+                            eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
+                                    eventsList.size() + 1);
+
+                            int page = eventsAndPlacesViewModel.getPage() + 1;
+                            eventsAndPlacesViewModel.setPage(page);
+                            eventsAndPlacesViewModel.getCategoryEventsLiveData(events.getCategory());
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void getPlace(Events events){
+        eventsAndPlacesViewModel.getSinglePlace(events.getPlaces().get(0).getId()).observe(getViewLifecycleOwner(), result ->{
+            if(result!=null){
+                Log.i("PLACE",result.toString());
+            }
+            else{
+                Log.i("RESULT ", "NULL");
+            }
+        });
+    }
+
+    private void googleMaps(Events events){
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap mMap) {
+                googleMap = mMap;
+
+                // For dropping a marker at a point on the Map
+                double[] location = events.getCoordinates();
+                LatLng latLng = new LatLng(location[0], location[1]);
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(events.getPlaces().get(0).getName()));
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(@NonNull Marker marker) {
+                        LatLng position = marker.getPosition();
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+                        googleMap.getMaxZoomLevel();
+
+                        return true;
+                    }
+                });
+
+                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(@NonNull LatLng latLng) {
+                        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latLng.latitude, latLng.longitude);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        startActivity(intent);
+                    }
+                });
+
+                // For zooming automatically to the location of the marker
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        });
+    }
+
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        eventsAndPlacesViewModel.setFirstLoading(true);
+        eventsAndPlacesViewModel.setLoading(false);
+        mMapView.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        fragmentEventBinding = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
+    private boolean isConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
 }

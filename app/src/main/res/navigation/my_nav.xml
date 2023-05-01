@@ -67,6 +67,9 @@
         android:name="com.example.eventiapp.ui.main.EventFragment"
         android:label="fragment_event"
         tools:layout="@layout/fragment_event" >
+        <action
+            android:id="@+id/action_eventFragment_self"
+            app:destination="@id/eventFragment" />
     </fragment>
     <fragment
         android:id="@+id/placeFragment"

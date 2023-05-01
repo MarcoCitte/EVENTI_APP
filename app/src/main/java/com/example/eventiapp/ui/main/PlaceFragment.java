@@ -5,6 +5,7 @@ import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,12 +33,15 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
+import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
+import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -59,6 +64,7 @@ public class PlaceFragment extends Fragment {
 
     private com.example.eventiapp.databinding.FragmentSinglePlaceBinding fragmentSinglePlaceBinding;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
+    private LayoutInflater inflater;
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -99,6 +105,7 @@ public class PlaceFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        inflater = LayoutInflater.from(getContext());
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -114,11 +121,32 @@ public class PlaceFragment extends Fragment {
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-        Events events = getArguments().getParcelable("event", Events.class);
+        Place place = getArguments().getParcelable("place", Place.class);
 
-        fragmentSinglePlaceBinding.placeName.setText(events.getPlaces().get(0).getName());
-        fragmentSinglePlaceBinding.placeType.setText(events.getPlaces().get(0).getType());
-        fragmentSinglePlaceBinding.placeAddress.setText(events.getPlaces().get(0).getAddress());
+        PlaceDetailsSource.fetchPlacePhotos(place.getImages(), new PlaceDetailsSource.PlacePhotosListener() {
+            @Override
+            public void onPlacePhotosListener(Bitmap bitmap) {
+                fragmentSinglePlaceBinding.scrollViewImagesPlace.setVisibility(View.VISIBLE);
+                if (bitmap != null) {
+                    View viewPlacePhoto = inflater.inflate(R.layout.item_place_photo_maps, fragmentSinglePlaceBinding.galleryPhotos, false);
+                    ImageView imagePlace = viewPlacePhoto.findViewById(R.id.imagePlace);
+                    imagePlace.setMaxHeight(300);
+                    imagePlace.setMaxWidth(300);
+                    imagePlace.setImageBitmap(bitmap);
+                    fragmentSinglePlaceBinding.galleryPhotos.addView(viewPlacePhoto);
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                Log.i("ERROR", message);
+            }
+        });
+
+        fragmentSinglePlaceBinding.placeName.setText(place.getName());
+        fragmentSinglePlaceBinding.placeType.setText(place.getType());
+        fragmentSinglePlaceBinding.placeAddress.setText(place.getAddress());
+        fragmentSinglePlaceBinding.placePhoneNumber.setText(place.getPhoneNumber());
 
         //GOOGLE MAPS
         mMapView=view.findViewById(R.id.mapView);
@@ -137,15 +165,16 @@ public class PlaceFragment extends Fragment {
                 googleMap = mMap;
 
                 // For dropping a marker at a point on the Map
-                double[] location = events.getCoordinates();
-                LatLng latLng=new LatLng(location[1], location[0]);
-                Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(events.getPlaces().get(0).getName()));
+                double[] location = place.getCoordinates();
+                LatLng latLng=new LatLng(location[0], location[1]);
+                googleMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()).snippet(place.getAddress()));
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(@NonNull Marker marker) {
                         LatLng position = marker.getPosition();
                         googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
                         googleMap.getMaxZoomLevel();
+                        marker.showInfoWindow();
 
                         return true;
                     }
@@ -194,7 +223,7 @@ public class PlaceFragment extends Fragment {
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
 
         String lastUpdate = "0";
-        String id=events.getPlaces().get(0).getId();
+        String id=place.getId();
         fragmentSinglePlaceBinding.progressBar.setVisibility(View.VISIBLE);
 
         eventsAndPlacesViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
@@ -219,6 +248,9 @@ public class PlaceFragment extends Fragment {
                           eventsRecyclerViewAdapter.notifyItemChanged(0,fetchedEvents.size());
                       }
                       fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
+                      fragmentSinglePlaceBinding.numberEventsButton.setVisibility(View.VISIBLE);
+                      fragmentSinglePlaceBinding.numberEventsButton.setText(Integer.toString(eventsList.size()));
+
                   } else {
                       eventsAndPlacesViewModel.setLoading(false);
                       eventsAndPlacesViewModel.setCurrentResults(eventsList.size());

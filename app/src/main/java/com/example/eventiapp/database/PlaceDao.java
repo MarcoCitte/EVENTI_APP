@@ -27,9 +27,7 @@ public interface PlaceDao {
     int count();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    default List<String> insertPlacesList(List<Place> placeList) {
-        return null;
-    }
+    void insertPlacesList(List<Place> placeList);
 
     @Insert
     void insertAll(Place... places);

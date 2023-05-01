@@ -19,6 +19,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue "string", "events_api_key", properties.getProperty("events_api_key", "")
+        resValue "string", "maps_api_key", properties.getProperty("maps_api_key", "")
+
     }
 
     buildTypes {
@@ -37,7 +39,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+
+
 }
+
 
 dependencies {
 

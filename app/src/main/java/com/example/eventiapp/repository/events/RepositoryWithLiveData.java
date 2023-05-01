@@ -1,5 +1,6 @@
 package com.example.eventiapp.repository.events;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -12,15 +13,18 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.source.events.BaseEventsLocalDataSource;
 import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
 import com.example.eventiapp.source.events.EventsCallback;
+import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
 import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCallback, PlaceCallback {
 
@@ -42,27 +46,30 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
     private final BaseEventsLocalDataSource eventsLocalDataSource;
     private final BasePlacesLocalDataSource placesLocalDataSource;
+    private final PlaceDetailsSource placeDetailsSource;
     private List<String> dates;
     private int count;
 
 
-    public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource, BasePlacesLocalDataSource placesLocalDataSource) {
+    public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
+                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
         categoryEventsMutableLiveData = new MutableLiveData<>();
         singleEventMutableLiveData = new MutableLiveData<>();
         placeEventsMutableLiveData = new MutableLiveData<>();
-        eventsDateMutableLiveData= new MutableLiveData<>();
-        moviesHoursMutableLiveData=new MutableLiveData<>();
-        allPlacesMutableLiveData=new MutableLiveData<>();
-        favoritePlacesMutableLiveData=new MutableLiveData<>();
-        singlePlaceMutableLiveData=new MutableLiveData<>();
+        eventsDateMutableLiveData = new MutableLiveData<>();
+        moviesHoursMutableLiveData = new MutableLiveData<>();
+        allPlacesMutableLiveData = new MutableLiveData<>();
+        favoritePlacesMutableLiveData = new MutableLiveData<>();
+        singlePlaceMutableLiveData = new MutableLiveData();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
         this.eventsLocalDataSource = eventsLocalDataSource;
         this.eventsLocalDataSource.setEventsCallback(this);
-        this.placesLocalDataSource=placesLocalDataSource;
+        this.placesLocalDataSource = placesLocalDataSource;
         this.placesLocalDataSource.setPlacesCallback((PlaceCallback) this);
+        this.placeDetailsSource = placeDetailsSource;
     }
 
     @Override
@@ -112,8 +119,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public MutableLiveData<List<String>> getEventsDates(String name) {
-       eventsLocalDataSource.getEventsDates(name);
-       return eventsDateMutableLiveData;
+        eventsLocalDataSource.getEventsDates(name);
+        return eventsDateMutableLiveData;
     }
 
     @Override
@@ -182,21 +189,51 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         //PLACES
         List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
+
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
         Map<String, Events> map = new HashMap<String, Events>();
         for (Events e : fetchedEvents) {
-            if(!e.getPlaces().isEmpty() && !e.getCategory().equals("severe-weather") && !e.getCategory().equals("airport-delays")) {
+            if (!e.getPlaces().isEmpty() && !e.getCategory().equals("severe-weather") && !e.getCategory().equals("airport-delays")) {
                 String idPlace = e.getPlaces().get(0).getId();
                 if (!map.containsKey(idPlace)) {
                     map.put(idPlace, e);
                 }
+                if(e.getCoordinates()[0]< e.getCoordinates()[1]){
+                    double temp = e.getCoordinates()[0];
+                    e.getCoordinates()[0] = e.getCoordinates()[1];
+                    e.getCoordinates()[1] = temp;
+                }
             }
         }
-        List<Events> eventsNoDuplicates=new ArrayList<>(map.values());
-        List<Place> placesList=new ArrayList<>();
-        for(Events e: eventsNoDuplicates){
-            placesList.add(new Place(e.getPlaces().get(0).getId(),e.getPlaces().get(0).getName(),e.getPlaces().get(0).getType(),e.getPlaces().get(0).getId(),e.getCoordinates()));
+        List<Events> eventsNoDuplicates = new ArrayList<>(map.values());
+        List<Place> placesList = new ArrayList<>();
+        for (Events e : eventsNoDuplicates) {
+            //if(!e.getPlaces().get(0).getId().equals("ChIJUQcYMFvHhkcR2bA0VH8rzJw") && !e.getPlaces().get(0).getId().equals("ChIJX19ryKPGhkcR5i34n6bQsyI")) {
+            //DEVO PRENDERE COORDINATE, INDIRIZZO, FOTO E NUMERO DI TELEFONO DEL POSTO  PIU PRECISI
+            placeDetailsSource.fetchPlaceDetails(e.getPlaces().get(0).getName(), e.getPlaces().get(0).getAddress(), new PlaceDetailsSource.PlaceDetailsListener() {
+                @Override
+                public void onPlaceDetailsFetched(com.google.android.libraries.places.api.model.Place place) {
+                    // Hai ottenuto i dettagli del posto
+                    double[] coordinates;
+                    if (place.getLatLng() != null) {
+                        coordinates = new double[]{place.getLatLng().latitude, place.getLatLng().longitude};
+                    } else {
+                        coordinates = new double[]{e.getCoordinates()[1], e.getCoordinates()[0]};
+                    }
+                    placesList.add(new Place(e.getPlaces().get(0).getId(),place.getName(),e.getPlaces().get(0).getType(),place.getAddress(),place.getId(),coordinates,place.getPhoneNumber(),place.getPhotoMetadatas()));
+
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.i("ERRORE FETCH PLACE:", message);
+                    //PER I POSTI NON TROVATI USO IL COSTUTTORE DI DEFAULT CON LE INFORMAZIONI BASE
+                    //placesList.add(new Place(e.getPlaces().get(0).getId(), e.getPlaces().get(0).getName(), e.getPlaces().get(0).getType(), e.getPlaces().get(0).getAddress(), e.getCoordinates()));
+                }
+            });
+            //}
         }
+
 
         /*
         Place uci = new Place("ChIJUQcYMFvHhkcR2bA0VH8rzJw", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
@@ -206,6 +243,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         */
 
         placesLocalDataSource.insertPlaces(placesList);
+
+
     }
 
     @Override
@@ -254,14 +293,14 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onEventsDates(List<String> dates) {
-       if(dates.size()>1){
-           eventsDateMutableLiveData.postValue(dates);
-       }
+        if (dates.size() > 1) {
+            eventsDateMutableLiveData.postValue(dates);
+        }
     }
 
     @Override
     public void onMoviesHours(String[] hours) {
-        if(hours.length>1){
+        if (hours.length > 1) {
             moviesHoursMutableLiveData.postValue(hours);
         }
     }
@@ -323,7 +362,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onCount(int count) {
-       this.count=count;
+        this.count = count;
     }
 
     @Override
@@ -364,12 +403,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     //PLACECALLBACK -------------------------------------------
 
-    @Override
     public void onSuccessFromLocalP(List<Place> placeList) {
         if (allPlacesMutableLiveData.getValue() != null) {
-            List<Place> placeListNew = allPlacesMutableLiveData.getValue();
-            placeListNew.addAll(placeList);
-            allPlacesMutableLiveData.postValue(placeListNew);
+            List<Place> placeListOld = allPlacesMutableLiveData.getValue();
+            placeListOld.addAll(placeList);
+            allPlacesMutableLiveData.postValue(placeListOld);
         } else {
             allPlacesMutableLiveData.postValue(placeList);
         }

@@ -35,12 +35,20 @@
 
         </LinearLayout>
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:layout_width="200sp"
-            android:layout_height="200sp"
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/scrollViewImagesPlace"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
             android:layout_gravity="center"
-            android:id="@+id/placeImageView"
-            />
+            android:scrollbars="none">
+            <LinearLayout
+                android:id="@+id/galleryPhotos"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

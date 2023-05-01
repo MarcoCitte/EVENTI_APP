@@ -17,12 +17,20 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/place_image"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:src="@drawable/ic_my_events"
-                android:scaleType="centerCrop"/>
+                android:id="@+id/scrollViewImagesPlace"
+                android:visibility="gone"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center"
+                android:scrollbars="none">
+                <LinearLayout
+                    android:id="@+id/galleryPhotos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/place_name"
@@ -50,13 +58,11 @@
                 android:textSize="16sp"
                 android:paddingBottom="8dp"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/number_events_button"
+            <TextView
+                android:id="@+id/place_phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="?attr/materialIconButtonStyle"
-                android:text="10"
-                android:clickable="false"
+                android:text="Numero di telefono"
                 android:textSize="16sp"
                 android:paddingBottom="8dp"/>
 
@@ -70,6 +76,16 @@
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"/>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/number_events_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?attr/materialIconButtonStyle"
+                android:visibility="gone"
+                android:clickable="false"
+                android:textSize="16sp"
+                android:paddingBottom="8dp"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_events"
                 android:layout_width="match_parent"
@@ -80,7 +96,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/place_events" />
+                app:layout_constraintTop_toBottomOf="@id/number_events_button" />
 
             <ProgressBar
                 android:id="@+id/progress_bar"

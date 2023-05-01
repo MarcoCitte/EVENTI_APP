@@ -5,7 +5,6 @@ import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
 import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -29,16 +29,16 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsResponse;
+import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,18 +49,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.PhotoMetadata;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPhotoRequest;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -78,11 +71,13 @@ public class MapsFragment extends Fragment {
     private BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
     LinearLayout tapactionlayout;
-    private ImageView placeImageView;
+    LayoutInflater inflater;
     private ImageView carImageView;
     private ImageView mapsImageView;
     private ImageView callImageView;
     private ImageView favoriteImageView;
+    private LinearLayout galleryPhotos;
+    private HorizontalScrollView scrollViewImagesPlace;
 
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private RecyclerView recyclerView;
@@ -130,10 +125,8 @@ public class MapsFragment extends Fragment {
                     View v = getLayoutInflater().inflate(R.layout.info_window_maps, null);
                     TextView textViewName = v.findViewById(R.id.place_name);
                     TextView textViewAddress = v.findViewById(R.id.place_address);
-
                     String[] parts = Objects.requireNonNull(marker.getTitle()).split(":");
                     String namePlace = parts[0];
-                    String idPlace = parts[1];
                     textViewName.setText(namePlace);
                     textViewAddress.setText(marker.getSnippet());
                     return v;
@@ -184,6 +177,7 @@ public class MapsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        inflater = LayoutInflater.from(getContext());
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
@@ -238,7 +232,8 @@ public class MapsFragment extends Fragment {
         mBottomSheetBehavior1.setPeekHeight(120);
         mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        placeImageView = view.findViewById(R.id.placeImageView);
+        scrollViewImagesPlace = view.findViewById(R.id.scrollViewImagesPlace);
+        galleryPhotos = view.findViewById(R.id.galleryPhotos);
         carImageView = view.findViewById(R.id.carImageView);
         mapsImageView = view.findViewById(R.id.mapsImageView);
         callImageView = view.findViewById(R.id.callImageView);
@@ -389,85 +384,6 @@ public class MapsFragment extends Fragment {
         });
     }
 
-    private LatLng getCoordinates(String name) {
-        try {
-            List<Address> addresses = geoCoder.getFromLocationName(name + "Milan", 1);
-            if (addresses.size() > 0) {
-                double lat = (double) (addresses.get(0).getLatitude());
-                double lon = (double) (addresses.get(0).getLongitude());
-                LatLng latLng = new LatLng(lat, lon);
-                return latLng;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    private String getAddress(String name) {
-        try {
-            List<Address> addresses = geoCoder.getFromLocationName(name + "Milan", 1);
-            if (!addresses.isEmpty()) {
-                String address = addresses.get(0).getAddressLine(0);
-                return address;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-    private String getPhone(String idPlace) {
-        List<Place.Field> placeFields = Arrays.asList(Place.Field.PHONE_NUMBER);
-        final String[] number = new String[1];
-        final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(idPlace, placeFields);
-        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-            final Place place = response.getPlace();
-            Log.i("TAG", "Phone found: " + place.getPhoneNumber());
-            number[0] = place.getPhoneNumber();
-        });
-        return number[0];
-    }
-
-    private Bitmap getPhotos(String idPlace) {
-        //FOTO LUOGO
-        final List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
-        final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(idPlace, fields);
-        final Bitmap[] bitmap = new Bitmap[1];
-
-        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-            final Place place = response.getPlace();
-
-            // Get the photo metadata.
-            final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
-            if (metadata == null || metadata.isEmpty()) {
-                Log.w("TAG", "No photo metadata.");
-                return;
-            }
-            final PhotoMetadata photoMetadata = metadata.get(0);
-
-            // Get the attribution text.
-            final String attributions = photoMetadata.getAttributions();
-
-            // Create a FetchPhotoRequest.
-            final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                    .setMaxWidth(500) // Optional.
-                    .setMaxHeight(300) // Optional.
-                    .build();
-            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                bitmap[0] = fetchPhotoResponse.getBitmap();
-            }).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    final ApiException apiException = (ApiException) exception;
-                    Log.e("ERROR", "Place not found: " + exception.getMessage());
-                    final int statusCode = apiException.getStatusCode();
-                }
-            });
-        });
-        return bitmap[0];
-    }
 
     private boolean isConnected() {
         ConnectivityManager cm =
@@ -490,19 +406,11 @@ public class MapsFragment extends Fragment {
     }
 
     private void setMarkers() {
-        for (int i = 0; i < placesList.size(); i++) {
-            LatLng latLng = getCoordinates(placesList.get(i).getName()); //PRENDE COORDINATE DA API GOOGLE
-            if (latLng != null) {
-                //GEOCODER HA TROVATO LE COORDINATE DEL LUOGO
-            } else {
-                //USA COORDINATE ESTRATTE DALLE API
-                double[] location = placesList.get(i).getCoordinates();
-                latLng = new LatLng(location[1], location[0]);
-            }
+        for (com.example.eventiapp.model.Place p : placesList) {
             marker = myGoogleMap.addMarker(new MarkerOptions().
-                    position(latLng).
-                    title(placesList.get(i).getName() + ":" + placesList.get(i).getId()).
-                    snippet(getAddress(placesList.get(i).getName())));
+                    position(new LatLng(p.getCoordinates()[0], p.getCoordinates()[1])).
+                    title(p.getName() + ":" + p.getId()).
+                    snippet(p.getAddress()));
             myGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(@NonNull Marker marker) {
@@ -518,38 +426,29 @@ public class MapsFragment extends Fragment {
 
                     //SETTA FOTO LUOGO
 
-                    List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
-                    FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(idPlace, fields);
-
-                    placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-                        Place place = response.getPlace();
-
-                        // Get the photo metadata.
-                        List<PhotoMetadata> metadata = place.getPhotoMetadatas();
-                        if (metadata == null || metadata.isEmpty()) {
-                            Log.w("TAG", "No photo metadata.");
-                            return;
+                    Place p = new Place();
+                    for (Place place : placesList) {
+                        if (place.getId().equals(idPlace)) {
+                            p = place;
                         }
-                        PhotoMetadata photoMetadata = metadata.get(0);
+                    }
 
-                        // Get the attribution text.
-                        String attributions = photoMetadata.getAttributions();
-
-                        // Create a FetchPhotoRequest.
-                        FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                                .setMaxWidth(1000) // Optional.
-                                .setMaxHeight(1000) // Optional.
-                                .build();
-                        placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                            Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                            placeImageView.setImageBitmap(bitmap);
-                        }).addOnFailureListener((exception) -> {
-                            if (exception instanceof ApiException) {
-                                ApiException apiException = (ApiException) exception;
-                                Log.e("ERROR", "Place not found: " + exception.getMessage());
-                                int statusCode = apiException.getStatusCode();
+                    PlaceDetailsSource.fetchPlacePhotos(p.getImages(), new PlaceDetailsSource.PlacePhotosListener() {
+                        @Override
+                        public void onPlacePhotosListener(Bitmap bitmap) {
+                            scrollViewImagesPlace.setVisibility(View.VISIBLE);
+                            if (bitmap != null) {
+                                View viewPlacePhoto = inflater.inflate(R.layout.item_place_photo_maps, galleryPhotos, false);
+                                ImageView imagePlace = viewPlacePhoto.findViewById(R.id.imagePlace);
+                                imagePlace.setImageBitmap(bitmap);
+                                galleryPhotos.addView(viewPlacePhoto);
                             }
-                        });
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            Log.i("ERROR", message);
+                        }
                     });
 
 
@@ -573,26 +472,22 @@ public class MapsFragment extends Fragment {
                         }
                     });
 
+                    Place finalP = p;
                     callImageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             //CHIAMA POSTO
 
-                            List<Place.Field> placeFields = Arrays.asList(Place.Field.PHONE_NUMBER);
-                            final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance("ChIJ3QKsnCXHhkcR3pA-eU_d9io", placeFields);
-                            placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-                                final Place place = response.getPlace();
-                                Log.i("TAG", "Phone found: " + place.getPhoneNumber());
-                                String number = place.getPhoneNumber();
-                                if (number != null) {
-                                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(requireContext(), "NUMERO NON TROVATO", Toast.LENGTH_LONG).show();
-                                }
-                            });
+                            String number = finalP.getPhoneNumber();
+                            if (number != null) {
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(requireContext(), "NUMERO NON TROVATO", Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
+
 
                     favoriteImageView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -603,6 +498,8 @@ public class MapsFragment extends Fragment {
                     return true;
                 }
             });
+
+
         }
     }
 

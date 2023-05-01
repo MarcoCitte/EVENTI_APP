@@ -1,18 +1,22 @@
 package com.example.eventiapp.model;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.gson.annotations.SerializedName;
 
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -26,47 +30,42 @@ public class Place implements Serializable, Parcelable {
     private String type;
     @SerializedName("formatted_address")
     private String address;
+    private String idGoogle;
     private double[] coordinates;
+    private String phoneNumber;
+    private List<PhotoMetadata> images;
     @ColumnInfo(name = "is_favorite")
     private boolean isFavorite;
     @ColumnInfo(name = "is_synchronized")
     private boolean isSynchronized;
 
+
+    @Ignore
+    public Place() {
+    }
+
+    @Ignore
     public Place(@NonNull String id, String name, String type, String address, double[] coordinates) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.address = address;
-        this.coordinates=coordinates;
-        this.isFavorite=false;
-        this.isSynchronized=false;
+        this.coordinates = coordinates;
+        this.isFavorite = false;
+        this.isSynchronized = false;
     }
 
-
-    protected Place(Parcel in) {
-        id = in.readString();
-        name = in.readString();
-        type = in.readString();
-        address = in.readString();
-        coordinates = in.createDoubleArray();
-        isFavorite = in.readByte() != 0;
-        isSynchronized = in.readByte() != 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(type);
-        dest.writeString(address);
-        dest.writeDoubleArray(coordinates);
-        dest.writeByte((byte) (isFavorite ? 1 : 0));
-        dest.writeByte((byte) (isSynchronized ? 1 : 0));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public Place(@NonNull String id, String name, String type, String address, String idGoogle, double[] coordinates, String phoneNumber, List<PhotoMetadata> images) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.address = address;
+        this.idGoogle = idGoogle;
+        this.coordinates = coordinates;
+        this.phoneNumber = phoneNumber;
+        this.images = images;
+        this.isFavorite = false;
+        this.isSynchronized = false;
     }
 
     public static final Creator<Place> CREATOR = new Creator<Place>() {
@@ -80,6 +79,38 @@ public class Place implements Serializable, Parcelable {
             return new Place[size];
         }
     };
+
+    public Place(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        type = in.readString();
+        address = in.readString();
+        idGoogle = in.readString();
+        coordinates = in.createDoubleArray();
+        phoneNumber = in.readString();
+        isFavorite = in.readByte() != 0;
+        isSynchronized = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(type);
+        dest.writeString(address);
+        dest.writeString(idGoogle);
+        dest.writeDoubleArray(coordinates);
+        dest.writeString(phoneNumber);
+        dest.writeTypedList(images);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
+        dest.writeByte((byte) (isSynchronized ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
 
     public String getId() {
         return id;
@@ -113,6 +144,14 @@ public class Place implements Serializable, Parcelable {
         this.address = address;
     }
 
+    public String getIdGoogle() {
+        return idGoogle;
+    }
+
+    public void setIdGoogle(String idGoogle) {
+        this.idGoogle = idGoogle;
+    }
+
     public double[] getCoordinates() {
         return coordinates;
     }
@@ -137,17 +176,33 @@ public class Place implements Serializable, Parcelable {
         isSynchronized = aSynchronized;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public List<PhotoMetadata> getImages() {
+        return images;
+    }
+
+    public void setImages(List<PhotoMetadata> images) {
+        this.images = images;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Place place = (Place) o;
-        return isFavorite == place.isFavorite && isSynchronized == place.isSynchronized && id.equals(place.id) && Objects.equals(name, place.name) && Objects.equals(type, place.type) && Objects.equals(address, place.address) && Arrays.equals(coordinates, place.coordinates);
+        return isFavorite == place.isFavorite && isSynchronized == place.isSynchronized && id.equals(place.id) && Objects.equals(name, place.name) && Objects.equals(type, place.type) && Objects.equals(address, place.address) && Objects.equals(idGoogle, place.idGoogle) && Arrays.equals(coordinates, place.coordinates) && Objects.equals(phoneNumber, place.phoneNumber) && Objects.equals(images, place.images);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name, type, address, isFavorite, isSynchronized);
+        int result = Objects.hash(id, name, type, address, idGoogle, phoneNumber, images, isFavorite, isSynchronized);
         result = 31 * result + Arrays.hashCode(coordinates);
         return result;
     }
@@ -159,9 +214,13 @@ public class Place implements Serializable, Parcelable {
                 ", name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", address='" + address + '\'' +
+                ", idGoogle='" + idGoogle + '\'' +
                 ", coordinates=" + Arrays.toString(coordinates) +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", images=" + images +
                 ", isFavorite=" + isFavorite +
                 ", isSynchronized=" + isSynchronized +
                 '}';
     }
 }
+

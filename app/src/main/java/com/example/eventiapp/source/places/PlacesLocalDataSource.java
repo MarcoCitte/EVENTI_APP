@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.example.eventiapp.database.PlaceDao;
 import com.example.eventiapp.database.RoomDatabase;
+import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.util.DataEncryptionUtil;
 import com.example.eventiapp.util.SharedPreferencesUtil;
@@ -94,12 +96,14 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
             if (placeList != null) {
                 List<Place> allPlaces = placeDao.getAll();
 
-                for (Place p : allPlaces) {
-                    if (placeList.contains(p)) {
-                        p.setSynchronized(true);
-                        placeList.set(placeList.indexOf(p), p);
+                for (Place place : allPlaces) {
+                    if (placeList.contains(place)) {
+                        place.setSynchronized(true);
+                        placeList.set(placeList.indexOf(place), place);
                     }
                 }
+
+                placeDao.insertPlacesList(placeList);
                 placeCallback.onSuccessFromLocalP(placeList);
             }
         });
