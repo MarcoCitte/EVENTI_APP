@@ -198,7 +198,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                 if (!map.containsKey(idPlace)) {
                     map.put(idPlace, e);
                 }
-                if(e.getCoordinates()[0]< e.getCoordinates()[1]){
+                if (e.getCoordinates()[0] < e.getCoordinates()[1]) {
                     double temp = e.getCoordinates()[0];
                     e.getCoordinates()[0] = e.getCoordinates()[1];
                     e.getCoordinates()[1] = temp;
@@ -206,7 +206,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             }
         }
         List<Events> eventsNoDuplicates = new ArrayList<>(map.values());
-        List<Place> placesList = new ArrayList<>();
         for (Events e : eventsNoDuplicates) {
             //if(!e.getPlaces().get(0).getId().equals("ChIJUQcYMFvHhkcR2bA0VH8rzJw") && !e.getPlaces().get(0).getId().equals("ChIJX19ryKPGhkcR5i34n6bQsyI")) {
             //DEVO PRENDERE COORDINATE, INDIRIZZO, FOTO E NUMERO DI TELEFONO DEL POSTO  PIU PRECISI
@@ -218,10 +217,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                     if (place.getLatLng() != null) {
                         coordinates = new double[]{place.getLatLng().latitude, place.getLatLng().longitude};
                     } else {
-                        coordinates = new double[]{e.getCoordinates()[1], e.getCoordinates()[0]};
+                        coordinates = new double[]{e.getCoordinates()[0], e.getCoordinates()[1]};
                     }
-                    placesList.add(new Place(e.getPlaces().get(0).getId(),place.getName(),e.getPlaces().get(0).getType(),place.getAddress(),place.getId(),coordinates,place.getPhoneNumber(),place.getPhotoMetadatas()));
-
+                    List<Place> placesList = new ArrayList<>();
+                    placesList.add(new Place(e.getPlaces().get(0).getId(), place.getName(), e.getPlaces().get(0).getType(), place.getAddress(), place.getId(), coordinates, place.getPhoneNumber(), place.getPhotoMetadatas()));
+                    placesLocalDataSource.insertPlaces(placesList);
                 }
 
                 @Override
@@ -233,17 +233,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             });
             //}
         }
-
-
-        /*
-        Place uci = new Place("ChIJUQcYMFvHhkcR2bA0VH8rzJw", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
-        Place pirelliHangar=new Place("ChIJX19ryKPGhkcR5i34n6bQsyI","Pirelli HangarBicocca","venue","Via Chiese, 2, 20126 Milan MI, Italy", new double[]{45.5203608, 9.2160497});
-        placesList.add(uci);
-        placesList.add(pirelliHangar);
-        */
-
-        placesLocalDataSource.insertPlaces(placesList);
-
 
     }
 

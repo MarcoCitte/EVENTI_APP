@@ -9,7 +9,9 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import com.example.eventiapp.util.Converters;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.gson.annotations.SerializedName;
 
@@ -39,7 +41,6 @@ public class Place implements Serializable, Parcelable {
     @ColumnInfo(name = "is_synchronized")
     private boolean isSynchronized;
 
-
     @Ignore
     public Place() {
     }
@@ -68,19 +69,8 @@ public class Place implements Serializable, Parcelable {
         this.isSynchronized = false;
     }
 
-    public static final Creator<Place> CREATOR = new Creator<Place>() {
-        @Override
-        public Place createFromParcel(Parcel in) {
-            return new Place(in);
-        }
 
-        @Override
-        public Place[] newArray(int size) {
-            return new Place[size];
-        }
-    };
-
-    public Place(Parcel in) {
+    protected Place(Parcel in) {
         id = in.readString();
         name = in.readString();
         type = in.readString();
@@ -92,25 +82,17 @@ public class Place implements Serializable, Parcelable {
         isSynchronized = in.readByte() != 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(type);
-        dest.writeString(address);
-        dest.writeString(idGoogle);
-        dest.writeDoubleArray(coordinates);
-        dest.writeString(phoneNumber);
-        dest.writeTypedList(images);
-        dest.writeByte((byte) (isFavorite ? 1 : 0));
-        dest.writeByte((byte) (isSynchronized ? 1 : 0));
-    }
+    public static final Creator<Place> CREATOR = new Creator<Place>() {
+        @Override
+        public Place createFromParcel(Parcel in) {
+            return new Place(in);
+        }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
+        @Override
+        public Place[] newArray(int size) {
+            return new Place[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -221,6 +203,25 @@ public class Place implements Serializable, Parcelable {
                 ", isFavorite=" + isFavorite +
                 ", isSynchronized=" + isSynchronized +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(type);
+        dest.writeString(address);
+        dest.writeString(idGoogle);
+        dest.writeDoubleArray(coordinates);
+        dest.writeString(phoneNumber);
+        dest.writeTypedList(images);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
+        dest.writeByte((byte) (isSynchronized ? 1 : 0));
     }
 }
 

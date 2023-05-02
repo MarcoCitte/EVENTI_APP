@@ -22,7 +22,7 @@ public interface EventsDao {
     @Query("SELECT * FROM events WHERE is_favorite = 1 ORDER BY startDate ASC")
     List<Events> getFavoriteEvents();
 
-    @Query("SELECT * FROM events WHERE category = :category ORDER BY startDate ASC")
+    @Query("SELECT * FROM events WHERE category LIKE '%' || :category || '%' ORDER BY startDate ASC")
     List<Events> getCategoryEvents(String category);
 
     @Query("SELECT * FROM events WHERE places LIKE '%' || :id_place || '%' ORDER BY startDate ASC")

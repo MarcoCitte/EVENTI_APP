@@ -1,21 +1,17 @@
 package com.example.eventiapp.util;
 
-import android.graphics.Bitmap;
-
 import androidx.room.TypeConverter;
-import androidx.room.TypeConverters;
 
+import com.example.eventiapp.adapter.PhotoMetadataJsonAdapter;
 import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Place;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,33 +76,18 @@ public class Converters {
     }
 
 
-    //BITMAP IMAGES OF PLACE
-    @TypeConverter
-    public static List<Bitmap> fromStringImages(String value) {
-        if (value == null) {
-            return Collections.emptyList();
-        }
-        Type listType = new TypeToken<List<Bitmap>>() {
-        }.getType();
-        return new Gson().fromJson(value, listType);
-    }
-
-    @TypeConverter
-    public static String fromListOfImages(List<Bitmap> list) {
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-        return json;
-    }
-
     //PHOTOMETADATA OF PLACE
     @TypeConverter
     public static List<PhotoMetadata> fromStringImagesMetadata(String value) {
         if (value == null) {
             return Collections.emptyList();
         }
-        Type listType = new TypeToken<List<Bitmap>>() {
+        Type listType = new TypeToken<List<PhotoMetadata>>() {
         }.getType();
-        return new Gson().fromJson(value, listType);
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(PhotoMetadata.class, new PhotoMetadataJsonAdapter())
+                .create();
+        return gson.fromJson(value, listType);
     }
 
     @TypeConverter

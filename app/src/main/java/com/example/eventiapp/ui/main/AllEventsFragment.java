@@ -197,7 +197,7 @@ public class AllEventsFragment extends Fragment {
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
                 }
             } else {
-                Log.i("FALLITO", "FALLITO");
+                Log.i("FALLITO", "FALLITO ALL EVENTS");
 
                 ErrorMessageUtil errorMessagesUtil =
                         new ErrorMessageUtil(requireActivity().getApplication());

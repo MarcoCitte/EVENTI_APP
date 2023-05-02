@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.model.Events;
@@ -49,7 +50,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -67,7 +67,6 @@ public class MapsFragment extends Fragment {
     private UiSettings mUiSettings;
     GoogleMap myGoogleMap;
     private Geocoder geoCoder;
-    private PlacesClient placesClient;
     private BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
     LinearLayout tapactionlayout;
@@ -113,7 +112,7 @@ public class MapsFragment extends Fragment {
             myGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(bicocca));
             */
 
-            float zoomLevel = 15.0f; //This goes up to 21
+            float zoomLevel = 13.0f; //This goes up to 21
             myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bicocca, zoomLevel));
 
             int count = 0;
@@ -161,9 +160,7 @@ public class MapsFragment extends Fragment {
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
         placesList = new ArrayList<com.example.eventiapp.model.Place>();
-        placeEventsList = new ArrayList<>(); //EVENTI DI UN SINGOLO LUOGO
-        Places.initialize(getContext(), "AIzaSyBfUbHrX9y475T-c7v--HuxDmxjUMldAE8");
-        placesClient = Places.createClient(getContext());
+        placeEventsList=new ArrayList<>(); //EVENTI DI UN SINGOLO LUOGO
     }
 
     @Nullable
@@ -227,7 +224,7 @@ public class MapsFragment extends Fragment {
         //BOTTOM SHEETS
 
         bottomSheet = view.findViewById(R.id.bottom_sheet1);
-        tapactionlayout = (LinearLayout) view.findViewById(R.id.tap_action_layout);
+        tapactionlayout = view.findViewById(R.id.tap_action_layout);
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior1.setPeekHeight(120);
         mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -305,6 +302,7 @@ public class MapsFragment extends Fragment {
 
             if (result.isSuccess()) {
                 Log.i("SUCCESSO", "SUCCESSO");
+                placeEventsList.clear();
 
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
@@ -426,82 +424,78 @@ public class MapsFragment extends Fragment {
 
                     //SETTA FOTO LUOGO
 
-                    Place p = new Place();
-                    for (Place place : placesList) {
-                        if (place.getId().equals(idPlace)) {
-                            p = place;
-                        }
-                    }
+                    eventsAndPlacesViewModel.getSinglePlace(idPlace).observe(getViewLifecycleOwner(), result -> {
+                        if(result!=null) {
+                            Place p = result;
+                            galleryPhotos.removeAllViews();
+                            PlaceDetailsSource.fetchPlacePhotos(p.getImages(), new PlaceDetailsSource.PlacePhotosListener() {
+                                @Override
+                                public void onPlacePhotosListener(Bitmap bitmap) {
+                                    scrollViewImagesPlace.setVisibility(View.VISIBLE);
+                                    if (bitmap != null) {
+                                        View viewPlacePhoto = inflater.inflate(R.layout.item_place_photo_maps, galleryPhotos, false);
+                                        ImageView imagePlace = viewPlacePhoto.findViewById(R.id.imagePlace);
+                                        imagePlace.setImageBitmap(bitmap);
+                                        galleryPhotos.addView(viewPlacePhoto);
+                                    }
+                                }
 
-                    PlaceDetailsSource.fetchPlacePhotos(p.getImages(), new PlaceDetailsSource.PlacePhotosListener() {
-                        @Override
-                        public void onPlacePhotosListener(Bitmap bitmap) {
-                            scrollViewImagesPlace.setVisibility(View.VISIBLE);
-                            if (bitmap != null) {
-                                View viewPlacePhoto = inflater.inflate(R.layout.item_place_photo_maps, galleryPhotos, false);
-                                ImageView imagePlace = viewPlacePhoto.findViewById(R.id.imagePlace);
-                                imagePlace.setImageBitmap(bitmap);
-                                galleryPhotos.addView(viewPlacePhoto);
-                            }
-                        }
-
-                        @Override
-                        public void onError(String message) {
-                            Log.i("ERROR", message);
-                        }
-                    });
+                                @Override
+                                public void onError(String message) {
+                                    Log.i("ERROR", message);
+                                }
+                            });
 
 
-                    carImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //NAVIGAZIONE
-                            String uri = String.format(Locale.ENGLISH, "google.navigation:q=%f,%f", position.latitude, position.longitude);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                            startActivity(intent);
-                        }
-                    });
+                            carImageView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //NAVIGAZIONE
+                                    String uri = String.format(Locale.ENGLISH, "google.navigation:q=%f,%f", position.latitude, position.longitude);
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                    startActivity(intent);
+                                }
+                            });
 
-                    mapsImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //APRI SU GOOGLE MAPS
-                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", position.latitude, position.longitude);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                            startActivity(intent);
-                        }
-                    });
+                            mapsImageView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //APRI SU GOOGLE MAPS
+                                    String uri = String.format(Locale.ENGLISH, "geo:%f,%f", position.latitude, position.longitude);
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                    startActivity(intent);
+                                }
+                            });
 
-                    Place finalP = p;
-                    callImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //CHIAMA POSTO
+                            Place finalP = p;
+                            callImageView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //CHIAMA POSTO
 
-                            String number = finalP.getPhoneNumber();
-                            if (number != null) {
-                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(requireContext(), "NUMERO NON TROVATO", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
+                                    String number = finalP.getPhoneNumber();
+                                    if (number != null) {
+                                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+                                        startActivity(intent);
+                                    } else {
+                                        Toast.makeText(requireContext(), "NUMERO NON TROVATO", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
 
 
-                    favoriteImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //AGGIUNGI POSTO AI FAVORITI DELL' UTENTE
+                            favoriteImageView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //AGGIUNGI POSTO AI FAVORITI DELL' UTENTE
+                                }
+                            });
                         }
                     });
                     return true;
                 }
             });
-
-
         }
     }
-
 
 }

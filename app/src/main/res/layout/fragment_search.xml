@@ -3,248 +3,335 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="#ffaa00"
     android:layout_height="match_parent"
     tools:context=".ui.main.SearchFragment">
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFFFFF">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="#00008577"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-           />
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutCategories"
+        android:background="#ffaa00"
+        android:layout_margin="10sp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="70sp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Explore"
+                android:layout_centerVertical="true"
+                android:padding="10sp"
+                android:textSize="40sp">
+            </TextView>
+            <SearchView
+                android:id="@+id/searchView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="15sp" />
+
+        </RelativeLayout>
+
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="24dp"
-            android:text="Explore"
-            android:textSize="30sp"
-            app:layout_constraintEnd_toStartOf="@+id/imageView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
+            android:padding="10sp"
             android:text="Categories"
-            app:layout_constraintEnd_toStartOf="@+id/imageView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="0dp"
-            android:layout_height="160dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            />
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="0dp"
-            android:layout_height="175dp"
-            android:orientation="horizontal"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView">
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:id="@+id/communityTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/communityIV"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:text="Community"
-                        android:textSize="24sp"
-                       />
-                    <ImageView
-                        android:id="@+id/communityIV"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
-                       />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:id="@+id/concertsTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/concertsIV"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:text="Concerts"
-                        android:textSize="24sp"
-                         />
-                    <ImageView
-                        android:id="@+id/concertsIV"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
-                        />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="0dp"
-            android:layout_height="175dp"
-            android:orientation="horizontal"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:id="@+id/festivalsTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/festivalsIV"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:text="Festivals"
-                        android:textSize="24sp"
-                      />
-                    <ImageView
-                        android:id="@+id/festivalsIV"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
-                       />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:id="@+id/performingArtsTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/performingArtsIV"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:text="Performing Arts"
-                        android:textSize="24sp"
-                     />
-                    <ImageView
-                        android:id="@+id/performingArtsIV"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
-                       />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="175dp"
-            android:orientation="horizontal"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:id="@+id/observancesTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/observancesIV"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:text="Observances"
-                        android:textSize="24sp"
-                        />
-                    <ImageView
-                        android:id="@+id/observancesIV"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
-                         />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:layout_weight="1">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:id="@+id/sportsTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/sportsIV"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="10dp"
-                        android:text="Sports"
-                        android:textSize="24sp"
-                        />
-                    <ImageView
-                        android:id="@+id/sportsIV"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
-                       />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:textAllCaps="true"
+            android:textSize="25sp">
+
+        </TextView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/communityCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            app:cardBackgroundColor="#00000000"
+            app:cardElevation="8sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:background="#F94144">
+
+                <ImageView
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20sp"
+                    android:src="@drawable/community" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="25sp"
+                    android:text="COMMUNITY"
+                    android:textSize="30sp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00000000"
+                    android:padding="30sp"
+                    android:text="Expand all" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/concertsCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            app:cardBackgroundColor="#00000000"
+            app:cardElevation="8sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:background="#E76161">
+
+                <ImageView
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20sp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_baseline_music_note_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="1dp"
+                    android:padding="25sp"
+                    android:text="CONCERTS &amp; FESTIVALS"
+                    android:textSize="30sp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00000000"
+                    android:padding="25sp"
+                    android:text="Expand all" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/sportsCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            app:cardBackgroundColor="#00000000"
+            app:cardElevation="8sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:background="#F8961E">
+
+                <ImageView
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20sp"
+                    android:src="@drawable/ic_baseline_sports_basketball_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="25sp"
+                    android:text="SPORTS"
+                    android:textSize="30sp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00000000"
+                    android:padding="20sp"
+                    android:text="Expand all" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/movieCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            app:cardBackgroundColor="#00000000"
+            app:cardElevation="8sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:background="#F9844A">
+
+                <ImageView
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20sp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_baseline_movie_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:padding="25sp"
+                    android:text="MOVIES"
+                    android:textSize="30sp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00000000"
+                    android:padding="20sp"
+                    android:text="Expand all" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/guestCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            app:cardBackgroundColor="#00000000"
+            app:cardElevation="8sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:background="#F9C74F">
+
+                <ImageView
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20sp"
+                    android:src="@drawable/ic_baseline_person_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="25sp"
+                    android:text="GUEST \nPROJECT"
+                    android:textSize="30sp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00000000"
+                    android:padding="20sp"
+                    android:text="Expand all" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/publicCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            app:cardBackgroundColor="#00000000"
+            app:cardElevation="8sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:background="#90BE6D">
+
+                <ImageView
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20sp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_baseline_public_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:padding="25sp"
+                    android:text="PUBLIC \nPROGRAM"
+                    android:textSize="30sp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00000000"
+                    android:padding="20sp"
+                    android:text="Expand all" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/specialCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            app:cardBackgroundColor="#00000000"
+            app:cardElevation="8sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:background="#43AA8B">
+
+                <ImageView
+                    android:layout_width="120sp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20sp"
+                    android:src="@drawable/ic_baseline_star_rate_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="25sp"
+                    android:text="SPECIAL \nPROJECT"
+                    android:textSize="30sp" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00000000"
+                    android:padding="20sp"
+                    android:text="Expand all" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+
 </ScrollView>
