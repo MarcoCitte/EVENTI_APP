@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/welcome_navigation_component"
+    app:startDestination="@id/loginFragment">
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.eventiapp.ui.welcome.LoginFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_login" >
+        <!--
+        <action
+            android:id="@+id/navigate_to_mainActivityWithBottomNavigationView"
+            app:destination="@id/mainActivityWithBottomNavigationView"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"></action>
+        <action
+            android:id="@+id/navigate_to_newsPreferencesActivity"
+            app:destination="@id/newsPreferencesActivity" />
+        <action
+            android:id="@+id/navigate_to_mainActivityWithNavigationDrawer"
+            app:destination="@id/mainActivityWithNavigationDrawer" />-->
+        <action
+            android:id="@+id/navigate_to_registrationFragment"
+            app:destination="@id/registrationFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_loginFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+        <action
+            android:id="@+id/action_loginFragment_to_resetPasswordFragment"
+            app:destination="@id/resetPasswordFragment" />
+    </fragment>
+    <!--<activity
+        android:id="@+id/mainActivityWithBottomNavigationView"
+        android:name="it.unimib.worldnews.ui.main.MainActivityWithBottomNavigationView"
+        android:label="activity_main_with_bottom_navigation_view"
+        tools:layout="@layout/activity_main_with_bottom_navigation_view" >
+    </activity>
+    <activity
+        android:id="@+id/newsPreferencesActivity"
+        android:name="it.unimib.worldnews.ui.preferences.NewsPreferencesActivity"
+        android:label="activity_news_preferences_linear_layout"
+        tools:layout="@layout/activity_news_preferences_constraint_layout" />
+    <activity
+        android:id="@+id/mainActivityWithNavigationDrawer"
+        android:name="it.unimib.worldnews.ui.main.MainActivityWithNavigationDrawer"
+        android:label="MainActivityWithNavigationDrawer" /> -->
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.example.eventiapp.ui.welcome.RegistrationFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_registration" >
+        <!--
+        <action
+            android:id="@+id/navigation_to_newsPreferencesActivity"
+            app:destination="@id/newsPreferencesActivity" /> -->
+        <action
+            android:id="@+id/action_registrationFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.eventiapp.ui.main.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.example.eventiapp.ui.welcome.ResetPasswordFragment"
+        android:label="fragment_reset_password"
+        tools:layout="@layout/fragment_reset_password" />
+</navigation>

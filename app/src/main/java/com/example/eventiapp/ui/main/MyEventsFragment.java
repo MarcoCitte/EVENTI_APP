@@ -6,15 +6,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
+import com.example.eventiapp.databinding.FragmentCategoryBinding;
 import com.example.eventiapp.databinding.FragmentMyEventsBinding;
 import com.example.eventiapp.model.Events;
+import com.example.eventiapp.repository.user.IUserRepository;
+import com.example.eventiapp.ui.welcome.UserViewModel;
+import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
@@ -35,6 +41,9 @@ public class MyEventsFragment extends Fragment {
 
     private List<Events> eventsList;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
+    //private EventsViewModel eventsViewModel;
+    private UserViewModel userViewModel;
+
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
 
@@ -70,6 +79,12 @@ public class MyEventsFragment extends Fragment {
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
         eventsList = new ArrayList<>();
+
+        IUserRepository userRepository = ServiceLocator.getInstance().
+                getUserRepository(requireActivity().getApplication());
+        userViewModel = new ViewModelProvider(
+                requireActivity(),
+                new UserViewModelFactory(userRepository)).get(UserViewModel.class);
     }
 
     @Override
@@ -81,6 +96,27 @@ public class MyEventsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        //eventsViewModel.deleteEvents();
+
+        Button buttonLogout = view.findViewById(R.id.logout_b);
+        buttonLogout.setOnClickListener(v -> {
+            userViewModel.logout().observe(getViewLifecycleOwner(), result -> {
+                if (result.isSuccess()) {
+                    Navigation.findNavController(view).navigate(
+                            R.id.action_myEventsFragment_to_welcomeActivity);
+                    requireActivity().finish();
+                } else {
+                    Snackbar.make(view,
+                            requireActivity().getString(R.string.unexpected_error),
+                            Snackbar.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
         eventsAndPlacesViewModel.deleteEvents();
     }
 }

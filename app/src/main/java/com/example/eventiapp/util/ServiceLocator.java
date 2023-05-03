@@ -4,10 +4,16 @@ import android.app.Application;
 import android.location.Geocoder;
 
 import com.example.eventiapp.R;
+import com.example.eventiapp.repository.user.IUserRepository;
+import com.example.eventiapp.repository.user.UserRepository;
 import com.example.eventiapp.database.RoomDatabase;
 import com.example.eventiapp.repository.events.RepositoryWithLiveData;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.service.EventsApiService;
+import com.example.eventiapp.source.user.BaseUserAuthenticationRemoteDataSource;
+import com.example.eventiapp.source.user.BaseUserDataRemoteDataSource;
+import com.example.eventiapp.source.user.UserAuthenticationRemoteDataSource;
+import com.example.eventiapp.source.user.UserDataRemoteDataSource;
 import com.example.eventiapp.source.events.BaseEventsLocalDataSource;
 import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
 import com.example.eventiapp.source.events.EventsLocalDataSource;
@@ -30,6 +36,11 @@ public class ServiceLocator {
     private ServiceLocator() {
     }
 
+    /**
+     * Returns an instance of ServiceLocator class.
+     *
+     * @return An instance of ServiceLocator.
+     */
     public static ServiceLocator getInstance() {
         if (INSTANCE == null) {
             synchronized (ServiceLocator.class) {
@@ -67,5 +78,24 @@ public class ServiceLocator {
         placesLocalDataSource = new PlacesLocalDataSource(getDao(application), sharedPreferencesUtil, dataEncryptionUtil);
         placeDetailsSource = new PlaceDetailsSource(placesClient,geocoder);
         return new RepositoryWithLiveData(eventsRemoteDataSource, eventsLocalDataSource, placesLocalDataSource, placeDetailsSource);
+    }
+
+    public IUserRepository getUserRepository(Application application) {
+        SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(application);
+
+        BaseUserAuthenticationRemoteDataSource userRemoteAuthenticationDataSource =
+                new UserAuthenticationRemoteDataSource();
+
+        BaseUserDataRemoteDataSource userDataRemoteDataSource =
+                new UserDataRemoteDataSource(sharedPreferencesUtil);
+
+        DataEncryptionUtil dataEncryptionUtil = new DataEncryptionUtil(application);
+
+        BaseEventsLocalDataSource newsLocalDataSource =
+                new EventsLocalDataSource(getDao(application), sharedPreferencesUtil,
+                        dataEncryptionUtil);
+
+        return new UserRepository(userRemoteAuthenticationDataSource,
+                userDataRemoteDataSource, newsLocalDataSource);
     }
 }
