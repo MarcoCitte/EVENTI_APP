@@ -23,6 +23,7 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        /*
         Toolbar toolbar = findViewById(R.id.top_appbar);
         setSupportActionBar(toolbar);
 
@@ -32,5 +33,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         // For the Toolbar
         NavigationUI.setupActionBarWithNavController(this, navController);
+
+         */
     }
 }
