@@ -27,7 +27,7 @@ public class Constants {
 
     public static final String FIREBASE_REALTIME_DATABASE = "https://accessfb-562e9-default-rtdb.europe-west1.firebasedatabase.app";
     public static final String FIREBASE_USERS_COLLECTION = "users";
-    public static final String FIREBASE_FAVORITE_EVENTS_COLLECTION = "favorite_news";
+    public static final String FIREBASE_FAVORITE_EVENTS_COLLECTION = "favorite_events";
 
 
     public static final String UNEXPECTED_ERROR = "unexpected_error";

@@ -33,6 +33,8 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="${maps_api_key}" />
 
+
+
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="false">
