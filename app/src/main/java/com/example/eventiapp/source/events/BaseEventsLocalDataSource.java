@@ -23,6 +23,16 @@ public abstract class BaseEventsLocalDataSource {
 
     public abstract void getPlaceEvent(String id);
 
+    public abstract void getEventsInADate(String date);
+
+    public abstract void getAllCategories();
+
+    public abstract void getCategoriesEvents(List<String> categories);
+
+    public abstract void getEventsBetweenDates(String startDate, String endDate);
+
+    public abstract void getCategoryEventsBetweenDates(String startDate, String endDate, List<String> categories);
+
     public abstract void getEventsDates(String name);
 
     public abstract void getMoviesHours(String name);

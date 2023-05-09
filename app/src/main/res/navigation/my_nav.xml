@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_homeFragment_to_placeFragment"
             app:destination="@id/placeFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_eventsInADateFragment"
+            app:destination="@id/eventsInADateFragment" />
     </fragment>
     <fragment
         android:id="@+id/myEventsFragment"
@@ -81,6 +84,15 @@
         android:label="PlaceFragment" >
         <action
             android:id="@+id/action_placeFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventsInADateFragment"
+        android:name="com.example.eventiapp.ui.main.EventsInADateFragment"
+        android:label="fragment_events_in_a_date"
+        tools:layout="@layout/fragment_events_in_a_date" >
+        <action
+            android:id="@+id/action_eventsInADateFragment_to_eventFragment"
             app:destination="@id/eventFragment" />
     </fragment>
     <activity

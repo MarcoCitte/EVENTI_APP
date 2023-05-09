@@ -7,15 +7,57 @@
     tools:context=".ui.main.AllEventsFragment">
 
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/numberOfEvents0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16sp"
+        android:text="Number of events: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/numberOfEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
+        app:layout_constraintTop_toTopOf="@id/numberOfEvents0"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/filtersButton"
+        android:layout_width="55sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="164sp"
+        android:layout_marginTop="2sp"
+        android:elevation="4sp"
+        app:icon="@drawable/ic_baseline_filter_alt_24"
+        app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sortingButton"
+        android:layout_width="55sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="2sp"
+        app:icon="@drawable/ic_baseline_sort_24"
+        android:elevation="4sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_events"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="80dp"
+        android:layout_marginTop="50sp"
+        android:elevation="5sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -27,4 +69,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

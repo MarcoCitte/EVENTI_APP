@@ -49,7 +49,15 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
     public void getSinglePlace(String id) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
             Place place = placeDao.getPlace(id);
-            placeCallback.onSingleEvent(place);
+            placeCallback.onSinglePlace(place);
+        });
+    }
+
+    @Override
+    public void getSinglePlaceByName(String name) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            Place place = placeDao.getPlaceByName(name);
+            placeCallback.onSinglePlace(place);
         });
     }
 

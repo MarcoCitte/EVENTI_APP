@@ -60,6 +60,8 @@ import java.util.Objects;
 
 public class MapsFragment extends Fragment {
 
+    private static final String TAG = MapsFragment.class.getSimpleName();
+
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     private List<com.example.eventiapp.model.Place> placesList;
     private List<Events> placeEventsList;
@@ -80,6 +82,7 @@ public class MapsFragment extends Fragment {
 
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
     private ProgressBar progressBar;
     private int totalItemCount; // Total number of events
     private int lastVisibleItem; // The position of the last visible event item
@@ -160,7 +163,7 @@ public class MapsFragment extends Fragment {
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
         placesList = new ArrayList<com.example.eventiapp.model.Place>();
-        placeEventsList=new ArrayList<>(); //EVENTI DI UN SINGOLO LUOGO
+        placeEventsList = new ArrayList<>(); //EVENTI DI UN SINGOLO LUOGO
     }
 
     @Nullable
@@ -181,8 +184,38 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
 
+        layoutManager =
+                new LinearLayoutManager(requireContext(),
+                        LinearLayoutManager.HORIZONTAL, false);
+
+        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(placeEventsList,
+                requireActivity().getApplication(),
+                new EventsRecyclerViewAdapter.OnItemClickListener() {
+                    @Override
+                    public void onEventsItemClick(Events events) {
+                        //VAI AI DETTAGLI DELL'EVENTO
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("event", events);
+                        Navigation.findNavController(requireView()
+                        ).navigate(R.id.action_mapsFragment_to_eventFragment, bundle);
+                    }
+
+                    @Override
+                    public void onExportButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onFavoriteButtonPressed(int position) {
+                        //SETTA EVENTO COME PREFERITO
+                    }
+                });
         progressBar = view.findViewById(R.id.progress_bar);
         recyclerView = view.findViewById(R.id.recyclerview_events);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(eventsRecyclerViewAdapter);
+
 
         eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
 
@@ -273,41 +306,18 @@ public class MapsFragment extends Fragment {
 
     private void getEventsOfPlace(String id) {
         //EVENTI PRESENTI NEL LUOGO
-        LinearLayoutManager layoutManager =
-                new LinearLayoutManager(requireContext(),
-                        LinearLayoutManager.HORIZONTAL, false);
-
-        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(placeEventsList,
-                requireActivity().getApplication(),
-                new EventsRecyclerViewAdapter.OnItemClickListener() {
-                    @Override
-                    public void onEventsItemClick(Events events) {
-                        //VAI AI DETTAGLI DELL'EVENTO
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("event", events);
-                        Navigation.findNavController(requireView()
-                        ).navigate(R.id.action_mapsFragment_to_eventFragment, bundle);
-                    }
-
-                    @Override
-                    public void onFavoriteButtonPressed(int position) {
-                        //SETTA EVENTO COME PREFERITO
-                    }
-                });
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(eventsRecyclerViewAdapter);
-
 
         eventsAndPlacesViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
 
             if (result.isSuccess()) {
                 Log.i("SUCCESSO", "SUCCESSO");
-                placeEventsList.clear();
 
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
 
                 if (!eventsAndPlacesViewModel.isLoading()) {
+                    eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.placeEventsList.size());
+                    this.placeEventsList.clear();
                     this.placeEventsList.addAll(fetchedEvents);
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
                             this.placeEventsList.size());
@@ -425,10 +435,9 @@ public class MapsFragment extends Fragment {
                     //SETTA FOTO LUOGO
 
                     eventsAndPlacesViewModel.getSinglePlace(idPlace).observe(getViewLifecycleOwner(), result -> {
-                        if(result!=null) {
-                            Place p = result;
+                        if (result != null) {
                             galleryPhotos.removeAllViews();
-                            PlaceDetailsSource.fetchPlacePhotos(p.getImages(), new PlaceDetailsSource.PlacePhotosListener() {
+                            PlaceDetailsSource.fetchPlacePhotos(result.getImages(), new PlaceDetailsSource.PlacePhotosListener() {
                                 @Override
                                 public void onPlacePhotosListener(Bitmap bitmap) {
                                     scrollViewImagesPlace.setVisibility(View.VISIBLE);
@@ -467,7 +476,7 @@ public class MapsFragment extends Fragment {
                                 }
                             });
 
-                            Place finalP = p;
+                            Place finalP = result;
                             callImageView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

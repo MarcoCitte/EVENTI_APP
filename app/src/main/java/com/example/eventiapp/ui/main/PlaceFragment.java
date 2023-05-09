@@ -91,7 +91,7 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        eventsAndPlacesViewModel =new ViewModelProvider(requireActivity()).get(EventsAndPlacesViewModel.class);
+        eventsAndPlacesViewModel = new ViewModelProvider(requireActivity()).get(EventsAndPlacesViewModel.class);
         eventsList = new ArrayList<>();
     }
 
@@ -149,7 +149,7 @@ public class PlaceFragment extends Fragment {
         fragmentSinglePlaceBinding.placePhoneNumber.setText(place.getPhoneNumber());
 
         //GOOGLE MAPS
-        mMapView=view.findViewById(R.id.mapView);
+        mMapView = view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
@@ -166,7 +166,7 @@ public class PlaceFragment extends Fragment {
 
                 // For dropping a marker at a point on the Map
                 double[] location = place.getCoordinates();
-                LatLng latLng=new LatLng(location[0], location[1]);
+                LatLng latLng = new LatLng(location[0], location[1]);
                 googleMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()).snippet(place.getAddress()));
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
@@ -196,7 +196,6 @@ public class PlaceFragment extends Fragment {
         });
 
 
-
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview_events);
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(requireContext(),
@@ -213,6 +212,11 @@ public class PlaceFragment extends Fragment {
                         Navigation.findNavController(view).navigate(R.id.action_placeFragment_to_eventFragment, bundle);
                     }
 
+                    @Override
+                    public void onExportButtonPressed(Events events) {
+
+                    }
+
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
@@ -223,65 +227,58 @@ public class PlaceFragment extends Fragment {
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
 
         String lastUpdate = "0";
-        String id=place.getId();
+        String id = place.getId();
         fragmentSinglePlaceBinding.progressBar.setVisibility(View.VISIBLE);
 
         eventsAndPlacesViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
-          if(result!=null) {
-              if (result.isSuccess()) {
-                  Log.i("SUCCESSO", "SUCCESSO");
+            if (result != null) {
+                if (result.isSuccess()) {
+                    Log.i("SUCCESSO", "SUCCESSO");
 
-                  eventsList.clear();
-                  EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
-                  List<Events> fetchedEvents = eventsResponse.getEventsList();
+                    eventsList.clear();
+                    EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                    List<Events> fetchedEvents = eventsResponse.getEventsList();
 
-                  if (!eventsAndPlacesViewModel.isLoading()) {
-                      if(eventsAndPlacesViewModel.isFirstLoading()) {
-                          eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                          eventsAndPlacesViewModel.setFirstLoading(false);
-                          this.eventsList.addAll(fetchedEvents);
-                          eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
-                                  this.eventsList.size());
-                      }else{
-                          eventsList.clear();
-                          eventsList.addAll(fetchedEvents);
-                          eventsRecyclerViewAdapter.notifyItemChanged(0,fetchedEvents.size());
-                      }
-                      fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
-                      fragmentSinglePlaceBinding.numberEventsButton.setVisibility(View.VISIBLE);
-                      fragmentSinglePlaceBinding.numberEventsButton.setText(Integer.toString(eventsList.size()));
+                    if (!eventsAndPlacesViewModel.isLoading()) {
+                        eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());
+                        this.eventsList.clear();
+                        this.eventsList.addAll(fetchedEvents);
+                        eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
+                        fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
+                        fragmentSinglePlaceBinding.numberEventsButton.setVisibility(View.VISIBLE);
+                        fragmentSinglePlaceBinding.numberEventsButton.setText(Integer.toString(eventsList.size()));
 
-                  } else {
-                      eventsAndPlacesViewModel.setLoading(false);
-                      eventsAndPlacesViewModel.setCurrentResults(eventsList.size());
+                    } else {
+                        eventsAndPlacesViewModel.setLoading(false);
+                        eventsAndPlacesViewModel.setCurrentResults(eventsList.size());
 
-                      int initialSize = eventsList.size();
+                        int initialSize = eventsList.size();
 
-                      for (int i = 0; i < eventsList.size(); i++) {
-                          if (eventsList.get(i) == null) {
-                              eventsList.remove(eventsList.get(i));
-                          }
-                      }
-                      int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
-                              EVENTS_PAGE_SIZE_VALUE;
-                      for (int i = startIndex; i < fetchedEvents.size(); i++) {
-                          eventsList.add(fetchedEvents.get(i));
-                      }
-                      eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
-                  }
-              } else {
-                  Log.i("FALLITO", "FALLITO");
+                        for (int i = 0; i < eventsList.size(); i++) {
+                            if (eventsList.get(i) == null) {
+                                eventsList.remove(eventsList.get(i));
+                            }
+                        }
+                        int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                                EVENTS_PAGE_SIZE_VALUE;
+                        for (int i = startIndex; i < fetchedEvents.size(); i++) {
+                            eventsList.add(fetchedEvents.get(i));
+                        }
+                        eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
+                    }
+                } else {
+                    Log.i("FALLITO", "FALLITO");
 
-                  ErrorMessageUtil errorMessagesUtil =
-                          new ErrorMessageUtil(requireActivity().getApplication());
-                  Snackbar.make(view, errorMessagesUtil.
-                                  getErrorMessage(((Result.Error) result).getMessage()),
-                          Snackbar.LENGTH_SHORT).show();
-                  fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
-              }
-          }else{
-              //NON CI SONO EVENTI IN QUEL LOCALE
-          }
+                    ErrorMessageUtil errorMessagesUtil =
+                            new ErrorMessageUtil(requireActivity().getApplication());
+                    Snackbar.make(view, errorMessagesUtil.
+                                    getErrorMessage(((Result.Error) result).getMessage()),
+                            Snackbar.LENGTH_SHORT).show();
+                    fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
+                }
+            } else {
+                //NON CI SONO EVENTI IN QUEL LOCALE
+            }
         });
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -328,18 +325,25 @@ public class PlaceFragment extends Fragment {
                 findNavController(view).getPreviousBackStackEntry();
 
         if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.homeFragment) {
+                navBackStackEntry.getDestination().
+
+                        getId() == R.id.homeFragment) {
             ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
                     getMenu().findItem(R.id.homeFragment).setChecked(true);
         } else if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.myEventsFragment) {
+                navBackStackEntry.getDestination().
+
+                        getId() == R.id.myEventsFragment) {
             ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
                     getMenu().findItem(R.id.myEventsFragment).setChecked(true);
         } else if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.mapsFragment) {
+                navBackStackEntry.getDestination().
+
+                        getId() == R.id.mapsFragment) {
             ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
                     getMenu().findItem(R.id.mapsFragment).setChecked(true);
         }
+
     }
 
     @Override
@@ -367,7 +371,6 @@ public class PlaceFragment extends Fragment {
         super.onPause();
         mMapView.onPause();
     }
-
 
 
     private boolean isConnected() {

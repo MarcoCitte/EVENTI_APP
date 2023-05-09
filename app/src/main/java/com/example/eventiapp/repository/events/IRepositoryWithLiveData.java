@@ -22,6 +22,16 @@ public interface IRepositoryWithLiveData {
 
     MutableLiveData<Result> getSingleEvent(long id);
 
+    MutableLiveData<Result> getEventsInADate(String date);
+
+    MutableLiveData<List<String>> getAllCategories();
+
+    MutableLiveData<Result> getCategoriesEvents(List<String> categories);
+
+    MutableLiveData<Result> getEventsBetweenDates(String firstDate, String endDate);
+
+    MutableLiveData<Result> getCategoryEventsBetweenDates(String firstDate, String endDate, List<String> categories);
+
     MutableLiveData<List<String>> getEventsDates(String name);
 
     MutableLiveData<String[]> getMoviesHours(String name);
@@ -31,6 +41,8 @@ public interface IRepositoryWithLiveData {
     MutableLiveData<List<Place>> getFavoritePlaces(boolean isFirstLoading);
 
     MutableLiveData<Place> getSinglePlace(String id);
+
+    MutableLiveData<Place> getSinglePlaceByName(String name);
 
     void updateEvents(Events events);
 

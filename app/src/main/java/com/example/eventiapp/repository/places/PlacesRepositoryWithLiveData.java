@@ -66,9 +66,10 @@ public class PlacesRepositoryWithLiveData implements IPlacesRepositoryWithLiveDa
     }
 
     @Override
-    public void onSingleEvent(Place place) {
+    public void onSinglePlace(Place place) {
         singlePlaceMutableLiveData.postValue(place);
     }
+
 
     @Override
     public void onPlacesFavoriteStatusChanged(Place place, List<Place> favoritePlaces) {

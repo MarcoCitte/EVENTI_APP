@@ -57,23 +57,63 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     @Override
     public void getSingleEvent(long id) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
-          Events event =eventsDao.getEvents(id);
-          eventsCallback.onSingleEvent(event);
+            Events event = eventsDao.getEvents(id);
+            eventsCallback.onSingleEvent(event);
         });
     }
 
     @Override
     public void getPlaceEvent(String id) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
-            List<Events> events=eventsDao.getPlaceEvents(id);
+            List<Events> events = eventsDao.getPlaceEvents(id);
             eventsCallback.onEventsPlace(events);
+        });
+    }
+
+    @Override
+    public void getEventsInADate(String date) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> events = eventsDao.getEventsInADate(date);
+            eventsCallback.onEventsInADate(events);
+        });
+    }
+
+    @Override
+    public void getAllCategories() {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<String> categories = eventsDao.getAllCategories();
+            eventsCallback.onAllCategories(categories);
+        });
+    }
+
+    @Override
+    public void getCategoriesEvents(List<String> categories) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> events = eventsDao.getCategoriesEvents(categories);
+            eventsCallback.onCategoriesEvents(events);
+        });
+    }
+
+    @Override
+    public void getEventsBetweenDates(String startDate, String endDate) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> events = eventsDao.getEventsBetweenDates(startDate, endDate);
+            eventsCallback.onEventsBetweenDates(events);
+        });
+    }
+
+    @Override
+    public void getCategoryEventsBetweenDates(String startDate, String endDate, List<String> categories) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> events = eventsDao.getCategoryEventsBetweenDates(startDate, endDate, categories);
+            eventsCallback.onCategoryEventsBetweenDates(events);
         });
     }
 
     @Override
     public void getEventsDates(String name) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
-            List<String> dates=eventsDao.getEventsDates(name);
+            List<String> dates = eventsDao.getEventsDates(name);
             eventsCallback.onEventsDates(dates);
         });
     }
@@ -81,7 +121,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     @Override
     public void getMoviesHours(String name) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
-            String[] hours=eventsDao.getMoviesHours(name);
+            String[] hours = eventsDao.getMoviesHours(name);
             eventsCallback.onMoviesHours(hours);
         });
     }
@@ -176,7 +216,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     @Override
     public void getCount() {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
-            int count=eventsDao.count();
+            int count = eventsDao.count();
             eventsCallback.onCount(count);
         });
     }

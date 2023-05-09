@@ -4,6 +4,7 @@ import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -39,8 +40,10 @@ import com.example.eventiapp.databinding.FragmentEventBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
+import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -52,6 +55,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -61,6 +65,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class EventFragment extends Fragment {
+
+    private static final String TAG = EventFragment.class.getSimpleName();
 
     private FragmentEventBinding fragmentEventBinding;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
@@ -129,77 +135,167 @@ public class EventFragment extends Fragment {
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-        Events events = getArguments().getParcelable("event", Events.class);
-
-        if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
-            fragmentEventBinding.eventImage.setVisibility(View.VISIBLE);
-            Glide.with(this).load(events.getEventSource().getUrlPhoto()).into(fragmentEventBinding.eventImage);
-        }
-        fragmentEventBinding.eventTitle.setText(events.getTitle());
-        fragmentEventBinding.eventCategory.setText(events.getCategory());
-        //fragmentEventBinding.eventTimezone.setText(events.getTimezone());
-        fragmentEventBinding.eventDescription.setText(events.getDescription());
-        if (events.getEnd() != null) {
-            String date = "FROM: " + events.getStart() + " TO: " + events.getEnd() + " (" + events.getTimezone() + ")";
-            fragmentEventBinding.eventDate.setText(date);
-        } else {
-            String date = events.getStart() + " (" + events.getTimezone() + ")";
-            fragmentEventBinding.eventDate.setText(date);
-        }
-        if (!events.getPlaces().isEmpty()) {
-            fragmentEventBinding.eventLocation.setText((CharSequence) events.getPlaces().get(0).getAddress());
-        } else {
-            fragmentEventBinding.eventLocation.setVisibility(View.GONE);
-        }
-
-        if (!events.getCategory().equals("movies")) { //PER ORA I MOVIES SON SOLO QUELLI DEL GIORNO CORRENTE
-            eventsAndPlacesViewModel.getEventsDates(events.getTitle()).observe(getViewLifecycleOwner(), result -> {
-                if (result.size() > 1) {
-                    showAllEventsDate(result);
-                }
-            });
-        } else { //MOSTRA ORARI FILM DEL GIORNO CORRENTE
-            //Log.i("NUMERO ROWS DB: ", String.valueOf(eventsAndPlacesViewModel.getCount()));
-            eventsAndPlacesViewModel.getMoviesHours(events.getTitle()).observe(getViewLifecycleOwner(), result -> {
-                if (result.length > 1) {
-                    showAllHoursMovie(result);
-                }
-            });
-        }
-
-
-        //EVENTI SIMILI ---------------------------------------------------------------------
-
-        sameCategoryEvents(events);
-
-        //PLACE
-
-        getPlace(events);
-
-        //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
-
         mMapView = requireView().findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
-        googleMaps(events);
+
+        Events events = getArguments().getParcelable("event", Events.class);
+
+        if (!events.getPlaces().isEmpty() && events.getPlaces().get(0).getName() != null) {
+            eventsAndPlacesViewModel.getSinglePlaceByName(events.getPlaces().get(0).getName()).observe(getViewLifecycleOwner(), result -> {
+                if (result != null) {
+
+                    if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
+                        fragmentEventBinding.eventImage.setVisibility(View.VISIBLE);
+                        Glide.with(this).load(events.getEventSource().getUrlPhoto()).into(fragmentEventBinding.eventImage);
+                    } else {
+                        fragmentEventBinding.eventImage.setVisibility(View.VISIBLE);
+                        List<PhotoMetadata> list = new ArrayList<>();
+                        list.add(result.getImages().get(0));
+                        if (!list.contains(null)) {
+                            PlaceDetailsSource.fetchPlacePhotos(list, new PlaceDetailsSource.PlacePhotosListener() {
+                                @Override
+                                public void onPlacePhotosListener(Bitmap bitmap) {
+                                    if (bitmap != null) {
+                                        Glide.with(requireView()).load(bitmap).into(fragmentEventBinding.eventImage);
+                                    }
+                                }
+
+                                @Override
+                                public void onError(String message) {
+                                    Log.e(TAG, message);
+                                    fragmentEventBinding.eventImage.setVisibility(View.GONE);
+                                }
+                            });
+                        }
+                    }
+                    fragmentEventBinding.eventTitle.setText(events.getTitle());
+                    fragmentEventBinding.eventCategory.setText(events.getCategory());
+                    //fragmentEventBinding.eventTimezone.setText(events.getTimezone());
+                    if (events.getEventSource() != null) {
+                        fragmentEventBinding.sourceTV.setText(events.getEventSource().getUrl());
+                    } else {
+                        fragmentEventBinding.sourceTV.setVisibility(View.GONE);
+                    }
+
+                    fragmentEventBinding.eventDescription.setText(events.getDescription());
+                    if (events.getEnd() != null) {
+                        String date = "FROM: " + events.getStart() + " TO: " + events.getEnd() + " (" + events.getTimezone() + ")";
+                        fragmentEventBinding.eventDate.setText(date);
+                    } else {
+                        String date = events.getStart() + " (" + events.getTimezone() + ")";
+                        fragmentEventBinding.eventDate.setText(date);
+                    }
+
+                    String place = result.getName() + "\n" + result.getAddress();
+                    fragmentEventBinding.eventLocation.setText(place);
+
+                    if (result.getPhoneNumber() != null) {
+                        fragmentEventBinding.phoneNumber.setText(result.getPhoneNumber());
+                        fragmentEventBinding.phoneNumber.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + result.getPhoneNumber()));
+                                startActivity(intent);
+                            }
+                        });
+                    } else {
+                        fragmentEventBinding.phoneNumber.setVisibility(View.GONE);
+                    }
+
+                    if (!events.getCategory().equals("movies")) { //PER ORA I MOVIES SON SOLO QUELLI DEL GIORNO CORRENTE
+                        eventsAndPlacesViewModel.getEventsDates(events.getTitle()).observe(getViewLifecycleOwner(), result2 -> {
+                            if (result2.size() > 1) {
+                                showAllEventsDate(result2);
+                            }
+                        });
+                    } else { //MOSTRA ORARI FILM DEL GIORNO CORRENTE
+                        showAllHoursMovie(events.getHours());
+                    }
+
+                    //EVENTI SIMILI ---------------------------------------------------------------------
+
+                    sameCategoryEvents(events);
 
 
+                    //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
+
+                    googleMaps(new LatLng(result.getCoordinates()[0], result.getCoordinates()[1]), result.getName());
+
+                }
+            });
+        } else { //L'evento non ha il nome del place in cui si tiene
+            fragmentEventBinding.eventTitle.setText(events.getTitle());
+            fragmentEventBinding.eventCategory.setText(events.getCategory());
+            //fragmentEventBinding.eventTimezone.setText(events.getTimezone());
+            if (events.getEventSource() != null) {
+                fragmentEventBinding.sourceTV.setText(events.getEventSource().getUrl());
+            } else {
+                fragmentEventBinding.sourceTV.setVisibility(View.GONE);
+            }
+
+            fragmentEventBinding.eventDescription.setText(events.getDescription());
+            if (events.getEnd() != null) {
+                String date = "FROM: " + events.getStart() + " TO: " + events.getEnd() + " (" + events.getTimezone() + ")";
+                fragmentEventBinding.eventDate.setText(date);
+            } else {
+                String date = events.getStart() + " (" + events.getTimezone() + ")";
+                fragmentEventBinding.eventDate.setText(date);
+            }
+
+
+            if (!events.getPlaces().isEmpty()) {
+                String place = (CharSequence) events.getPlaces().get(0).getName() + "\n" + (CharSequence) events.getPlaces().get(0).getAddress();
+                fragmentEventBinding.eventLocation.setText(place);
+            } else {
+                fragmentEventBinding.eventLocation.setVisibility(View.GONE);
+            }
+
+            fragmentEventBinding.phoneNumber.setVisibility(View.GONE);
+
+            if (!events.getCategory().equals("movies")) { //PER ORA I MOVIES SON SOLO QUELLI DEL GIORNO CORRENTE
+                eventsAndPlacesViewModel.getEventsDates(events.getTitle()).observe(getViewLifecycleOwner(), result2 -> {
+                    if (result2.size() > 1) {
+                        showAllEventsDate(result2);
+                    }
+                });
+            } else { //MOSTRA ORARI FILM DEL GIORNO CORRENTE
+                showAllHoursMovie(events.getHours());
+            }
+
+            //EVENTI SIMILI ---------------------------------------------------------------------
+
+            sameCategoryEvents(events);
+
+
+            //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
+
+            googleMaps(new LatLng(events.getCoordinates()[0], events.getCoordinates()[1]), null);
+
+        }
         NavBackStackEntry navBackStackEntry = Navigation.
                 findNavController(view).getPreviousBackStackEntry();
 
         if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.homeFragment) {
+                navBackStackEntry.getDestination().
+
+                        getId() == R.id.homeFragment) {
             ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
                     getMenu().findItem(R.id.homeFragment).setChecked(true);
         } else if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.myEventsFragment) {
+                navBackStackEntry.getDestination().
+
+                        getId() == R.id.myEventsFragment) {
             ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
                     getMenu().findItem(R.id.myEventsFragment).setChecked(true);
         } else if (navBackStackEntry != null &&
-                navBackStackEntry.getDestination().getId() == R.id.mapsFragment) {
+                navBackStackEntry.getDestination().
+
+                        getId() == R.id.mapsFragment) {
             ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).
                     getMenu().findItem(R.id.mapsFragment).setChecked(true);
         }
+
     }
 
     private void showAllEventsDate(List<String> dates) {
@@ -250,7 +346,7 @@ public class EventFragment extends Fragment {
         }
     }
 
-    private void sameCategoryEvents(Events events){
+    private void sameCategoryEvents(Events events) {
 
         RecyclerView recyclerView = fragmentEventBinding.recyclerviewEvents;
         LinearLayoutManager layoutManager =
@@ -266,6 +362,11 @@ public class EventFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("event", events);
                         Navigation.findNavController(requireView()).navigate(R.id.action_eventFragment_self, bundle);
+                    }
+
+                    @Override
+                    public void onExportButtonPressed(Events events) {
+
                     }
 
 
@@ -292,17 +393,10 @@ public class EventFragment extends Fragment {
                         fragmentEventBinding.categoryEvents.setVisibility(View.VISIBLE);
                         fragmentEventBinding.recyclerviewEvents.setVisibility(View.VISIBLE);
                         if (!eventsAndPlacesViewModel.isLoading()) {
-                            if (eventsAndPlacesViewModel.isFirstLoading()) {
-                                eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                                eventsAndPlacesViewModel.setFirstLoading(false);
-                                this.eventsList.addAll(fetchedEvents);
-                                eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
-                                        this.eventsList.size());
-                            } else {
-                                eventsList.clear();
-                                eventsList.addAll(fetchedEvents);
-                                eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
-                            }
+                            eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());
+                            this.eventsList.clear();
+                            this.eventsList.addAll(fetchedEvents);
+                            eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
                             fragmentEventBinding.progressBar.setVisibility(View.GONE);
 
                         } else {
@@ -382,18 +476,8 @@ public class EventFragment extends Fragment {
         });
     }
 
-    private void getPlace(Events events){
-        eventsAndPlacesViewModel.getSinglePlace(events.getPlaces().get(0).getId()).observe(getViewLifecycleOwner(), result ->{
-            if(result!=null){
-                Log.i("PLACE",result.toString());
-            }
-            else{
-                Log.i("RESULT ", "NULL");
-            }
-        });
-    }
 
-    private void googleMaps(Events events){
+    private void googleMaps(LatLng latLng, String placeName) {
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -404,11 +488,7 @@ public class EventFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
-
-                // For dropping a marker at a point on the Map
-                double[] location = events.getCoordinates();
-                LatLng latLng = new LatLng(location[0], location[1]);
-                Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(events.getPlaces().get(0).getName()));
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(placeName));
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(@NonNull Marker marker) {
@@ -435,7 +515,6 @@ public class EventFragment extends Fragment {
             }
         });
     }
-
 
 
     @Override

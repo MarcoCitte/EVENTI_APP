@@ -18,6 +18,8 @@ public abstract class BasePlacesLocalDataSource {
 
     public abstract void getSinglePlace(String id);
 
+    public abstract void getSinglePlaceByName(String name);
+
     public abstract void updatePlaces(Place place);
 
     public abstract void deleteFavoritePlaces();

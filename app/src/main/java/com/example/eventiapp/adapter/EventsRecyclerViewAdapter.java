@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventiapp.R;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.util.DateTimeUtil;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public interface OnItemClickListener {
         void onEventsItemClick(Events events);
+
+        void onExportButtonPressed(Events events);
 
         void onFavoriteButtonPressed(int position);
     }
@@ -90,6 +93,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private TextView textViewDate;
         private TextView textViewCategory;
         private ImageView imageViewFavoriteEvent;
+        private MaterialButton exportButton;
 
         public EventsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -97,7 +101,9 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewDate = itemView.findViewById(R.id.textview_date);
             textViewCategory = itemView.findViewById(R.id.textview_category);
             imageViewFavoriteEvent = itemView.findViewById(R.id.imageview_favorite_event);
+            exportButton = itemView.findViewById(R.id.buttonExport);
             itemView.setOnClickListener(this);
+            exportButton.setOnClickListener(this);
             //imageViewFavoriteEvent.setOnClickListener(this);
         }
 
@@ -119,6 +125,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             if (v.getId() == R.id.imageview_favorite_event) {
                 //setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
                 onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
+            } else if (v.getId() == R.id.buttonExport) {
+                onItemClickListener.onExportButtonPressed(eventsList.get(getAdapterPosition()));
             } else {
                 onItemClickListener.onEventsItemClick(eventsList.get(getAdapterPosition()));
             }

@@ -20,6 +20,9 @@ public interface PlaceDao {
     @Query("SELECT * FROM place WHERE id = :id")
     Place getPlace(String id);
 
+    @Query("SELECT * FROM place WHERE name = :name")
+    Place getPlaceByName(String name);
+
     @Query("SELECT * FROM place WHERE is_favorite = 1 ORDER BY name ASC")
     List<Place> getFavoritePlaces();
 

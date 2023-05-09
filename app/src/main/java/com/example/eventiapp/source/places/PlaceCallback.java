@@ -7,7 +7,7 @@ import java.util.List;
 public interface PlaceCallback {
     void onSuccessFromLocalP(List<Place> placeList);
     void onFailureFromLocalP(Exception exception);
-    void onSingleEvent(Place place);
+    void onSinglePlace(Place place);
     void onPlacesFavoriteStatusChanged(Place place, List<Place> favoritePlaces);
     void onPlacesFavoriteStatusChanged(List<Place> placeList);
     void onDeleteFavoritePlacesSuccess(List<Place> favoritePlaces);

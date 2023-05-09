@@ -20,8 +20,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -336,6 +340,51 @@ public class Events implements Parcelable {
                 ", isFavorite=" + isFavorite +
                 ", isSynchronized=" + isSynchronized +
                 '}';
+    }
+
+
+    public static class SortByLeastRecent implements java.util.Comparator<Events> {
+        public int compare(Events a, Events b) {
+            if(a.getStart()!=null && b.getStart()!=null) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date dateA = format.parse(a.getStart());
+                    Date dateB = format.parse(b.getStart());
+                    return Objects.requireNonNull(dateA).compareTo(dateB);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            return 0;
+        }
+    }
+
+    public static class SortByMostRecent implements java.util.Comparator<Events> {
+        public int compare(Events a, Events b) {
+            if(a.getStart()!=null && b.getStart()!=null) {
+                try {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date1 = formatter.parse(a.getStart());
+                    Date date2 = formatter.parse(b.getStart());
+                    return -Objects.requireNonNull(date1).compareTo(date2);
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            return 0;
+        }
+    }
+
+    public static class SortByAlphabetAZ implements java.util.Comparator<Events> {
+        public int compare(Events a, Events b) {
+            return a.getTitle().compareTo(b.getTitle());
+        }
+    }
+
+    public static class SortByAlphabetZA implements java.util.Comparator<Events> {
+        public int compare(Events a, Events b) {
+            return -a.getTitle().compareTo(b.getTitle());
+        }
     }
 }
 

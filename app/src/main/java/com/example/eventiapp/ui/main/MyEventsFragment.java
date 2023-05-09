@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class MyEventsFragment extends Fragment {
 
-    private static final String TAG = CategoryFragment.class.getSimpleName();
+    private static final String TAG = MyEventsFragment.class.getSimpleName();
 
     private FragmentMyEventsBinding fragmentMyEventsBinding;
 

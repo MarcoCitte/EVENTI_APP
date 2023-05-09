@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.AllEventsFragment">
+    tools:context=".ui.main.EventsInADateFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_places"
+        android:id="@+id/recyclerview_events"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

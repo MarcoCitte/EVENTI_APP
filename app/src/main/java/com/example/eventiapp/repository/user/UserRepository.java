@@ -216,6 +216,11 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
+    public void onEventsInADate(List<Events> events) {
+
+    }
+
+    @Override
     public void onEventsDates(List<String> dates) {
 
     }
@@ -242,6 +247,26 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
 
     @Override
     public void onCount(int count) {
+
+    }
+
+    @Override
+    public void onAllCategories(List<String> categories) {
+
+    }
+
+    @Override
+    public void onCategoriesEvents(List<Events> events) {
+
+    }
+
+    @Override
+    public void onEventsBetweenDates(List<Events> events) {
+
+    }
+
+    @Override
+    public void onCategoryEventsBetweenDates(List<Events> events) {
 
     }
 

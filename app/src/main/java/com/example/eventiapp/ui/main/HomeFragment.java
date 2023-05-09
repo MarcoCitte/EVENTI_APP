@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.adapter.MyViewPagerAdapter;
+import com.example.eventiapp.adapter.EventsAndPlacesPagerAdapter;
 import com.example.eventiapp.databinding.FragmentHomeBinding;
 import com.google.android.material.tabs.TabLayout;
 
@@ -22,7 +22,7 @@ public class HomeFragment extends Fragment {
     FragmentHomeBinding fragmentHomeBinding;
     TabLayout tabLayout;
     ViewPager2 viewPager2;
-    MyViewPagerAdapter myViewPagerAdapter;
+    EventsAndPlacesPagerAdapter eventsAndPlacesPagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,8 +42,8 @@ public class HomeFragment extends Fragment {
 
         tabLayout=view.findViewById(R.id.tab_layout);
         viewPager2=view.findViewById(R.id.view_pager);
-        myViewPagerAdapter=new MyViewPagerAdapter(this);
-        viewPager2.setAdapter(myViewPagerAdapter);
+        eventsAndPlacesPagerAdapter =new EventsAndPlacesPagerAdapter(this);
+        viewPager2.setAdapter(eventsAndPlacesPagerAdapter);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

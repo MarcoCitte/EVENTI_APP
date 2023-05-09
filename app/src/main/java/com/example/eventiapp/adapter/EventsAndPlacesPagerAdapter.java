@@ -6,10 +6,11 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.eventiapp.ui.main.AllEventsFragment;
 import com.example.eventiapp.ui.main.AllPlacesFragment;
+import com.example.eventiapp.ui.main.CalendarFragment;
 
-public class MyViewPagerAdapter extends FragmentStateAdapter {
+public class EventsAndPlacesPagerAdapter extends FragmentStateAdapter {
 
-    public MyViewPagerAdapter(@NonNull Fragment fragment) {
+    public EventsAndPlacesPagerAdapter(@NonNull Fragment fragment) {
         super(fragment);
     }
 
@@ -21,6 +22,8 @@ public class MyViewPagerAdapter extends FragmentStateAdapter {
                 return new AllEventsFragment();
             case 1:
                 return new AllPlacesFragment();
+            case 2:
+                return new CalendarFragment();
             default:
                 return new AllEventsFragment();
         }
@@ -28,6 +31,6 @@ public class MyViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 }

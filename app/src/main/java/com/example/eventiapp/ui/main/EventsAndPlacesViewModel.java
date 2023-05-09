@@ -22,8 +22,13 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<Result> eventsListLiveData; //TUTTI GLI EVENTI
     private MutableLiveData<Result> favoriteEventsListLiveData; //EVENTI FAVORITI
     private MutableLiveData<Result> categoryEventsLiveData; //EVENTI APPARTENENTI AD UNA CATEGORIA SPECIFICA
+    private MutableLiveData<Result> categoriesEventsLiveData; //EVENTI APPARTENENTI A PIU CATEGORIE
+    private MutableLiveData<Result> eventsInADateLiveData; //EVENTI CHE SI TENGONO IN UNA DATA SPECIFICA
+    private MutableLiveData<Result> eventsBetweenDatesLiveData; //EVENTI CHE SI TENGONO TRA DUE DATE
+    private MutableLiveData<Result> categoryEventsBetweenDatesLiveData; //EVENTI CHE SI TENGONO TRA DUE DATE CON CATEGORIE
     private MutableLiveData<Result> placeEventsLiveData; //EVENTI CHE SI TENGONO IN UN LUOGO SPECIFICO
     private MutableLiveData<Result> singleEventLiveData; //EVENTO SINGOLO
+    private MutableLiveData<List<String>> allCategoriesLiveData; //TUTTE LE CATEGORIE DI EVENTI
 
     //PLACES
     private MutableLiveData<List<Place>> placesListLiveData; //TUTTI I POSTI
@@ -67,10 +72,36 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
 
     public MutableLiveData<Result> getCategoryEventsLiveData(String category) {
-        if (categoryEventsLiveData == null) {
-            categoryEventsLiveData = iRepositoryWithLiveData.getCategoryEvents(category);
-        }
+        categoryEventsLiveData = iRepositoryWithLiveData.getCategoryEvents(category);
         return categoryEventsLiveData;
+    }
+
+    public MutableLiveData<Result> getEventsInADateLiveData(String date) {
+        if (eventsInADateLiveData == null) {
+            eventsInADateLiveData = iRepositoryWithLiveData.getEventsInADate(date);
+        }
+        return eventsInADateLiveData;
+    }
+
+    public MutableLiveData<Result> getEventsBetweenDatesLiveData(String firstDate, String endDate) {
+        if (eventsBetweenDatesLiveData == null) {
+            eventsBetweenDatesLiveData = iRepositoryWithLiveData.getEventsBetweenDates(firstDate, endDate);
+        }
+        return eventsBetweenDatesLiveData;
+    }
+
+    public MutableLiveData<Result> getCategoryEventsBetweenDatesLiveData(String firstDate, String endDate, List<String> categories) {
+        if (categoryEventsBetweenDatesLiveData == null) {
+            categoryEventsBetweenDatesLiveData = iRepositoryWithLiveData.getCategoryEventsBetweenDates(firstDate, endDate, categories);
+        }
+        return categoryEventsBetweenDatesLiveData;
+    }
+
+    public MutableLiveData<Result> getCategoriesEventsLiveData(List<String> categories) {
+        if (categoriesEventsLiveData == null) {
+            categoriesEventsLiveData = iRepositoryWithLiveData.getCategoriesEvents(categories);
+        }
+        return categoriesEventsLiveData;
     }
 
     public MutableLiveData<Result> getPlaceEventsLiveData(String id) {
@@ -90,6 +121,11 @@ public class EventsAndPlacesViewModel extends ViewModel {
         return singlePlaceLiveData;
     }
 
+    public MutableLiveData<Place> getSinglePlaceByName(String name) {
+        singlePlaceLiveData = iRepositoryWithLiveData.getSinglePlaceByName(name);
+        return singlePlaceLiveData;
+    }
+
     public MutableLiveData<List<String>> getEventsDates(String name) {
         return iRepositoryWithLiveData.getEventsDates(name);
     }
@@ -104,6 +140,11 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public int getCount() {
         return iRepositoryWithLiveData.getCount();
+    }
+
+    public MutableLiveData<List<String>> getAllCategories() {
+        allCategoriesLiveData = iRepositoryWithLiveData.getAllCategories();
+        return allCategoriesLiveData;
     }
 
 

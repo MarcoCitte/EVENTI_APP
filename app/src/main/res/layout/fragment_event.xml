@@ -47,21 +47,13 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/event_labels"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Labels dell'evento"
-            android:textSize="16sp" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/event_favorites_button"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aggiungi ai preferiti"
+            android:text="Add to favorite"
             app:icon="@drawable/ic_baseline_favorite_24" />
 
         <com.google.android.material.button.MaterialButton
@@ -70,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:text="Aggiungi al calendario"
+            android:text="Add to calendar"
             app:icon="@drawable/ic_baseline_edit_calendar_24" />
 
         <TextView
@@ -81,6 +73,15 @@
             android:paddingBottom="16dp"
             android:text="Descrizione dell'evento"
             android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sourceTV"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:text="source">
+        </TextView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,6 +100,14 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/phoneNumber"
+                android:text="PHONE NUMBER"
+                android:textSize="15sp">
+            </TextView>
+
         </LinearLayout>
 
 
@@ -107,7 +116,7 @@
             android:layout_height="match_parent"
             android:id="@+id/otherDatesTextView"
             android:visibility="gone"
-            android:text="Altre date dell'evento" />
+            android:text="Other dates of the event" />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -128,7 +137,7 @@
             android:layout_height="match_parent"
             android:id="@+id/otherHoursTextView"
             android:visibility="gone"
-            android:text="Orari del film" />
+            android:text="Movie times" />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -150,7 +159,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:text="Eventi simili"
+            android:text="Similar events"
             android:textSize="18sp"
             android:textStyle="bold"
             android:paddingTop="16dp"
@@ -184,8 +193,8 @@
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="16dp"/>
+            android:layout_height="300sp"
+            android:layout_marginTop="16sp"/>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

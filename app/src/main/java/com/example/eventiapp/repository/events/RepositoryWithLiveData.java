@@ -33,10 +33,15 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final MutableLiveData<Result> allEventsMutableLiveData;
     private final MutableLiveData<Result> favoriteEventsMutableLiveData;
     private final MutableLiveData<Result> categoryEventsMutableLiveData;
+    private final MutableLiveData<Result> eventsInADateMutableLiveData;
+    private final MutableLiveData<Result> categoriesEventsMutableLiveData;
+    private final MutableLiveData<Result> eventsBetweenDatesMutableLiveData;
+    private final MutableLiveData<Result> categoryEventsBetweenDatesMutableLiveData;
     private final MutableLiveData<Result> placeEventsMutableLiveData;
     private final MutableLiveData<Result> singleEventMutableLiveData;
     private final MutableLiveData<List<String>> eventsDateMutableLiveData;
     private final MutableLiveData<String[]> moviesHoursMutableLiveData;
+    private final MutableLiveData<List<String>> allCategoriesMutableLiveData;
 
     //PLACES
     private final MutableLiveData<List<Place>> allPlacesMutableLiveData;
@@ -56,6 +61,10 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         allEventsMutableLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
         categoryEventsMutableLiveData = new MutableLiveData<>();
+        eventsInADateMutableLiveData = new MutableLiveData<>();
+        eventsBetweenDatesMutableLiveData = new MutableLiveData<>();
+        categoriesEventsMutableLiveData = new MutableLiveData<>();
+        categoryEventsBetweenDatesMutableLiveData = new MutableLiveData<>();
         singleEventMutableLiveData = new MutableLiveData<>();
         placeEventsMutableLiveData = new MutableLiveData<>();
         eventsDateMutableLiveData = new MutableLiveData<>();
@@ -63,6 +72,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         allPlacesMutableLiveData = new MutableLiveData<>();
         favoritePlacesMutableLiveData = new MutableLiveData<>();
         singlePlaceMutableLiveData = new MutableLiveData();
+        allCategoriesMutableLiveData = new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
         this.eventsLocalDataSource = eventsLocalDataSource;
@@ -75,18 +85,19 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public MutableLiveData<Result> fetchEvents(String country, String location, String date, String sort, int limit, long lastUpdate) {
         long currentTime = System.currentTimeMillis();
-
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
             eventsRemoteDataSource.getEvents(country, location, date, sort, limit);
         } else {
             eventsLocalDataSource.getEvents();
         }
+
+        eventsLocalDataSource.getEvents();
         return allEventsMutableLiveData;
     }
 
     @Override
     public void fetchEvents(String country, String location, String date, String sort, int limit) {
-        eventsRemoteDataSource.getEvents(country, location, date, sort, limit);
+         eventsRemoteDataSource.getEvents(country, location, date, sort, limit);
     }
 
     @Override
@@ -115,6 +126,36 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public MutableLiveData<Result> getSingleEvent(long id) {
         eventsLocalDataSource.getSingleEvent(id);
         return singleEventMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Result> getEventsInADate(String date) {
+        eventsLocalDataSource.getEventsInADate(date);
+        return eventsInADateMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<List<String>> getAllCategories() {
+        eventsLocalDataSource.getAllCategories();
+        return allCategoriesMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Result> getCategoriesEvents(List<String> categories) {
+        eventsLocalDataSource.getCategoriesEvents(categories);
+        return categoriesEventsMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Result> getEventsBetweenDates(String firstDate, String endDate) {
+        eventsLocalDataSource.getEventsBetweenDates(firstDate, endDate);
+        return eventsBetweenDatesMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Result> getCategoryEventsBetweenDates(String firstDate, String endDate, List<String> categories) {
+        eventsLocalDataSource.getCategoryEventsBetweenDates(firstDate, endDate, categories);
+        return categoryEventsBetweenDatesMutableLiveData;
     }
 
     @Override
@@ -150,6 +191,12 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public MutableLiveData<Place> getSinglePlace(String id) {
         placesLocalDataSource.getSinglePlace(id);
+        return singlePlaceMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Place> getSinglePlaceByName(String name) {
+        placesLocalDataSource.getSinglePlaceByName(name);
         return singlePlaceMutableLiveData;
     }
 
@@ -281,6 +328,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
+    public void onEventsInADate(List<Events> events) {
+        eventsInADateMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
+    }
+
+    @Override
     public void onEventsDates(List<String> dates) {
         if (dates.size() > 1) {
             eventsDateMutableLiveData.postValue(dates);
@@ -355,6 +407,26 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
+    public void onAllCategories(List<String> categories) {
+        allCategoriesMutableLiveData.postValue(categories);
+    }
+
+    @Override
+    public void onCategoriesEvents(List<Events> events) {
+        categoriesEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
+    }
+
+    @Override
+    public void onEventsBetweenDates(List<Events> events) {
+        eventsBetweenDatesMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
+    }
+
+    @Override
+    public void onCategoryEventsBetweenDates(List<Events> events) {
+        categoryEventsBetweenDatesMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
+    }
+
+    @Override
     public void onSuccessFromCloudReading(List<Events> eventsList) {
         if (eventsList != null) {
             for (Events events : eventsList) {
@@ -386,7 +458,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onSuccessDeletion() {
-
+        Log.d(TAG, "Events delete from DB");
     }
 
 
@@ -408,9 +480,10 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
-    public void onSingleEvent(Place place) {
+    public void onSinglePlace(Place place) {
         singlePlaceMutableLiveData.postValue(place);
     }
+
 
     @Override
     public void onPlacesFavoriteStatusChanged(Place place, List<Place> favoritePlaces) {

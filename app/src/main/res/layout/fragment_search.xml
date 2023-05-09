@@ -3,37 +3,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#ffaa00"
     android:layout_height="match_parent"
+    android:background="#ffaa00"
     tools:context=".ui.main.SearchFragment">
 
     <LinearLayout
+        android:id="@+id/layoutCategories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/layoutCategories"
-        android:background="#ffaa00"
         android:layout_margin="10sp"
+        android:background="#ffaa00"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="70sp">
+            android:layout_height="150sp">
+
+            <com.google.android.material.search.SearchBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.search.SearchView
+                android:id="@+id/searchView"
+                android:hint="Search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15sp"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Explore"
+                android:layout_below="@id/searchView"
+                android:layout_alignParentBottom="true"
                 android:layout_centerVertical="true"
                 android:padding="10sp"
-                android:textSize="40sp">
-            </TextView>
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:padding="15sp" />
+                android:text="Explore"
+                android:textSize="40sp" />
 
         </RelativeLayout>
 
@@ -49,6 +55,7 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/communityCV"
+            style="?attr/materialCardViewFilledStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20sp"
@@ -103,8 +110,8 @@
                 <ImageView
                     android:layout_width="120sp"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="20sp"
                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="20sp"
                     android:src="@drawable/ic_baseline_music_note_24" />
 
                 <TextView
@@ -185,8 +192,8 @@
                 <ImageView
                     android:layout_width="120sp"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="20sp"
                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="20sp"
                     android:src="@drawable/ic_baseline_movie_24" />
 
                 <TextView
@@ -266,8 +273,8 @@
                 <ImageView
                     android:layout_width="120sp"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="20sp"
                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="20sp"
                     android:src="@drawable/ic_baseline_public_24" />
 
                 <TextView

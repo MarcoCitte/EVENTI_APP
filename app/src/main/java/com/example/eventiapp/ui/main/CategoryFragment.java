@@ -134,6 +134,11 @@ public class CategoryFragment extends Fragment {
                     }
 
                     @Override
+                    public void onExportButtonPressed(Events events) {
+
+                    }
+
+                    @Override
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
                     }
