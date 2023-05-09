@@ -185,7 +185,9 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
                         ContentValues event = new ContentValues();
                         event.put(CalendarContract.Events.CALENDAR_ID, events.getId_db());
                         event.put(CalendarContract.Events.TITLE, events.getTitle());
-                        event.put(CalendarContract.Events.EVENT_LOCATION, events.getPlaces().get(0).getAddress());
+                        if(events.getPlaces().get(0).getAddress()!=null) {
+                            event.put(CalendarContract.Events.EVENT_LOCATION, events.getPlaces().get(0).getAddress());
+                        }
                         event.put(CalendarContract.Events.DESCRIPTION, events.getDescription());
                         if (events.getStart() != null) {
                             event.put(CalendarContract.Events.DTSTART, events.getStart());

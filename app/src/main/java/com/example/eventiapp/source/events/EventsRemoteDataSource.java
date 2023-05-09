@@ -4,6 +4,8 @@ import static com.example.eventiapp.util.Constants.API_KEY_ERROR;
 import static com.example.eventiapp.util.Constants.CONTENT_TYPE_VALUE;
 import static com.example.eventiapp.util.Constants.RETROFIT_ERROR;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.eventiapp.model.EventsApiResponse;
@@ -36,8 +38,9 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
             public void onResponse(@NonNull Call<EventsApiResponse> call,
                                    @NonNull Response<EventsApiResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
-                    getEventsFromJsoup();
                     eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
+                    getEventsFromJsoup();
+                    Log.i("RESPONSE", String.valueOf(response.body().getCount()));
                 } else {
                     eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));
                 }
