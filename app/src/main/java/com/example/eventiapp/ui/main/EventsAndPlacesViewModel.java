@@ -59,9 +59,18 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public MutableLiveData<Result> getFavoriteEventsLiveData(boolean isFirstLoading) {
         if (favoriteEventsListLiveData == null) {
-            iRepositoryWithLiveData.getFavoriteEvents(isFirstLoading);
+            getFavoriteEvents(isFirstLoading);
         }
         return favoriteEventsListLiveData;
+    }
+
+    /**
+     * It uses the Repository to get the list of favorite news
+     * and to associate it with the LiveData object.
+     */
+    private void getFavoriteEvents(boolean firstLoading) {
+        favoriteEventsListLiveData = iRepositoryWithLiveData.getFavoriteEvents(firstLoading);
+
     }
 
     public MutableLiveData<List<Place>> getFavoritePlacesLiveData(boolean isFirstLoading) {
@@ -69,6 +78,14 @@ public class EventsAndPlacesViewModel extends ViewModel {
             iRepositoryWithLiveData.getFavoritePlaces(isFirstLoading);
         }
         return favoritePlacesListLiveData;
+    }
+
+    /**
+     * Updates the event status.
+     * @param event The news to be updated.
+     */
+    public void updateEvents(Events event) {
+        iRepositoryWithLiveData.updateEvents(event);
     }
 
 

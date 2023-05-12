@@ -86,6 +86,9 @@
         <action
             android:id="@+id/action_eventFragment_self"
             app:destination="@id/eventFragment" />
+        <argument
+            android:name="event"
+            app:argType="com.example.eventiapp.model.Events" />
     </fragment>
     <fragment
         android:id="@+id/placeFragment"

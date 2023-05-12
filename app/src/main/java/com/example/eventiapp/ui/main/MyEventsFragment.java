@@ -1,5 +1,7 @@
 package com.example.eventiapp.ui.main;
 
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -141,7 +143,7 @@ public class MyEventsFragment extends Fragment {
                 new SharedPreferencesUtil(requireActivity().getApplication());
 
         boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                Constants.SHARED_PREFERENCES_FIRST_LOADING);
+                SHARED_PREFERENCES_FIRST_LOADING);
 
         // Observe the LiveData associated with the MutableLiveData containing the favorite news
         // returned by the method getFavoriteNewsLiveData() of NewsViewModel class.
@@ -160,7 +162,7 @@ public class MyEventsFragment extends Fragment {
                     eventsListAdapter.notifyDataSetChanged();
                     if (isFirstLoading) {
                         sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                                Constants.SHARED_PREFERENCES_FIRST_LOADING, false);
+                                SHARED_PREFERENCES_FIRST_LOADING, false);
                     }
                 } else {
                     ErrorMessageUtil errorMessagesUtil =
@@ -182,6 +184,8 @@ public class MyEventsFragment extends Fragment {
         });
 
          */
+
+
     }
 
     @Override

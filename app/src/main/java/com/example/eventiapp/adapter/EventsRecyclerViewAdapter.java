@@ -177,13 +177,13 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 imageViewEvent.setVisibility(View.GONE);
             }
-            //setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
+            setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.imageViewFavorite) {
-                //setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
+                setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
                 onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
             } else if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(eventsList.get(getAdapterPosition()));
@@ -251,13 +251,13 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 imageViewEvent.setVisibility(View.GONE);
             }
-            //setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
+            setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.imageViewFavorite) {
-                //setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
+                setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
                 onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
             } else if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(eventsList.get(getAdapterPosition()));

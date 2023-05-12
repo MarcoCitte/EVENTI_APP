@@ -220,8 +220,8 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-                        //SETTA EVENTO COME PREFERITO
-                    }
+                        eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updateEvents(eventsList.get(position));                    }
                 });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
