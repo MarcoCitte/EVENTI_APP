@@ -4,9 +4,7 @@ package com.example.eventiapp.ui.main;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +13,12 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.eventiapp.databinding.FragmentDialogBinding;
 import com.example.eventiapp.util.DateUtils;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
@@ -33,10 +29,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class MyDialogFragment extends DialogFragment implements View.OnClickListener {
+public class MyDialogEventsFragment extends DialogFragment implements View.OnClickListener {
 
     private FragmentDialogBinding fragmentDialogBinding;
-    private static final String TAG = MyDialogFragment.class.getSimpleName();
+    private static final String TAG = MyDialogEventsFragment.class.getSimpleName();
 
     private MaterialDatePicker<Pair<Long, Long>> materialDatePicker;
     private MyDialogListener listener;
@@ -54,7 +50,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
         void onFilterApply(List<String> checkedCategories, String startDate, String endDate);
     }
 
-    public MyDialogFragment(List<String> allCategories) {
+    public MyDialogEventsFragment(List<String> allCategories) {
         this.allCategories = allCategories;
     }
 

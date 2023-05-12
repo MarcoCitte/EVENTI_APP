@@ -4,6 +4,7 @@
     <string name="map">MAP</string>
     <string name="events">MY EVENTS</string>
     <string name="search">SEARCH</string>
+    <string name="account">ACCOUNT</string>
 
 
     <string name="content_description_fav_addition">Add the news to the favorite list</string>
@@ -17,6 +18,12 @@
     <string-array name="sorting_parameters">
         <item>Earliest date</item>
         <item>Latest date</item>
+        <item>Rank</item>
+        <item>Alphabet (A-Z)</item>
+        <item>Alphabet (Z-A)</item>
+    </string-array>
+
+    <string-array name="sorting_parameters_places">
         <item>Alphabet (A-Z)</item>
         <item>Alphabet (Z-A)</item>
     </string-array>

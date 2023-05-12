@@ -13,6 +13,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.eventiapp.util.Converters;
+import com.example.eventiapp.util.StringUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -122,7 +123,7 @@ public class Events implements Parcelable {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = StringUtils.capitalizeFirstLetter(title);
     }
 
     public String getDescription() {
@@ -350,7 +351,7 @@ public class Events implements Parcelable {
                 try {
                     Date dateA = format.parse(a.getStart());
                     Date dateB = format.parse(b.getStart());
-                    return Objects.requireNonNull(dateA).compareTo(dateB);
+                    return -Objects.requireNonNull(dateA).compareTo(dateB);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -366,7 +367,7 @@ public class Events implements Parcelable {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     Date date1 = formatter.parse(a.getStart());
                     Date date2 = formatter.parse(b.getStart());
-                    return -Objects.requireNonNull(date1).compareTo(date2);
+                    return Objects.requireNonNull(date1).compareTo(date2);
                 } catch (ParseException e1) {
                     e1.printStackTrace();
                 }
@@ -384,6 +385,12 @@ public class Events implements Parcelable {
     public static class SortByAlphabetZA implements java.util.Comparator<Events> {
         public int compare(Events a, Events b) {
             return -a.getTitle().compareTo(b.getTitle());
+        }
+    }
+
+    public static class SortByRank implements java.util.Comparator<Events> {
+        public int compare(Events a, Events b) {
+                return Integer.compare(b.getRank(), a.getRank());
         }
     }
 }

@@ -19,8 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,14 +36,11 @@ import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentAllEventsBinding;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -56,9 +51,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDialogListener {
+public class AllEventsFragment extends Fragment implements MyDialogEventsFragment.MyDialogListener {
 
     private static final String TAG = AllEventsFragment.class.getSimpleName();
 
@@ -72,6 +66,7 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
     private LinearLayoutManager layoutManager;
     private String sortingParameter;
     private int lastSelectedSortingParameter;
+    private String[] listItemsSort;
 
     //private SharedPreferencesUtil sharedPreferencesUtil;
 
@@ -103,8 +98,10 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
         return dateFormat.format(date);
     }
 
-    public static AllEventsFragment newInstance() {
-        return new AllEventsFragment();
+    public static AllEventsFragment newInstance(Bundle bundle) {
+        AllEventsFragment fragment = new AllEventsFragment();
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -126,6 +123,7 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
         }
         eventsList = new ArrayList<>();
         allCategories = new ArrayList<>();
+        listItemsSort = requireContext().getResources().getStringArray(R.array.sorting_parameters);
     }
 
     @Override
@@ -138,6 +136,20 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if (bundle != null && (!Objects.equals(getArguments().getString("sort"), null))) {
+            String sort = getArguments().getString("sort");
+            sortingParameter = sort;
+            for (int i = 0; i < listItemsSort.length; i++) {
+                if (sortingParameter.equals(listItemsSort[i])) {
+                    lastSelectedSortingParameter = i;
+                }
+            }
+        } else {
+            sortingParameter = "Earliest date";
+            lastSelectedSortingParameter = 0;
+        }
 
         //PERMESSI CALENDARIO
         // Verifica se l'app ha i permessi di lettura del calendario
@@ -170,14 +182,14 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
                         LinearLayoutManager.VERTICAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),
+                requireActivity().getApplication(), 0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
                         //VAI AI DETTAGLI DELL'EVENTO
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("event", events);
-                        Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_eventFragment, bundle);
+                        Navigation.findNavController(view).navigate(R.id.action_containerEventsPlacesCalendar_to_eventFragment, bundle);
                     }
 
                     @Override
@@ -185,7 +197,7 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
                         ContentValues event = new ContentValues();
                         event.put(CalendarContract.Events.CALENDAR_ID, events.getId_db());
                         event.put(CalendarContract.Events.TITLE, events.getTitle());
-                        if(events.getPlaces().get(0).getAddress()!=null) {
+                        if (events.getPlaces().get(0).getAddress() != null) {
                             event.put(CalendarContract.Events.EVENT_LOCATION, events.getPlaces().get(0).getAddress());
                         }
                         event.put(CalendarContract.Events.DESCRIPTION, events.getDescription());
@@ -199,6 +211,11 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
 
                         // Inserisci l'evento nel calendario
                         Uri uri = requireContext().getContentResolver().insert(CalendarContract.Events.CONTENT_URI, event);
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
+
                     }
 
                     @Override
@@ -245,7 +262,7 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
 
 
     public void showDialog(List<String> allCategories) {
-        MyDialogFragment dialogFragment = new MyDialogFragment(allCategories);
+        MyDialogEventsFragment dialogFragment = new MyDialogEventsFragment(allCategories);
         Bundle bundle = new Bundle();
         if (checkedCategories != null && !checkedCategories.isEmpty()) {
             bundle.putStringArrayList("categories", (ArrayList<String>) checkedCategories);
@@ -260,19 +277,18 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
     }
 
     public void showSorting() {
-        final String[] listItems = requireContext().getResources().getStringArray(R.array.sorting_parameters);
         new MaterialAlertDialogBuilder(requireContext()).setTitle("ORDER BY")
-                .setSingleChoiceItems(listItems, lastSelectedSortingParameter, (dialog, i) -> {
-                    sortingParameter = listItems[i];
+                .setSingleChoiceItems(listItemsSort, lastSelectedSortingParameter, (dialog, i) -> {
+                    sortingParameter = listItemsSort[i];
                     lastSelectedSortingParameter = i;
                     if (!eventsList.isEmpty()) {
-                        sortGames(sortingParameter, eventsList);
+                        sortEvents(sortingParameter, eventsList);
                     }
                 }).setNegativeButton(R.string.cancel_text, (dialogInterface, i) -> {
                 }).show();
     }
 
-    public void sortGames(String sortingParameter, List<Events> eventsList) {
+    public void sortEvents(String sortingParameter, List<Events> eventsList) {
         switch (sortingParameter) {
             case "Earliest date":
             case "Più recente":
@@ -282,6 +298,10 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
             case "Meno recente":
                 Collections.sort(eventsList, new Events.SortByLeastRecent());
                 break;
+            case "Rank":
+            case "Più attesi":
+                Collections.sort(eventsList, new Events.SortByRank());
+                break;
             case "Alphabet (A-Z)":
             case "Alfabetico (A-Z)":
                 Collections.sort(eventsList, new Events.SortByAlphabetAZ());
@@ -290,8 +310,8 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
             case "Alfabetico (Z-A)":
                 Collections.sort(eventsList, new Events.SortByAlphabetZA());
                 break;
-
         }
+        eventsRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -348,22 +368,13 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
             List<Events> fetchedEvents = eventsResponse.getEventsList();
 
             if (!eventsAndPlacesViewModel.isLoading()) {
-                if (eventsAndPlacesViewModel.isFirstLoading()) {
-                    Log.i(TAG, "FIRST LOADING");
-                    eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
-                    eventsAndPlacesViewModel.setFirstLoading(false);
-                    this.eventsList.addAll(fetchedEvents);
-                    eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
-                            this.eventsList.size());
-                } else {
-                    Log.i(TAG, "NOT FIRST LOADING");
-
-                    // Updates related to the favorite status of the events
-                    eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, eventsList.size());
-                    eventsList.clear();
-                    eventsList.addAll(fetchedEvents);
-                    eventsRecyclerViewAdapter.notifyItemRangeInserted(0, fetchedEvents.size());
+                eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());
+                this.eventsList.addAll(fetchedEvents);
+                if (!eventsList.isEmpty()) {
+                    sortEvents(sortingParameter, eventsList);
                 }
+                eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
+                        this.eventsList.size());
                 fragmentAllEventsBinding.progressBar.setVisibility(View.GONE);
             } else {
                 Log.i(TAG, "IS LOADING");
@@ -381,6 +392,9 @@ public class AllEventsFragment extends Fragment implements MyDialogFragment.MyDi
                         EVENTS_PAGE_SIZE_VALUE;
                 for (int i = startIndex; i < fetchedEvents.size(); i++) {
                     eventsList.add(fetchedEvents.get(i));
+                }
+                if (!eventsList.isEmpty()) {
+                    sortEvents(sortingParameter, eventsList);
                 }
                 eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
             }

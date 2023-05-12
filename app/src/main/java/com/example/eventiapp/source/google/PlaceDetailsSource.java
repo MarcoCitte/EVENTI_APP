@@ -82,13 +82,19 @@ public class PlaceDetailsSource {
         });
     }
 
-    public static void fetchPlacePhotos(List<PhotoMetadata> metadata,PlacePhotosListener listener) {
+    public static void fetchPlacePhotos(List<PhotoMetadata> metadata, boolean onePhoto, PlacePhotosListener listener) {
 
         if (metadata == null || metadata.isEmpty()) {
             Log.w("TAG", "No photo metadata.");
             return;
         }
-        for (int i = 0; i < metadata.size(); i++) {
+        int length = 0;
+        if (onePhoto) {
+            length = 1;
+        } else {
+            length = metadata.size();
+        }
+        for (int i = 0; i < length; i++) {
             if (metadata.get(i) != null) {
                 PhotoMetadata photoMetadata = metadata.get(i);
                 FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)

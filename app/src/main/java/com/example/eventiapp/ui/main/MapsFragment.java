@@ -79,6 +79,8 @@ public class MapsFragment extends Fragment {
     private ImageView favoriteImageView;
     private LinearLayout galleryPhotos;
     private HorizontalScrollView scrollViewImagesPlace;
+    private TextView placeTextView;
+    private TextView addressTextView;
 
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private RecyclerView recyclerView;
@@ -189,7 +191,7 @@ public class MapsFragment extends Fragment {
                         LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(placeEventsList,
-                requireActivity().getApplication(),
+                requireActivity().getApplication(),0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -202,6 +204,11 @@ public class MapsFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
 
                     }
 
@@ -268,6 +275,8 @@ public class MapsFragment extends Fragment {
         mapsImageView = view.findViewById(R.id.mapsImageView);
         callImageView = view.findViewById(R.id.callImageView);
         favoriteImageView = view.findViewById(R.id.favoriteImageView);
+        placeTextView= view.findViewById(R.id.placeTextView);
+        addressTextView=view.findViewById(R.id.addressTextView);
 
 
         mBottomSheetBehavior1.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -437,7 +446,7 @@ public class MapsFragment extends Fragment {
                     eventsAndPlacesViewModel.getSinglePlace(idPlace).observe(getViewLifecycleOwner(), result -> {
                         if (result != null) {
                             galleryPhotos.removeAllViews();
-                            PlaceDetailsSource.fetchPlacePhotos(result.getImages(), new PlaceDetailsSource.PlacePhotosListener() {
+                            PlaceDetailsSource.fetchPlacePhotos(result.getImages(), false, new PlaceDetailsSource.PlacePhotosListener() {
                                 @Override
                                 public void onPlacePhotosListener(Bitmap bitmap) {
                                     scrollViewImagesPlace.setVisibility(View.VISIBLE);
@@ -455,6 +464,9 @@ public class MapsFragment extends Fragment {
                                 }
                             });
 
+                            placeTextView.setVisibility(View.VISIBLE);
+                            placeTextView.setText(result.getName());
+                            addressTextView.setText(result.getAddress());
 
                             carImageView.setOnClickListener(new View.OnClickListener() {
                                 @Override

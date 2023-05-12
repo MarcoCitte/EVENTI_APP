@@ -196,7 +196,7 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
             if (date != null) {
                 String formattedDate = formatter.format(date);
                 bundle.putString("date", formattedDate);
-                Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_eventsInADateFragment, bundle);
+                Navigation.findNavController(requireView()).navigate(R.id.action_containerEventsPlacesCalendar_to_eventsInADateFragment, bundle);
             }
         }else{
             String message = "No events in this date";

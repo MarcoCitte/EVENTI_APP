@@ -123,7 +123,7 @@ public class CategoryFragment extends Fragment {
                         LinearLayoutManager.VERTICAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),
+                requireActivity().getApplication(),0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -135,6 +135,11 @@ public class CategoryFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
 
                     }
 

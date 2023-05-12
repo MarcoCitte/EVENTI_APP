@@ -7,6 +7,7 @@ import java.util.Locale;
 
 public class DateUtils {
     private static final String[] DATE_FORMATS = {
+            "yyyy-MM-dd'T'HH:mm:ss'Z'",
             "dd MMMM yyyy",
             "dd MMM yyyy",
             "dd MMMM",
@@ -34,6 +35,24 @@ public class DateUtils {
             parser = new SimpleDateFormat("dd MMMM yyyy", Locale.ITALIAN);
         } else {
             parser = new SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH);
+        }
+        for (String format : DATE_FORMATS) {
+            parser.applyPattern(format);
+            try {
+                return parser.parse(dateString);
+            } catch (ParseException e) {
+                // ignore and try next format
+            }
+        }
+        return null;
+    }
+
+    public static Date parseDateToShow(String dateString, String language) {
+        SimpleDateFormat parser;
+        if (language.equals("it")) {
+            parser = new SimpleDateFormat("dd MMM yyyy - HH:mm", Locale.ITALIAN);
+        } else {
+            parser = new SimpleDateFormat("dd MMM yyyy - HH:mm", Locale.ENGLISH);
         }
         for (String format : DATE_FORMATS) {
             parser.applyPattern(format);

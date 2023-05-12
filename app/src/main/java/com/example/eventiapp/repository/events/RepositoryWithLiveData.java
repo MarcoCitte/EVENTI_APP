@@ -18,6 +18,7 @@ import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
 import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
+import com.example.eventiapp.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,6 +91,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public MutableLiveData<Result> fetchEvents(String country, String location, String date, String sort, int limit, long lastUpdate) {
+
+
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
             eventsRemoteDataSource.getEvents(country, location, date, sort, limit);
@@ -97,9 +100,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             eventsLocalDataSource.getEvents();
         }
 
+
         eventsLocalDataSource.getEvents();
         return allEventsMutableLiveData;
     }
+
 
     @Override
     public void fetchEvents(String country, String location, String date, String sort, int limit) {
@@ -273,7 +278,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                         coordinates = new double[]{e.getCoordinates()[0], e.getCoordinates()[1]};
                     }
                     List<Place> placesList = new ArrayList<>();
-                    placesList.add(new Place(e.getPlaces().get(0).getId(), place.getName(), e.getPlaces().get(0).getType(), place.getAddress(), place.getId(), coordinates, place.getPhoneNumber(), place.getPhotoMetadatas()));
+                    placesList.add(new Place(e.getPlaces().get(0).getId(), StringUtils.capitalizeFirstLetter(place.getName()), e.getPlaces().get(0).getType(), place.getAddress(), place.getId(), coordinates, place.getPhoneNumber(), place.getPhotoMetadatas()));
                     placesLocalDataSource.insertPlaces(placesList);
                 }
 

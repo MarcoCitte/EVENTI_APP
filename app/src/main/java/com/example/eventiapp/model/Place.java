@@ -12,6 +12,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.eventiapp.util.Converters;
+import com.example.eventiapp.util.StringUtils;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.gson.annotations.SerializedName;
 
@@ -107,7 +108,7 @@ public class Place implements Serializable, Parcelable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = StringUtils.capitalizeFirstLetter(name);
     }
 
     public String getType() {
@@ -222,6 +223,18 @@ public class Place implements Serializable, Parcelable {
         dest.writeTypedList(images);
         dest.writeByte((byte) (isFavorite ? 1 : 0));
         dest.writeByte((byte) (isSynchronized ? 1 : 0));
+    }
+
+    public static class SortByAlphabetAZ implements java.util.Comparator<Place> {
+        public int compare(Place a, Place b) {
+            return a.getName().compareTo(b.getName());
+        }
+    }
+
+    public static class SortByAlphabetZA implements java.util.Comparator<Place> {
+        public int compare(Place a, Place b) {
+            return -a.getName().compareTo(b.getName());
+        }
     }
 }
 
