@@ -115,6 +115,7 @@ public class RegistrationFragment extends Fragment {
                                 saveLoginData(email, password, user.getIdToken());
                                 userViewModel.setAuthenticationError(false);
                                 Navigation.findNavController(view).navigate(R.id.action_registrationFragment_to_mainActivity);
+                                requireActivity().finish();
                             } else {
                                 userViewModel.setAuthenticationError(true);
                                 Snackbar.make(requireActivity().findViewById(android.R.id.content),

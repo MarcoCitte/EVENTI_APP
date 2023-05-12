@@ -3,6 +3,7 @@ package com.example.eventiapp.ui.main;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
@@ -208,5 +209,8 @@ public class EventsAndPlacesViewModel extends ViewModel {
         return placesListLiveData;
     }
 
+    public void removeFromFavorite(Events events) {
+        iRepositoryWithLiveData.updateEvents(events);
+    }
 
 }

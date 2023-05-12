@@ -104,7 +104,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             exportButton = itemView.findViewById(R.id.buttonExport);
             itemView.setOnClickListener(this);
             exportButton.setOnClickListener(this);
-            //imageViewFavoriteEvent.setOnClickListener(this);
+            imageViewFavoriteEvent.setOnClickListener(this);
         }
 
         public void bind(Events events) {
@@ -117,13 +117,13 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 textViewDate.setText(events.getStart());
             }
             textViewCategory.setText(events.getCategory());
-            //setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
+            setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.imageview_favorite_event) {
-                //setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
+                setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
                 onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
             } else if (v.getId() == R.id.buttonExport) {
                 onItemClickListener.onExportButtonPressed(eventsList.get(getAdapterPosition()));
