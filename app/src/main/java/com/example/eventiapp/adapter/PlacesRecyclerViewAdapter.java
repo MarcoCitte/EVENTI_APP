@@ -1,27 +1,41 @@
 package com.example.eventiapp.adapter;
 
+import static com.example.eventiapp.util.Constants.EVENTS2_VIEW_TYPE;
+import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.LOADING_VIEW_TYPE;
+import static com.example.eventiapp.util.Constants.MAX_ITEMS;
+import static com.example.eventiapp.util.Constants.PLACES2_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.PLACES_VIEW_TYPE;
 
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventiapp.R;
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
+import com.example.eventiapp.source.google.PlaceDetailsSource;
 
 import java.util.List;
 
 public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private int typeOfView;
+
     public interface OnItemClickListener {
         void onPlacesItemClick(Place place);
+
+        void onShareButtonPressed(Place place);
 
         void onFavoriteButtonPressed(int position);
     }
@@ -30,21 +44,31 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private final Application application;
     private final PlacesRecyclerViewAdapter.OnItemClickListener onItemClickListener;
 
-    public PlacesRecyclerViewAdapter(List<Place> placeList, Application application,
+    public PlacesRecyclerViewAdapter(List<Place> placeList, Application application, int typeOfView,
                                      PlacesRecyclerViewAdapter.OnItemClickListener onItemClickListener) {
         this.placeList = placeList;
         this.application = application;
         this.onItemClickListener = onItemClickListener;
+        this.typeOfView = typeOfView;
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        if (placeList.get(position) == null) {
-            return LOADING_VIEW_TYPE;
-        } else {
-            return PLACES_VIEW_TYPE;
+        if (typeOfView == 2) {
+            if (placeList.get(position) == null) {
+                return LOADING_VIEW_TYPE;
+            } else {
+                return PLACES_VIEW_TYPE;
+            }
+        } else if (typeOfView == 4) { //PLACES 2
+            if (placeList.get(position) == null) {
+                return LOADING_VIEW_TYPE;
+            } else {
+                return PLACES2_VIEW_TYPE;
+            }
         }
+        return PLACES_VIEW_TYPE;
     }
 
 
@@ -57,6 +81,10 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.places_list_item, parent, false);
             return new PlacesViewHolder(view);
+        } else if (viewType == PLACES2_VIEW_TYPE) {
+            view = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.place2_list_item, parent, false);
+            return new PlacesRecyclerViewAdapter.Places2ViewHolder(view);
         } else {
             view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.places_loading_item, parent, false);
@@ -70,13 +98,21 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             ((PlacesViewHolder) holder).bind(placeList.get(position));
         } else if (holder instanceof LoadingPlacesViewHolder) {
             ((LoadingPlacesViewHolder) holder).activate();
+        } else if (holder instanceof Places2ViewHolder) {
+            ((Places2ViewHolder) holder).bind(placeList.get(position));
         }
     }
 
     @Override
     public int getItemCount() {
-        if (placeList != null) {
+        if (placeList != null && typeOfView == 2) { //EVENTS
             return placeList.size();
+        } else if (placeList != null && typeOfView == 4) { //EVENTS2
+            if(placeList.size()>=MAX_ITEMS) {
+                return MAX_ITEMS;
+            }else{
+                return placeList.size();
+            }
         }
         return 0;
     }
@@ -84,26 +120,146 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     public class PlacesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView textViewName;
-        private TextView textViewType;
         private TextView textViewAddress;
+        private TextView textViewDistance;
+        private ImageView imageViewPlace;
+        private ImageView imageViewFavorite;
+        private ImageView imageViewShare;
+
 
         public PlacesViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewName = itemView.findViewById(R.id.textview_name);
-            textViewType = itemView.findViewById(R.id.textview_type);
-            textViewAddress = itemView.findViewById(R.id.textview_address);
+            textViewName = itemView.findViewById(R.id.nameTextView);
+            textViewDistance = itemView.findViewById(R.id.distanceTextView);
+            textViewAddress = itemView.findViewById(R.id.addressTextView);
+            imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
+            imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
+            imageViewShare = itemView.findViewById(R.id.imageViewShare);
+
             itemView.setOnClickListener(this);
+            imageViewFavorite.setOnClickListener(this);
+            imageViewShare.setOnClickListener(this);
         }
 
         public void bind(Place places) {
             textViewName.setText(places.getName());
-            textViewType.setText(places.getType());
             textViewAddress.setText(places.getAddress());
+            textViewDistance.setText("5.2km");
+            if(places.getImages()!=null && !places.getImages().isEmpty()){
+                PlaceDetailsSource.fetchPlacePhotos(places.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
+                    @Override
+                    public void onPlacePhotosListener(Bitmap bitmap) {
+                        if (bitmap != null) {
+                            imageViewPlace.setImageBitmap(bitmap);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.i("ERROR", message);
+                        imageViewPlace.setVisibility(View.GONE);
+                    }
+                });
+            }else{
+                imageViewPlace.setVisibility(View.GONE);
+            }
         }
 
         @Override
         public void onClick(View v) {
-            onItemClickListener.onPlacesItemClick(placeList.get(getAdapterPosition()));
+            if (v.getId() == R.id.imageViewFavorite) {
+                //setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
+                onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
+            } else if (v.getId() == R.id.imageViewShare) {
+                onItemClickListener.onShareButtonPressed(placeList.get(getAdapterPosition()));
+            } else {
+                onItemClickListener.onPlacesItemClick(placeList.get(getAdapterPosition()));
+            }
+        }
+
+        private void setImageViewFavoritePlace(boolean isFavorite) {
+            if (isFavorite) {
+                imageViewFavorite.setImageDrawable(
+                        AppCompatResources.getDrawable(application,
+                                R.drawable.ic_baseline_favorite_24));
+            } else {
+                imageViewFavorite.setImageDrawable(
+                        AppCompatResources.getDrawable(application,
+                                R.drawable.ic_baseline_favorite_border_24));
+            }
+        }
+    }
+
+    public class Places2ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private TextView textViewName;
+        private TextView textViewAddress;
+        private TextView textViewDistance;
+        private ImageView imageViewPlace;
+        private ImageView imageViewFavorite;
+        private ImageView imageViewShare;
+
+        public Places2ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textViewName = itemView.findViewById(R.id.nameTextView);
+            textViewDistance = itemView.findViewById(R.id.distanceTextView);
+            textViewAddress = itemView.findViewById(R.id.addressTextView);
+            imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
+            imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
+            imageViewShare = itemView.findViewById(R.id.imageViewShare);
+
+            itemView.setOnClickListener(this);
+            imageViewFavorite.setOnClickListener(this);
+            imageViewShare.setOnClickListener(this);
+
+        }
+
+        public void bind(Place places) {
+            textViewName.setText(places.getName());
+            textViewAddress.setText(places.getAddress());
+            textViewDistance.setText("5.2km");
+            if(places.getImages()!=null && !places.getImages().isEmpty()){
+                PlaceDetailsSource.fetchPlacePhotos(places.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
+                    @Override
+                    public void onPlacePhotosListener(Bitmap bitmap) {
+                        if (bitmap != null) {
+                            imageViewPlace.setImageBitmap(bitmap);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.i("ERROR", message);
+                        imageViewPlace.setVisibility(View.GONE);
+                    }
+                });
+            }else{
+                imageViewPlace.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.imageViewFavorite) {
+                //setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
+                onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
+            } else if (v.getId() == R.id.imageViewShare) {
+                onItemClickListener.onShareButtonPressed(placeList.get(getAdapterPosition()));
+            } else {
+                onItemClickListener.onPlacesItemClick(placeList.get(getAdapterPosition()));
+            }
+        }
+
+        private void setImageViewFavoritePlace(boolean isFavorite) {
+            if (isFavorite) {
+                imageViewFavorite.setImageDrawable(
+                        AppCompatResources.getDrawable(application,
+                                R.drawable.ic_baseline_favorite_24));
+            } else {
+                imageViewFavorite.setImageDrawable(
+                        AppCompatResources.getDrawable(application,
+                                R.drawable.ic_baseline_favorite_border_24));
+            }
         }
     }
 
@@ -112,7 +268,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         LoadingPlacesViewHolder(View view) {
             super(view);
-            progressBar = view.findViewById(R.id.progressbar_loading_event);
+            progressBar = view.findViewById(R.id.progressbar_loading_place);
         }
 
         public void activate() {

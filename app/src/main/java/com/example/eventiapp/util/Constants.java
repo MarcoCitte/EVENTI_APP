@@ -54,9 +54,13 @@ public class Constants {
     public static final String ENCRYPTED_DATA_FILE_NAME = "encrypted_file.txt";
 
     //RECYCLER VIEW ADAPTER
+    public static final int MAX_ITEMS = 10;
     public static final int EVENTS_VIEW_TYPE = 0;
     public static final int LOADING_VIEW_TYPE = 1;
     public static final int PLACES_VIEW_TYPE = 2;
+    public static final int EVENTS2_VIEW_TYPE = 3;
+    public static final int PLACES2_VIEW_TYPE = 4;
+
 
 
     // Constants for SharedPreferences

@@ -1,5 +1,7 @@
 package com.example.eventiapp.adapter;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -10,6 +12,8 @@ import com.example.eventiapp.ui.main.CalendarFragment;
 
 public class EventsAndPlacesPagerAdapter extends FragmentStateAdapter {
 
+    private Bundle bundle;
+
     public EventsAndPlacesPagerAdapter(@NonNull Fragment fragment) {
         super(fragment);
     }
@@ -19,13 +23,13 @@ public class EventsAndPlacesPagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                return new AllEventsFragment();
+                return AllEventsFragment.newInstance(bundle);
             case 1:
-                return new AllPlacesFragment();
+                return AllPlacesFragment.newInstance(bundle);
             case 2:
                 return new CalendarFragment();
             default:
-                return new AllEventsFragment();
+                return AllEventsFragment.newInstance(bundle);
         }
     }
 
@@ -33,4 +37,9 @@ public class EventsAndPlacesPagerAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return 3;
     }
+
+    public void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
 }

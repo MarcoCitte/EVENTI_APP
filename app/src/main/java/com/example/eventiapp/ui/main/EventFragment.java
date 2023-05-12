@@ -44,6 +44,7 @@ import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
+import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -60,9 +61,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class EventFragment extends Fragment {
 
@@ -144,16 +148,13 @@ public class EventFragment extends Fragment {
         if (!events.getPlaces().isEmpty() && events.getPlaces().get(0).getName() != null) {
             eventsAndPlacesViewModel.getSinglePlaceByName(events.getPlaces().get(0).getName()).observe(getViewLifecycleOwner(), result -> {
                 if (result != null) {
-
                     if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
                         fragmentEventBinding.eventImage.setVisibility(View.VISIBLE);
                         Glide.with(this).load(events.getEventSource().getUrlPhoto()).into(fragmentEventBinding.eventImage);
                     } else {
                         fragmentEventBinding.eventImage.setVisibility(View.VISIBLE);
-                        List<PhotoMetadata> list = new ArrayList<>();
-                        list.add(result.getImages().get(0));
-                        if (!list.contains(null)) {
-                            PlaceDetailsSource.fetchPlacePhotos(list, new PlaceDetailsSource.PlacePhotosListener() {
+                        if (result.getImages() != null && !result.getImages().isEmpty()) {
+                            PlaceDetailsSource.fetchPlacePhotos(result.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
                                 @Override
                                 public void onPlacePhotosListener(Bitmap bitmap) {
                                     if (bitmap != null) {
@@ -167,28 +168,45 @@ public class EventFragment extends Fragment {
                                     fragmentEventBinding.eventImage.setVisibility(View.GONE);
                                 }
                             });
+                        } else {
+                            fragmentEventBinding.eventImage.setVisibility(View.GONE);
                         }
                     }
                     fragmentEventBinding.eventTitle.setText(events.getTitle());
                     fragmentEventBinding.eventCategory.setText(events.getCategory());
-                    //fragmentEventBinding.eventTimezone.setText(events.getTimezone());
                     if (events.getEventSource() != null) {
                         fragmentEventBinding.sourceTV.setText(events.getEventSource().getUrl());
                     } else {
+                        fragmentEventBinding.forMoreInfoTV.setVisibility(View.GONE);
                         fragmentEventBinding.sourceTV.setVisibility(View.GONE);
                     }
 
-                    fragmentEventBinding.eventDescription.setText(events.getDescription());
-                    if (events.getEnd() != null) {
-                        String date = "FROM: " + events.getStart() + " TO: " + events.getEnd() + " (" + events.getTimezone() + ")";
-                        fragmentEventBinding.eventDate.setText(date);
+                    if (events.getDescription() != null && !Objects.equals(events.getDescription(), "")) {
+                        fragmentEventBinding.eventDescription.setText(events.getDescription());
                     } else {
-                        String date = events.getStart() + " (" + events.getTimezone() + ")";
-                        fragmentEventBinding.eventDate.setText(date);
+                        fragmentEventBinding.showInfoTV.setVisibility(View.GONE);
+                        fragmentEventBinding.eventDescription.setVisibility(View.GONE);
                     }
 
-                    String place = result.getName() + "\n" + result.getAddress();
-                    fragmentEventBinding.eventLocation.setText(place);
+                    if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
+                        String dateStart = events.getStart();
+                        String dateEnd = events.getEnd();
+                        Date date1 = DateUtils.parseDateToShow(dateStart, "EN");
+                        Date date2 = DateUtils.parseDateToShow(dateEnd, "EN");
+                        SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                        String formattedDate = outputFormat.format(date1) + " - " + outputFormat.format(date2);
+                        fragmentEventBinding.eventDate.setText(formattedDate);
+                    } else {
+                        String date = events.getStart();
+                        Date date1 = DateUtils.parseDateToShow(date, "EN");
+                        SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                        String formattedDate = outputFormat.format(date1);
+                        fragmentEventBinding.eventDate.setText(formattedDate);
+                    }
+
+                    fragmentEventBinding.eventPlace.setText(result.getName());
+                    fragmentEventBinding.eventAddress.setText(result.getAddress());
+                    fragmentEventBinding.eventAddress2.setText(result.getAddress());
 
                     if (result.getPhoneNumber() != null) {
                         fragmentEventBinding.phoneNumber.setText(result.getPhoneNumber());
@@ -220,35 +238,68 @@ public class EventFragment extends Fragment {
 
                     //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
 
-                    googleMaps(new LatLng(result.getCoordinates()[0], result.getCoordinates()[1]), result.getName());
+                    if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
+                        googleMaps(new LatLng(result.getCoordinates()[0], result.getCoordinates()[1]), result.getName());
+                    }else{
+                        fragmentEventBinding.mapView.setVisibility(View.GONE);
+                    }
 
                 }
             });
         } else { //L'evento non ha il nome del place in cui si tiene
             fragmentEventBinding.eventTitle.setText(events.getTitle());
             fragmentEventBinding.eventCategory.setText(events.getCategory());
-            //fragmentEventBinding.eventTimezone.setText(events.getTimezone());
+
             if (events.getEventSource() != null) {
                 fragmentEventBinding.sourceTV.setText(events.getEventSource().getUrl());
             } else {
+                fragmentEventBinding.forMoreInfoTV.setVisibility(View.GONE);
                 fragmentEventBinding.sourceTV.setVisibility(View.GONE);
             }
 
-            fragmentEventBinding.eventDescription.setText(events.getDescription());
-            if (events.getEnd() != null) {
-                String date = "FROM: " + events.getStart() + " TO: " + events.getEnd() + " (" + events.getTimezone() + ")";
-                fragmentEventBinding.eventDate.setText(date);
+            if (events.getDescription() != null && !Objects.equals(events.getDescription(), "")) {
+                fragmentEventBinding.eventDescription.setText(events.getDescription());
             } else {
-                String date = events.getStart() + " (" + events.getTimezone() + ")";
-                fragmentEventBinding.eventDate.setText(date);
+                fragmentEventBinding.showInfoTV.setVisibility(View.GONE);
+                fragmentEventBinding.eventDescription.setVisibility(View.GONE);
             }
 
 
-            if (!events.getPlaces().isEmpty()) {
-                String place = (CharSequence) events.getPlaces().get(0).getName() + "\n" + (CharSequence) events.getPlaces().get(0).getAddress();
-                fragmentEventBinding.eventLocation.setText(place);
+            if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
+                String dateStart = events.getStart();
+                String dateEnd = events.getEnd();
+                Date date1 = DateUtils.parseDateToShow(dateStart, "EN");
+                Date date2 = DateUtils.parseDateToShow(dateEnd, "EN");
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                String formattedDate = outputFormat.format(date1) + " - " + outputFormat.format(date2);
+                fragmentEventBinding.eventDate.setText(formattedDate);
             } else {
-                fragmentEventBinding.eventLocation.setVisibility(View.GONE);
+                String date = events.getStart();
+                Date date1 = DateUtils.parseDateToShow(date, "EN");
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                String formattedDate = outputFormat.format(date1);
+                fragmentEventBinding.eventDate.setText(formattedDate);
+            }
+
+            if (!events.getPlaces().isEmpty()) {
+                if (events.getPlaces().get(0).getName() != null) {
+                    fragmentEventBinding.eventPlace.setText(events.getPlaces().get(0).getName());
+                    if (events.getPlaces().get(0).getAddress() != null) {
+                        fragmentEventBinding.eventAddress.setText(events.getPlaces().get(0).getAddress());
+                        fragmentEventBinding.eventAddress2.setText(events.getPlaces().get(0).getAddress());
+                    } else {
+                        fragmentEventBinding.eventAddress.setVisibility(View.GONE);
+                        fragmentEventBinding.eventAddress2.setVisibility(View.GONE);
+                    }
+                } else {
+                    fragmentEventBinding.eventPlace.setText("Unknown");
+                    fragmentEventBinding.eventAddress.setVisibility(View.GONE);
+                    fragmentEventBinding.eventAddress2.setVisibility(View.GONE);
+                }
+            } else {
+                fragmentEventBinding.eventPlace.setText("Unknown");
+                fragmentEventBinding.eventAddress.setVisibility(View.GONE);
+                fragmentEventBinding.eventAddress2.setVisibility(View.GONE);
             }
 
             fragmentEventBinding.phoneNumber.setVisibility(View.GONE);
@@ -269,10 +320,13 @@ public class EventFragment extends Fragment {
 
 
             //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
-
-            googleMaps(new LatLng(events.getCoordinates()[0], events.getCoordinates()[1]), null);
-
+            if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
+                googleMaps(new LatLng(events.getCoordinates()[0], events.getCoordinates()[1]), null);
+            }else{
+                fragmentEventBinding.mapView.setVisibility(View.GONE);
+            }
         }
+
         NavBackStackEntry navBackStackEntry = Navigation.
                 findNavController(view).getPreviousBackStackEntry();
 
@@ -354,7 +408,7 @@ public class EventFragment extends Fragment {
                         LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),
+                requireActivity().getApplication(), 0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -366,6 +420,11 @@ public class EventFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
 
                     }
 
@@ -384,13 +443,12 @@ public class EventFragment extends Fragment {
             if (result != null) {
                 if (result.isSuccess()) {
                     Log.i("SUCCESSO", "SUCCESSO");
-                    eventsList.clear();
                     EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                     List<Events> fetchedEvents = eventsResponse.getEventsList();
                     fetchedEvents.remove(events); //RIMUOVI LO STESSO EVENTO
 
                     if (fetchedEvents.size() > 0) {
-                        fragmentEventBinding.categoryEvents.setVisibility(View.VISIBLE);
+                        fragmentEventBinding.categoryEventsTV.setVisibility(View.VISIBLE);
                         fragmentEventBinding.recyclerviewEvents.setVisibility(View.VISIBLE);
                         if (!eventsAndPlacesViewModel.isLoading()) {
                             eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());
@@ -432,7 +490,7 @@ public class EventFragment extends Fragment {
                 }
 
             } else {
-                //NON CI SONO EVENTI IN QUEL LOCALE
+                //NON CI SONO EVENTI SIMILI
             }
         });
 

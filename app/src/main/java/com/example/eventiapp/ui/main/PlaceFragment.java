@@ -123,15 +123,13 @@ public class PlaceFragment extends Fragment {
 
         Place place = getArguments().getParcelable("place", Place.class);
 
-        PlaceDetailsSource.fetchPlacePhotos(place.getImages(), new PlaceDetailsSource.PlacePhotosListener() {
+        PlaceDetailsSource.fetchPlacePhotos(place.getImages(), false, new PlaceDetailsSource.PlacePhotosListener() {
             @Override
             public void onPlacePhotosListener(Bitmap bitmap) {
                 fragmentSinglePlaceBinding.scrollViewImagesPlace.setVisibility(View.VISIBLE);
                 if (bitmap != null) {
                     View viewPlacePhoto = inflater.inflate(R.layout.item_place_photo_maps, fragmentSinglePlaceBinding.galleryPhotos, false);
                     ImageView imagePlace = viewPlacePhoto.findViewById(R.id.imagePlace);
-                    imagePlace.setMaxHeight(300);
-                    imagePlace.setMaxWidth(300);
                     imagePlace.setImageBitmap(bitmap);
                     fragmentSinglePlaceBinding.galleryPhotos.addView(viewPlacePhoto);
                 }
@@ -144,9 +142,8 @@ public class PlaceFragment extends Fragment {
         });
 
         fragmentSinglePlaceBinding.placeName.setText(place.getName());
-        fragmentSinglePlaceBinding.placeType.setText(place.getType());
         fragmentSinglePlaceBinding.placeAddress.setText(place.getAddress());
-        fragmentSinglePlaceBinding.placePhoneNumber.setText(place.getPhoneNumber());
+        fragmentSinglePlaceBinding.phoneNumber.setText(place.getPhoneNumber());
 
         //GOOGLE MAPS
         mMapView = view.findViewById(R.id.mapView);
@@ -202,7 +199,7 @@ public class PlaceFragment extends Fragment {
                         LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),
+                requireActivity().getApplication(),0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -214,6 +211,11 @@ public class PlaceFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
 
                     }
 
@@ -245,8 +247,9 @@ public class PlaceFragment extends Fragment {
                         this.eventsList.addAll(fetchedEvents);
                         eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());
                         fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
-                        fragmentSinglePlaceBinding.numberEventsButton.setVisibility(View.VISIBLE);
-                        fragmentSinglePlaceBinding.numberEventsButton.setText(Integer.toString(eventsList.size()));
+                        fragmentSinglePlaceBinding.placeEvents.setVisibility(View.VISIBLE);
+                        fragmentSinglePlaceBinding.numberEventsTextView.setVisibility(View.VISIBLE);
+                        fragmentSinglePlaceBinding.numberEventsTextView.setText(Integer.toString(eventsList.size()));
 
                     } else {
                         eventsAndPlacesViewModel.setLoading(false);
@@ -278,6 +281,8 @@ public class PlaceFragment extends Fragment {
                 }
             } else {
                 //NON CI SONO EVENTI IN QUEL LOCALE
+                fragmentSinglePlaceBinding.placeEvents.setVisibility(View.VISIBLE);
+                fragmentSinglePlaceBinding.placeEvents.setText("There are no events");
             }
         });
 

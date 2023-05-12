@@ -34,6 +34,15 @@
         <action
             android:id="@+id/action_homeFragment_to_eventsInADateFragment"
             app:destination="@id/eventsInADateFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_allEventsFragment"
+            app:destination="@id/allEventsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_allPlacesFragment"
+            app:destination="@id/allPlacesFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_containerEventsPlacesCalendar"
+            app:destination="@id/containerEventsPlacesCalendar" />
     </fragment>
     <fragment
         android:id="@+id/myEventsFragment"
@@ -100,4 +109,33 @@
         android:name="com.example.eventiapp.ui.welcome.WelcomeActivity"
         android:label="activity_welcome"
         tools:layout="@layout/activity_welcome" />
+    <fragment
+        android:id="@+id/allEventsFragment"
+        android:name="com.example.eventiapp.ui.main.AllEventsFragment"
+        android:label="fragment_all_events"
+        tools:layout="@layout/fragment_all_events" >
+        <action
+            android:id="@+id/action_allEventsFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allPlacesFragment"
+        android:name="com.example.eventiapp.ui.main.AllPlacesFragment"
+        android:label="fragment_places"
+        tools:layout="@layout/fragment_places" />
+    <fragment
+        android:id="@+id/containerEventsPlacesCalendar"
+        android:name="com.example.eventiapp.ui.main.ContainerEventsPlacesCalendar"
+        android:label="fragment_container_events_places_calendar"
+        tools:layout="@layout/fragment_container_events_places_calendar" >
+        <action
+            android:id="@+id/action_containerEventsPlacesCalendar_to_eventFragment"
+            app:destination="@id/eventFragment" />
+        <action
+            android:id="@+id/action_containerEventsPlacesCalendar_to_eventsInADateFragment"
+            app:destination="@id/eventsInADateFragment" />
+        <action
+            android:id="@+id/action_containerEventsPlacesCalendar_to_placeFragment"
+            app:destination="@id/placeFragment" />
+    </fragment>
 </navigation>

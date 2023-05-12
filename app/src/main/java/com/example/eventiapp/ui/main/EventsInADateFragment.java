@@ -114,7 +114,7 @@ public class EventsInADateFragment extends Fragment {
                         LinearLayoutManager.VERTICAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),
+                requireActivity().getApplication(),0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -126,6 +126,11 @@ public class EventsInADateFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
 
                     }
 
@@ -145,7 +150,6 @@ public class EventsInADateFragment extends Fragment {
 
             if (result.isSuccess()) {
                 Log.i("SUCCESSO", "SUCCESSO");
-
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
 

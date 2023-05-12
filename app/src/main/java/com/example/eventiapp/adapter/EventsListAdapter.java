@@ -46,10 +46,10 @@ public class EventsListAdapter extends ArrayAdapter<Events> {
                     inflate(layout, parent, false);
         }
 
-        TextView textViewTitle = convertView.findViewById(R.id.textview_title);
-        TextView textViewDate = convertView.findViewById(R.id.textview_date);
-        TextView textViewCategory=convertView.findViewById(R.id.textview_category);
-        ImageView imageViewFavoriteEvent = convertView.findViewById(R.id.imageview_favorite_event);
+        TextView textViewTitle = convertView.findViewById(R.id.titleTextView);
+        TextView textViewDate = convertView.findViewById(R.id.dateTextView);
+        TextView textViewCategory=convertView.findViewById(R.id.categoryTextView);
+        ImageView imageViewFavoriteEvent = convertView.findViewById(R.id.imageViewFavorite);
 
         imageViewFavoriteEvent.setOnClickListener(new View.OnClickListener() {
             @Override

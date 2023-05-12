@@ -27,13 +27,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.PlacesRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentPlacesBinding;
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AllPlacesFragment extends Fragment {
@@ -55,13 +58,19 @@ public class AllPlacesFragment extends Fragment {
     // Based on this value, the process of loading more places is anticipated or postponed
     private final int threshold = 1;
 
+    private String sortingParameter;
+    private int lastSelectedSortingParameter;
+    private String[] listItemsSort;
+
 
     public AllPlacesFragment() {
         // Required empty public constructor
     }
 
-    public static AllPlacesFragment newInstance() {
-        return new AllPlacesFragment();
+    public static AllPlacesFragment newInstance(Bundle bundle) {
+        AllPlacesFragment fragment = new AllPlacesFragment();
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -82,6 +91,7 @@ public class AllPlacesFragment extends Fragment {
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
         placesList = new ArrayList<>();
+        listItemsSort = requireContext().getResources().getStringArray(R.array.sorting_parameters_places);
 
     }
 
@@ -121,14 +131,19 @@ public class AllPlacesFragment extends Fragment {
                         LinearLayoutManager.VERTICAL, false);
 
         placesRecyclerViewAdapter = new PlacesRecyclerViewAdapter(placesList,
-                requireActivity().getApplication(),
+                requireActivity().getApplication(), 2,
                 new PlacesRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onPlacesItemClick(Place place) {
                         //VAI AI DETTAGLI DEL POSTO
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("place", place);
-                        Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_placeFragment, bundle);
+                        Navigation.findNavController(view).navigate(R.id.action_containerEventsPlacesCalendar_to_placeFragment, bundle);
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Place place) {
+
                     }
 
                     @Override
@@ -136,7 +151,7 @@ public class AllPlacesFragment extends Fragment {
 
                     }
                 });
-                recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(placesRecyclerViewAdapter);
 
         String lastUpdate = "0";
@@ -146,7 +161,7 @@ public class AllPlacesFragment extends Fragment {
 
         eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
 
-            if (result!=null) {
+            if (result != null) {
                 Log.i("SUCCESSO", "SUCCESSO");
 
                 List<Place> fetchedPlaces = new ArrayList<>(result);
@@ -184,6 +199,7 @@ public class AllPlacesFragment extends Fragment {
                     }
                     placesRecyclerViewAdapter.notifyItemRangeInserted(initialSize, placesList.size());
                 }
+                fragmentPlacesBinding.numberOfEvents.setText(String.valueOf(placesList.size()));
             } else {
                 Log.i("FALLITO", "FALLITO");
 
@@ -234,7 +250,40 @@ public class AllPlacesFragment extends Fragment {
             }
         });
 
+        //SORTING
+        fragmentPlacesBinding.sortingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSorting();
+            }
+        });
 
+    }
+
+    public void showSorting() {
+        new MaterialAlertDialogBuilder(requireContext()).setTitle("ORDER BY")
+                .setSingleChoiceItems(listItemsSort, lastSelectedSortingParameter, (dialog, i) -> {
+                    sortingParameter = listItemsSort[i];
+                    lastSelectedSortingParameter = i;
+                    if (!placesList.isEmpty()) {
+                        sortPlaces(sortingParameter, placesList);
+                    }
+                }).setNegativeButton(R.string.cancel_text, (dialogInterface, i) -> {
+                }).show();
+    }
+
+    public void sortPlaces(String sortingParameter, List<Place> placesList) {
+        switch (sortingParameter) {
+            case "Alphabet (A-Z)":
+            case "Alfabetico (A-Z)":
+                Collections.sort(placesList, new Place.SortByAlphabetAZ());
+                break;
+            case "Alphabet (Z-A)":
+            case "Alfabetico (Z-A)":
+                Collections.sort(placesList, new Place.SortByAlphabetZA());
+                break;
+        }
+        placesRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override
