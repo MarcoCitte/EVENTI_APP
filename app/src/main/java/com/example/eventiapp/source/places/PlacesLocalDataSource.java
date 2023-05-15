@@ -37,6 +37,7 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
         });
     }
 
+
     @Override
     public void getFavoritePlaces() {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
@@ -110,9 +111,7 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
                         placeList.set(placeList.indexOf(place), place);
                     }
                 }
-
                 placeDao.insertPlacesList(placeList);
-                placeCallback.onSuccessFromLocalP(placeList);
             }
         });
     }

@@ -1,344 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffaa00"
     tools:context=".ui.main.SearchFragment">
 
-    <LinearLayout
-        android:id="@+id/layoutCategories"
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="10sp"
+        android:text="Explore"
+        android:textSize="40sp" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10sp"
-        android:background="#ffaa00"
-        android:orientation="vertical">
+        tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="150sp">
-
-            <com.google.android.material.search.SearchBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.search.SearchView
-                android:id="@+id/searchView"
-                android:hint="Search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="15sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/searchView"
-                android:layout_alignParentBottom="true"
-                android:layout_centerVertical="true"
-                android:padding="10sp"
-                android:text="Explore"
-                android:textSize="40sp" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10sp"
-            android:text="Categories"
-            android:textAllCaps="true"
-            android:textSize="25sp">
-
-        </TextView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/communityCV"
-            style="?attr/materialCardViewFilledStyle"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            app:cardBackgroundColor="#00000000"
-            app:cardElevation="8sp">
+            android:text="All events" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="150sp"
-                android:background="#F94144">
-
-                <ImageView
-                    android:layout_width="120sp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="20sp"
-                    android:src="@drawable/community" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:padding="25sp"
-                    android:text="COMMUNITY"
-                    android:textSize="30sp" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="#00000000"
-                    android:padding="30sp"
-                    android:text="Expand all" />
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/concertsCV"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            app:cardBackgroundColor="#00000000"
-            app:cardElevation="8sp">
+            android:text="All venues" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="150sp"
-                android:background="#E76161">
-
-                <ImageView
-                    android:layout_width="120sp"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="20sp"
-                    android:src="@drawable/ic_baseline_music_note_24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="1dp"
-                    android:padding="25sp"
-                    android:text="CONCERTS &amp; FESTIVALS"
-                    android:textSize="30sp" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="#00000000"
-                    android:padding="25sp"
-                    android:text="Expand all" />
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/sportsCV"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            app:cardBackgroundColor="#00000000"
-            app:cardElevation="8sp">
+            android:text="Calendar" />
+    </com.google.android.material.tabs.TabLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="150sp"
-                android:background="#F8961E">
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tab_layout"/>
 
-                <ImageView
-                    android:layout_width="120sp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="20sp"
-                    android:src="@drawable/ic_baseline_sports_basketball_24" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150sp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:padding="25sp"
-                    android:text="SPORTS"
-                    android:textSize="30sp" />
+        <com.google.android.material.search.SearchBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="#00000000"
-                    android:padding="20sp"
-                    android:text="Expand all" />
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/movieCV"
+        <com.google.android.material.search.SearchView
+            android:id="@+id/searchView"
+            android:hint="Search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            app:cardBackgroundColor="#00000000"
-            app:cardElevation="8sp">
+            android:padding="15sp"
+            android:visibility="gone" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="150sp"
-                android:background="#F9844A">
-
-                <ImageView
-                    android:layout_width="120sp"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="20sp"
-                    android:src="@drawable/ic_baseline_movie_24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:padding="25sp"
-                    android:text="MOVIES"
-                    android:textSize="30sp" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="#00000000"
-                    android:padding="20sp"
-                    android:text="Expand all" />
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/guestCV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            app:cardBackgroundColor="#00000000"
-            app:cardElevation="8sp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="150sp"
-                android:background="#F9C74F">
-
-                <ImageView
-                    android:layout_width="120sp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="20sp"
-                    android:src="@drawable/ic_baseline_person_24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:padding="25sp"
-                    android:text="GUEST \nPROJECT"
-                    android:textSize="30sp" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="#00000000"
-                    android:padding="20sp"
-                    android:text="Expand all" />
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/publicCV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            app:cardBackgroundColor="#00000000"
-            app:cardElevation="8sp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="150sp"
-                android:background="#90BE6D">
-
-                <ImageView
-                    android:layout_width="120sp"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="20sp"
-                    android:src="@drawable/ic_baseline_public_24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:padding="25sp"
-                    android:text="PUBLIC \nPROGRAM"
-                    android:textSize="30sp" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="#00000000"
-                    android:padding="20sp"
-                    android:text="Expand all" />
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/specialCV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            app:cardBackgroundColor="#00000000"
-            app:cardElevation="8sp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="150sp"
-                android:background="#43AA8B">
-
-                <ImageView
-                    android:layout_width="120sp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="20sp"
-                    android:src="@drawable/ic_baseline_star_rate_24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:padding="25sp"
-                    android:text="SPECIAL \nPROJECT"
-                    android:textSize="30sp" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="#00000000"
-                    android:padding="20sp"
-                    android:text="Expand all" />
-
-            </RelativeLayout>
-
-        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
 
 
-    </LinearLayout>
-
-</ScrollView>
+</RelativeLayout>

@@ -1,5 +1,6 @@
 package com.example.eventiapp.util;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,5 +64,11 @@ public class DateUtils {
             }
         }
         return null;
+    }
+
+    public static String currentDate() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        return dateFormat.format(date);
     }
 }

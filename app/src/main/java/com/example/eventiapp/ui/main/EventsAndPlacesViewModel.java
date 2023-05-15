@@ -43,9 +43,9 @@ public class EventsAndPlacesViewModel extends ViewModel {
         this.firstLoading = true;
     }
 
-    public MutableLiveData<Result> getEvents(String country, String location, String date, String sort, int limit, long lastUpdate) {
+    public MutableLiveData<Result> getEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
         if (eventsListLiveData == null) {
-            fetchEvents(country, location, date, sort, limit, lastUpdate);
+            fetchEvents(country, location, date, categories, sort, limit, lastUpdate);
         }
         return eventsListLiveData;
     }
@@ -166,17 +166,19 @@ public class EventsAndPlacesViewModel extends ViewModel {
     }
 
 
-    public void fetchEvents(String country, String location, String date, String sort, int limit) {
-        iRepositoryWithLiveData.fetchEvents(country, location, date, sort, limit);
+    public void fetchEvents(String country, String location, String date, String categories, String sort, int limit) {
+        iRepositoryWithLiveData.fetchEvents(country, location, date, categories, sort, limit);
     }
 
-    public void fetchEvents(String country, String location, String date, String sort, int limit, long lastUpdate) {
-        eventsListLiveData = iRepositoryWithLiveData.fetchEvents(country, location, date, sort, limit, lastUpdate);
+    public void fetchEvents(String country, String location, String date,String categories, String sort, int limit, long lastUpdate) {
+        eventsListLiveData = iRepositoryWithLiveData.fetchEvents(country, location, date, categories, sort, limit, lastUpdate);
     }
 
     public void fetchPlaces() {
         placesListLiveData = iRepositoryWithLiveData.fetchPlaces();
     }
+
+    public void deletePlaces() {iRepositoryWithLiveData.deletePlaces();}
 
     public int getPage() {
         return page;

@@ -43,6 +43,7 @@ import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -100,7 +101,8 @@ public class HomeFragment extends Fragment {
     String location = "45.51851,9.2075123"; //BICOCCA
     double radius = 4.2;
     String sort = "start";
-    String date = AllEventsFragment.currentDate();
+    String date = DateUtils.currentDate();
+    String categories = "conferences,expos,concerts,festivals,performing-arts,sports,community";
     int limit = 5000;
     String lastUpdate = "0";
 
@@ -281,10 +283,9 @@ public class HomeFragment extends Fragment {
         fragmentHomeBinding.progressBarFE.setVisibility(View.VISIBLE);
         fragmentHomeBinding.progressBarEV.setVisibility(View.VISIBLE);
 
-        //eventsAndPlacesViewModel.deleteEvents(); //IN QUESTO MODO MI CARICA SEMPRE EVENTI NUOVI A PARTIRE DAL GIORNO CORRENTE
 
 
-        eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categories, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
             showEvents(result, 0); //UPCOMING EVENTS E ORDER BY RANK
         });
 

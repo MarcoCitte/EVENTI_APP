@@ -7,6 +7,7 @@ import static com.example.eventiapp.util.Constants.RETROFIT_ERROR;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.service.EventsApiService;
@@ -28,8 +29,8 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
     }
 
     @Override
-    public void getEvents(String country, String location, String date, String sort, int limit) {
-        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,location,date,sort,limit,
+    public void getEvents(String country, String location, String date, String categories, String sort, int limit) {
+        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,location,date, categories, sort,limit,
                 apiKey,CONTENT_TYPE_VALUE);
 
 
@@ -38,8 +39,8 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
             public void onResponse(@NonNull Call<EventsApiResponse> call,
                                    @NonNull Response<EventsApiResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
+                    getEventsFromJsoup(); //RICHIAMA POI onSuccessFromRemoteJsoup
                     eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
-                    //getEventsFromJsoup();
                     Log.i("RESPONSE", String.valueOf(response.body().getCount()));
                 } else {
                     eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));

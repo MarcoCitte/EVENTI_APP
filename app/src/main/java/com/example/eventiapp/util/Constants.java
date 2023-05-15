@@ -8,6 +8,7 @@ public class Constants {
     public static final String PLACES_ENDPOINT = "places";
     public static final String CLIENT_ID = "Client-ID";
     public static final String EVENTS_COUNTRY = "country";
+    public static final String EVENTS_CATEGORY = "category";
     public static final String EVENTS_LIMIT = "limit";
     public static final String EVENTS_START = "start.gte";
     public static final String EVENTS_WITHIN = "within";
