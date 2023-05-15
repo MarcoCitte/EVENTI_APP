@@ -39,6 +39,7 @@ import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -82,7 +83,8 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
     String location = "45.51851,9.2075123"; //BICOCCA
     double radius = 4.2;
     String sort = "start";
-    String date = currentDate();
+    String date = DateUtils.currentDate();
+    String categories = "conferences,expos,concerts,festivals,performing-arts,sports,community";
     int limit = 5000;
     List<String> checkedCategories;
     String firstDate, endDate;
@@ -90,12 +92,6 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
     public AllEventsFragment() {
         // Required empty public constructor
-    }
-
-    public static String currentDate() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        return dateFormat.format(date);
     }
 
     public static AllEventsFragment newInstance(Bundle bundle) {
@@ -238,7 +234,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
             }
         });
 
-        eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categories, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
             showEvents(result, 0);
         });
 
@@ -366,6 +362,11 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
             EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
             List<Events> fetchedEvents = eventsResponse.getEventsList();
+            for(Events e : fetchedEvents){
+                if(e.getCategory().equals("movies")){
+                    Log.i(TAG,"CIAO");
+                }
+            }
 
             if (!eventsAndPlacesViewModel.isLoading()) {
                 eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());
@@ -461,7 +462,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
                             eventsAndPlacesViewModel.setPage(page);
                             switch (typeOfQuery) {
                                 case 0:
-                                    eventsAndPlacesViewModel.fetchEvents(country, radius + "km@" + location, date, sort, limit);
+                                    eventsAndPlacesViewModel.fetchEvents(country, radius + "km@" + location, date, categories, sort, limit);
                                     break;
                                 case 1:
                                     eventsAndPlacesViewModel.getEventsBetweenDatesLiveData(firstDate, endDate);

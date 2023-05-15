@@ -96,7 +96,8 @@ public class MyEventsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //eventsViewModel.deleteEvents();
+        eventsAndPlacesViewModel.deleteEvents(); //IN QUESTO MODO MI CARICA SEMPRE EVENTI NUOVI A PARTIRE DAL GIORNO CORRENTE
+        eventsAndPlacesViewModel.deletePlaces();
 
         Button buttonLogout = view.findViewById(R.id.logout_b);
         buttonLogout.setOnClickListener(v -> {

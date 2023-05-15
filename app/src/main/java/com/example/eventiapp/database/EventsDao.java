@@ -6,15 +6,22 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.example.eventiapp.model.Events;
+import com.example.eventiapp.ui.main.AllEventsFragment;
 
 import java.util.List;
 
 @Dao
 public interface EventsDao {
+
+
     @Query("SELECT * FROM events ORDER BY startDate ASC")
     List<Events> getAll();
+
+    @Query("SELECT * FROM events WHERE startDate >= :date ORDER BY startDate ASC")
+    List<Events> getEventsFromADate(String date);
 
     @Query("SELECT * FROM events WHERE id_db = :id")
     Events getEvents(long id);

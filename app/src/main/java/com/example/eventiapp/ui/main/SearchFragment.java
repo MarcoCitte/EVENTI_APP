@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.eventiapp.R;
+import com.example.eventiapp.adapter.EventsAndPlacesPagerAdapter;
 import com.example.eventiapp.databinding.FragmentAllEventsBinding;
+import com.example.eventiapp.databinding.FragmentContainerEventsPlacesCalendarBinding;
 import com.example.eventiapp.databinding.FragmentSearchBinding;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Locale;
 
@@ -29,6 +33,9 @@ public class SearchFragment extends Fragment {
     public SearchFragment() {
     }
 
+    TabLayout tabLayout;
+    ViewPager2 viewPager2;
+    EventsAndPlacesPagerAdapter eventsAndPlacesPagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,70 +49,52 @@ public class SearchFragment extends Fragment {
         return fragmentSearchBinding.getRoot();
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        fragmentSearchBinding.communityCV.setOnClickListener(new View.OnClickListener() {
+        super.onViewCreated(view, savedInstanceState);
+
+        Bundle bundle=null;
+        String isPlace=null;
+        if(getArguments()!=null) {
+            String sort = getArguments().getString("sort");
+            bundle = new Bundle();
+            bundle.putString("sort", sort);
+            isPlace=getArguments().getString("place");
+        }
+
+        tabLayout=fragmentSearchBinding.tabLayout;
+        viewPager2=fragmentSearchBinding.viewPager;
+        eventsAndPlacesPagerAdapter =new EventsAndPlacesPagerAdapter(this);
+        eventsAndPlacesPagerAdapter.setBundle(bundle);
+        viewPager2.setAdapter(eventsAndPlacesPagerAdapter);
+
+        if(isPlace!=null){  //HA SCELTO SEE ALL VENUES
+            viewPager2.setCurrentItem(1); //IMPOSTA TAB ALL PLACES
+        }
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("category","community");
-                Navigation.findNavController(view).navigate(R.id.action_searchFragment_to_categoryFragment, bundle);
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
 
-        fragmentSearchBinding.concertsCV.setOnClickListener(new View.OnClickListener() {
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
-            public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("category","concerts");
-                Navigation.findNavController(view).navigate(R.id.action_searchFragment_to_categoryFragment, bundle);
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                tabLayout.getTabAt(position).select();
             }
         });
-
-        fragmentSearchBinding.sportsCV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("category","sports");
-                Navigation.findNavController(view).navigate(R.id.action_searchFragment_to_categoryFragment, bundle);
-            }
-        });
-
-        fragmentSearchBinding.movieCV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("category","movies");
-                Navigation.findNavController(view).navigate(R.id.action_searchFragment_to_categoryFragment, bundle);
-            }
-        });
-
-        fragmentSearchBinding.guestCV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("category","Guest");
-                Navigation.findNavController(view).navigate(R.id.action_searchFragment_to_categoryFragment, bundle);
-            }
-        });
-
-        fragmentSearchBinding.publicCV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("category","Public");
-                Navigation.findNavController(view).navigate(R.id.action_searchFragment_to_categoryFragment, bundle);
-            }
-        });
-
-        fragmentSearchBinding.specialCV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("category","Special");
-                Navigation.findNavController(view).navigate(R.id.action_searchFragment_to_categoryFragment, bundle);
-            }
-        });
-
-
     }
 }

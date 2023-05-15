@@ -8,6 +8,8 @@ import java.util.List;
 public interface EventsCallback {
     void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate);
 
+    void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse);
+
     void onFailureFromRemote(Exception exception);
 
     void onSuccessFromLocal(EventsApiResponse eventsApiResponse);

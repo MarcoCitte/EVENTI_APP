@@ -159,12 +159,14 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 String formattedDate = outputFormat.format(date1) + " - " + outputFormat.format(date2);
                 textViewDate.setText(formattedDate);
                 textViewDate.setTextSize(13);
-            } else {
+            } else if (events.getStart() != null) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
                 SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
                 String formattedDate = outputFormat.format(date1);
                 textViewDate.setText(formattedDate);
+            } else {
+                textViewDate.setVisibility(View.GONE);
             }
             textViewCategory.setText(events.getCategory());
             if (events.getPlaces() != null && !events.getPlaces().isEmpty()) {
@@ -235,11 +237,15 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
             textViewCategory.setText(events.getCategory());
-            String date = events.getStart();
-            Date date1 = DateUtils.parseDateToShow(date, "EN");
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            String formattedDate = outputFormat.format(date1);
-            textViewDate.setText(formattedDate);
+            if(events.getStart()!=null) {
+                String date = events.getStart();
+                Date date1 = DateUtils.parseDateToShow(date, "EN");
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                String formattedDate = outputFormat.format(date1);
+                textViewDate.setText(formattedDate);
+            }else{
+                textViewDate.setVisibility(View.GONE);
+            }
 
             if (events.getPlaces() != null && !events.getPlaces().isEmpty()) {
                 textViewPlace.setText(events.getPlaces().get(0).getName());

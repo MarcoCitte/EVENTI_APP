@@ -45,7 +45,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
 
     @Override
     protected void onPostExecute(EventsApiResponse eventsApiResponse) {
-        BaseEventsRemoteDataSource.eventsCallback.onSuccessFromRemote(eventsApiResponse, System.currentTimeMillis());
+        BaseEventsRemoteDataSource.eventsCallback.onSuccessFromRemote(eventsApiResponse,System.currentTimeMillis());
     }
 
     private List<Events> eventsUciCinemas() {
@@ -108,7 +108,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                 event.setEventSource(new EventSource(urlMovie, srcValue));
                 event.setCategory("movies");
                 event.setDescription(String.valueOf(description));
-                event.setStart(AllEventsFragment.currentDate());
+                event.setStart(DateUtils.currentDate());
                 String[] hoursArray = new String[hours.size()];
                 hoursArray = hours.toArray(hoursArray);
                 event.setHours(hoursArray);
@@ -154,7 +154,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 if (date1 != null) {
                     String formattedDate = formatter.format(date1);
-                    if (formattedDate.compareTo(AllEventsFragment.currentDate()) >= 0) {
+                    if (formattedDate.compareTo(DateUtils.currentDate()) >= 0) {
                         event.setStart(formattedDate);
                     }
                 }

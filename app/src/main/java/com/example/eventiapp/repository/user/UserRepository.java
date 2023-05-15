@@ -191,6 +191,11 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
+    public void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse) {
+
+    }
+
+    @Override
     public void onFailureFromRemote(Exception exception) {
 
     }

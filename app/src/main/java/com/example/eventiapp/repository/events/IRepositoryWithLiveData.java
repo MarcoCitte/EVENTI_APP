@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface IRepositoryWithLiveData {
 
-    MutableLiveData<Result> fetchEvents(String country, String location, String date, String sort, int limit, long lastUpdate);
+    MutableLiveData<Result> fetchEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate);
 
-    void fetchEvents(String country, String location, String date, String sort, int limit);
+    void fetchEvents(String country, String location, String date, String categories, String sort, int limit);
 
     MutableLiveData<Result> getFavoriteEvents(boolean isFirstLoading);
 
@@ -49,6 +49,8 @@ public interface IRepositoryWithLiveData {
     int getCount();
 
     void deleteEvents();
+
+    void deletePlaces();
 
     void deleteFavoriteEvents();
 }

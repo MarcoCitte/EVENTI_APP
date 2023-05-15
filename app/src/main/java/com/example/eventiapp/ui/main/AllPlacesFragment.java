@@ -30,6 +30,7 @@ import com.example.eventiapp.databinding.FragmentPlacesBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -110,7 +111,7 @@ public class AllPlacesFragment extends Fragment {
         String location = "45.51851, 9.2075123"; //BICOCCA
         double radius = 4.2;
         String sort = "start";
-        String date = AllEventsFragment.currentDate();
+        String date = DateUtils.currentDate();
         int limit = 5000;
 
         requireActivity().addMenuProvider(new MenuProvider() {

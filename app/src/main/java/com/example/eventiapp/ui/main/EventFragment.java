@@ -139,14 +139,14 @@ public class EventFragment extends Fragment {
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-        mMapView = requireView().findViewById(R.id.mapView);
+        mMapView = fragmentEventBinding.mapView;
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
         Events events = getArguments().getParcelable("event", Events.class);
 
         if (!events.getPlaces().isEmpty() && events.getPlaces().get(0).getName() != null) {
-            eventsAndPlacesViewModel.getSinglePlaceByName(events.getPlaces().get(0).getName()).observe(getViewLifecycleOwner(), result -> {
+            eventsAndPlacesViewModel.getSinglePlace(events.getPlaces().get(0).getId()).observe(getViewLifecycleOwner(), result -> {
                 if (result != null) {
                     if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
                         fragmentEventBinding.eventImage.setVisibility(View.VISIBLE);
