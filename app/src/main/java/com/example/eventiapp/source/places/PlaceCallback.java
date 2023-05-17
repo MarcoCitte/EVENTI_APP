@@ -8,6 +8,7 @@ public interface PlaceCallback {
     void onSuccessFromLocalP(List<Place> placeList);
     void onFailureFromLocalP(Exception exception);
     void onSinglePlace(Place place);
+    void onPlacesFromSearch(List<Place> places);
     void onPlacesFavoriteStatusChanged(Place place, List<Place> favoritePlaces);
     void onPlacesFavoriteStatusChanged(List<Place> placeList);
     void onDeleteFavoritePlacesSuccess(List<Place> favoritePlaces);

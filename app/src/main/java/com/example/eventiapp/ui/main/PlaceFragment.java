@@ -43,6 +43,7 @@ import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.util.ErrorMessageUtil;
+import com.example.eventiapp.util.ShareUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -145,6 +146,20 @@ public class PlaceFragment extends Fragment {
         fragmentSinglePlaceBinding.placeAddress.setText(place.getAddress());
         fragmentSinglePlaceBinding.phoneNumber.setText(place.getPhoneNumber());
 
+        fragmentSinglePlaceBinding.imageViewShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShareUtils.sharePlace(requireContext(),place);
+            }
+        });
+
+        fragmentSinglePlaceBinding.imageViewFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //POSTO PREFERITO
+            }
+        });
+
         //GOOGLE MAPS
         mMapView = view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -199,7 +214,7 @@ public class PlaceFragment extends Fragment {
                         LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),0,
+                requireActivity().getApplication(), 0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -216,7 +231,7 @@ public class PlaceFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
 

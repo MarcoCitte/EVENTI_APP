@@ -11,12 +11,14 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentDialogBinding;
 import com.example.eventiapp.util.DateUtils;
 import com.google.android.material.chip.Chip;
@@ -177,12 +179,14 @@ public class MyDialogEventsFragment extends DialogFragment implements View.OnCli
         for (int i = 0; i < allCategories.size(); i++) {
             Chip chip = new Chip(getContext());
             chip.setText(allCategories.get(i));
+            chip.setChipBackgroundColorResource(R.color.colorBackgroundSecondary);
             chip.setCheckable(true);
             chip.setCheckedIconVisible(false);
             chip.setCloseIconVisible(false);
             if (checkedCategories != null && !checkedCategories.isEmpty()) {
                 if (checkedCategories.contains(allCategories.get(i))) {
                     chip.setChecked(true);
+                    chip.setChipBackgroundColorResource(R.color.colorBackground);
                 }
             }
             chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -190,8 +194,10 @@ public class MyDialogEventsFragment extends DialogFragment implements View.OnCli
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
                         checkedCategories.add((String) buttonView.getText());
+                        chip.setChipBackgroundColorResource(R.color.colorBackground);
                     } else {
                         checkedCategories.remove(buttonView.getText());
+                        chip.setChipBackgroundColorResource(R.color.colorBackgroundSecondary);
                     }
                 }
             });

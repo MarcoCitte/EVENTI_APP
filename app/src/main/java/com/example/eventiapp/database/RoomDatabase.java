@@ -15,7 +15,7 @@ import com.example.eventiapp.util.Converters;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Events.class, Place.class}, version = 33)
+@Database(entities = {Events.class, Place.class}, version = 34)
 @TypeConverters({Converters.class})
 public abstract class RoomDatabase extends androidx.room.RoomDatabase {
     public abstract EventsDao eventsDao();

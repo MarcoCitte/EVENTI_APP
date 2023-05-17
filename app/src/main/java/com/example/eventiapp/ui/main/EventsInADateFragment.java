@@ -13,11 +13,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -34,6 +37,8 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.example.eventiapp.util.ShareUtils;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -49,6 +54,9 @@ public class EventsInADateFragment extends Fragment {
     private FragmentEventsInADateBinding fragmentEventsInADateBinding;
 
     private List<Events> eventsList;
+    private List<String> categoriesInADate;
+    private List<String> checkedCategories;
+    private String date;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
@@ -82,7 +90,8 @@ public class EventsInADateFragment extends Fragment {
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
         eventsList = new ArrayList<>();
-
+        categoriesInADate = new ArrayList<>();
+        checkedCategories = new ArrayList<>();
     }
 
     @Override
@@ -114,7 +123,7 @@ public class EventsInADateFragment extends Fragment {
                         LinearLayoutManager.VERTICAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),0,
+                requireActivity().getApplication(), 0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -131,7 +140,7 @@ public class EventsInADateFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-
+                        ShareUtils.shareEvent(requireContext(),events);
                     }
 
                     @Override
@@ -142,17 +151,85 @@ public class EventsInADateFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
         assert getArguments() != null;
-        String date = getArguments().getString("date");
+        date = getArguments().getString("date");
 
         fragmentEventsInADateBinding.progressBar.setVisibility(View.VISIBLE);
 
-        eventsAndPlacesViewModel.getEventsInADateLiveData(date).observe(getViewLifecycleOwner(), result -> {
+        //CATEGORIE DI EVENTI IN QUELLA DATA
+        eventsAndPlacesViewModel.getCategoriesInADate(date).observe(getViewLifecycleOwner(), result -> {
+            if (result != null) {
+                categoriesInADate = result;
+                setChips(categoriesInADate);
+            }
+        });
 
+        eventsAndPlacesViewModel.getEventsInADateLiveData(date).observe(getViewLifecycleOwner(), result -> {
+            showEvents(result);
+        });
+
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        eventsAndPlacesViewModel.setFirstLoading(true);
+        eventsAndPlacesViewModel.setLoading(false);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        fragmentEventsInADateBinding = null;
+    }
+
+
+    private void setChips(List<String> categoriesOfthatDate) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMarginEnd(16);
+        for (int i = 0; i < categoriesOfthatDate.size(); i++) {
+            Chip chip = new Chip(getContext());
+            chip.setText(categoriesOfthatDate.get(i));
+            chip.setChipBackgroundColorResource(R.color.colorBackgroundSecondary);
+            chip.setCheckable(true);
+            chip.setCheckedIconVisible(false);
+            chip.setCloseIconVisible(false);
+            chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        checkedCategories.add((String) buttonView.getText());
+                        chip.setChipBackgroundColorResource(R.color.colorBackground);
+                        eventsAndPlacesViewModel.getCategoryEventsBetweenDatesLiveData(date, date, checkedCategories).observe(getViewLifecycleOwner(), result -> {
+                            showEvents(result);
+                        });
+                    } else {
+                        checkedCategories.remove(buttonView.getText());
+                        chip.setChipBackgroundColorResource(R.color.colorBackgroundSecondary);
+                        if (checkedCategories.isEmpty()) { //SE NON è SELEZIONATO PIù NIENTE RIMETTE TUTTO
+                            eventsAndPlacesViewModel.getEventsInADateLiveData(date).observe(getViewLifecycleOwner(), result -> {
+                                showEvents(result);
+                            });
+                        } else {
+                            eventsAndPlacesViewModel.getCategoryEventsBetweenDatesLiveData(date, date, checkedCategories).observe(getViewLifecycleOwner(), result -> {
+                                showEvents(result);
+                            });
+                        }
+                    }
+                }
+            });
+            fragmentEventsInADateBinding.chipsLinearLayout.addView(chip, params);
+        }
+    }
+
+    private void showEvents(Result result) {
+        if (result != null) {
             if (result.isSuccess()) {
-                Log.i("SUCCESSO", "SUCCESSO");
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
-
                 if (!eventsAndPlacesViewModel.isLoading()) {
                     eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());
                     this.eventsList.clear();
@@ -177,71 +254,20 @@ public class EventsInADateFragment extends Fragment {
                     }
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
                 }
+                fragmentEventsInADateBinding.textViewDate.setText("Events of: " + date);
+                fragmentEventsInADateBinding.numberOfEvents.setText(String.valueOf(eventsList.size()));
             } else {
-                Log.i("FALLITO", "FALLITO ALL EVENTS");
-
                 ErrorMessageUtil errorMessagesUtil =
                         new ErrorMessageUtil(requireActivity().getApplication());
-                Snackbar.make(view, errorMessagesUtil.
+                Snackbar.make(requireView(), errorMessagesUtil.
                                 getErrorMessage(((Result.Error) result).getMessage()),
                         Snackbar.LENGTH_SHORT).show();
                 fragmentEventsInADateBinding.progressBar.setVisibility(View.GONE);
             }
-        });
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                boolean isConnected = isConnected();
-
-                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
-
-                    totalItemCount = layoutManager.getItemCount();
-                    lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-                    visibleItemCount = layoutManager.getChildCount();
-
-                    if (totalItemCount == visibleItemCount ||
-                            (totalItemCount <= (lastVisibleItem + threshold) &&
-                                    dy > 0 &&
-                                    !eventsAndPlacesViewModel.isLoading()
-                            ) &&
-                                    eventsAndPlacesViewModel.getEventsResponseLiveData().getValue() != null &&
-                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
-                    ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getEventsResponseLiveData();
-
-                        if (eventsListMutableLiveData.getValue() != null &&
-                                eventsListMutableLiveData.getValue().isSuccess()) {
-
-                            eventsAndPlacesViewModel.setLoading(true);
-                            eventsList.add(null);
-                            eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
-                                    eventsList.size() + 1);
-
-                            int page = eventsAndPlacesViewModel.getPage() + 1;
-                            eventsAndPlacesViewModel.setPage(page);
-                            eventsAndPlacesViewModel.getEventsInADateLiveData(date);
-                        }
-                    }
-                }
-            }
-        });
-
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        eventsAndPlacesViewModel.setFirstLoading(true);
-        eventsAndPlacesViewModel.setLoading(false);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        fragmentEventsInADateBinding = null;
+        } else {
+            fragmentEventsInADateBinding.textViewDate.setText("No events in " + date);
+            fragmentEventsInADateBinding.numberOfEvents.setText("0");
+        }
     }
 
 

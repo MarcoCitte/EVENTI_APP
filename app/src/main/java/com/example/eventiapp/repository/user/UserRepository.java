@@ -261,6 +261,11 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
+    public void onCategoriesInADate(List<String> categories) {
+
+    }
+
+    @Override
     public void onCategoriesEvents(List<Events> events) {
 
     }
@@ -272,6 +277,11 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
 
     @Override
     public void onCategoryEventsBetweenDates(List<Events> events) {
+
+    }
+
+    @Override
+    public void onEventsFromSearch(List<Events> events) {
 
     }
 

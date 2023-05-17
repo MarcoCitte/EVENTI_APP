@@ -28,6 +28,8 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,10 +44,12 @@ import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.example.eventiapp.util.ShareUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -185,7 +189,14 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
                         //VAI AI DETTAGLI DELL'EVENTO
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("event", events);
-                        Navigation.findNavController(view).navigate(R.id.action_containerEventsPlacesCalendar_to_eventFragment, bundle);
+                        //Navigation.findNavController(view).navigate(R.id.action_containerEventsPlacesCalendar_to_eventFragment, bundle);
+                        NavController navController = Navigation.findNavController(requireView());
+                        NavDestination currentDestination = navController.getCurrentDestination();
+                        if (currentDestination != null && currentDestination.getId() == R.id.containerEventsPlacesCalendar) {
+                            navController.navigate(R.id.action_containerEventsPlacesCalendar_to_eventFragment, bundle);
+                        } else {
+                            navController.navigate(R.id.action_searchFragment_to_eventFragment, bundle);
+                        }
                     }
 
                     @Override
@@ -194,15 +205,46 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
                         event.put(CalendarContract.Events.CALENDAR_ID, events.getId_db());
                         event.put(CalendarContract.Events.TITLE, events.getTitle());
                         if (events.getPlaces().get(0).getAddress() != null) {
-                            event.put(CalendarContract.Events.EVENT_LOCATION, events.getPlaces().get(0).getAddress());
+                            event.put(CalendarContract.Events.EVENT_LOCATION, events.getPlaces().get(0).getName() + " (" + events.getPlaces().get(0).getAddress() + ")");
                         }
                         event.put(CalendarContract.Events.DESCRIPTION, events.getDescription());
                         if (events.getStart() != null) {
-                            event.put(CalendarContract.Events.DTSTART, events.getStart());
+                            Date startDate = DateUtils.parseDateToShow(events.getStart(), "EN");
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            String formattedDateString=dateFormat.format(startDate);
+                            Date formattedDate=null;
+                            try {
+                                formattedDate = dateFormat.parse(formattedDateString);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            long startTime = 0;
+                            if (formattedDate != null) {
+                                startTime = formattedDate.getTime();
+                            }
+                            event.put(CalendarContract.Events.DTSTART, startTime);
+                        }else{
+                            event.put(CalendarContract.Events.DTSTART, "UNKNOWN");
                         }
                         if (events.getEnd() != null) {
-                            event.put(CalendarContract.Events.DTEND, events.getEnd());
+                            Date endDate = DateUtils.parseDateToShow(events.getEnd(), "EN");
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            String formattedDateString=dateFormat.format(endDate);
+                            Date formattedDate=null;
+                            try {
+                                formattedDate = dateFormat.parse(formattedDateString);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            long endTime = 0;
+                            if (formattedDate != null) {
+                                endTime = formattedDate.getTime();
+                            }
+                            event.put(CalendarContract.Events.DTEND, endTime);
+                        }else{
+                            event.put(CalendarContract.Events.DURATION,String.valueOf(events.getDuration()));
                         }
+
                         event.put(CalendarContract.Events.EVENT_TIMEZONE, events.getTimezone());
 
                         // Inserisci l'evento nel calendario
@@ -211,7 +253,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
                     @Override
@@ -315,18 +357,25 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
         Log.i(TAG, "FILTRI");
         firstDate = fromDate;
         endDate = toDate;
-        checkedCategories = categories;
-        if (categories.isEmpty() && Objects.equals(fromDate, "") && Objects.equals(toDate, "")) {
-            //NON FARE NIENTE
-        } else if (categories.isEmpty() && !Objects.equals(fromDate, "") && !Objects.equals(toDate, "")) {
+        if (categories == null || categories.isEmpty()) {
+            checkedCategories = allCategories;
+        } else {
+            checkedCategories = categories;
+        }
+        if (checkedCategories == allCategories && Objects.equals(fromDate, "") && Objects.equals(toDate, "")) {
+            //MOSTRA TUTTI GLI EVENTI
+        } else if (checkedCategories == allCategories && !Objects.equals(fromDate, "") && !Objects.equals(toDate, "")) {
+            //MOSTRA EVENTI TUTTE CATEGORIE TRA DUE DATE
             eventsAndPlacesViewModel.getEventsBetweenDatesLiveData(fromDate, toDate).observe(getViewLifecycleOwner(), result -> {
                 showEvents(result, 1);
             });
-        } else if (!categories.isEmpty() && !Objects.equals(fromDate, "") && !Objects.equals(toDate, "")) {
+        } else if (checkedCategories != allCategories && !Objects.equals(fromDate, "") && !Objects.equals(toDate, "")) {
+            //MOSTRA EVENTI DI CERTE CATEGORIE TRA DUE DATE
             eventsAndPlacesViewModel.getCategoryEventsBetweenDatesLiveData(firstDate, endDate, categories).observe(getViewLifecycleOwner(), result -> {
                 showEvents(result, 2);
             });
-        } else if (!categories.isEmpty() && Objects.equals(fromDate, "") && Objects.equals(toDate, "")) {
+        } else if (checkedCategories != allCategories && Objects.equals(fromDate, "") && Objects.equals(toDate, "")) {
+            //MOSTRA TUTTI GLI EVENTI DI QUELLA CATEGORIA/E IN TUTTE LE DATE POSSIBILI
             eventsAndPlacesViewModel.getCategoriesEventsLiveData(categories).observe(getViewLifecycleOwner(), result -> {
                 showEvents(result, 3);
             });
@@ -358,18 +407,13 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
     private void showEvents(Result result, int typeOfQuery) {
         if (result.isSuccess()) {
-            Log.i("SUCCESSO", "SUCCESSO GET EVENTS");
 
             EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
             List<Events> fetchedEvents = eventsResponse.getEventsList();
-            for(Events e : fetchedEvents){
-                if(e.getCategory().equals("movies")){
-                    Log.i(TAG,"CIAO");
-                }
-            }
 
             if (!eventsAndPlacesViewModel.isLoading()) {
                 eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());
+                this.eventsList.clear();
                 this.eventsList.addAll(fetchedEvents);
                 if (!eventsList.isEmpty()) {
                     sortEvents(sortingParameter, eventsList);
@@ -412,73 +456,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
             fragmentAllEventsBinding.progressBar.setVisibility(View.GONE);
         }
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                boolean isConnected = isConnected();
 
-                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
-
-                    totalItemCount = layoutManager.getItemCount();
-                    lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-                    visibleItemCount = layoutManager.getChildCount();
-
-                    if (totalItemCount == visibleItemCount ||
-                            (totalItemCount <= (lastVisibleItem + threshold) &&
-                                    dy > 0 &&
-                                    !eventsAndPlacesViewModel.isLoading()
-                            ) &&
-                                    eventsAndPlacesViewModel.getEventsResponseLiveData().getValue() != null &&
-                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
-                    ) {
-                        MutableLiveData<Result> eventsListMutableLiveData;
-                        switch (typeOfQuery) {
-                            case 0:
-                                eventsListMutableLiveData = eventsAndPlacesViewModel.getEventsResponseLiveData();
-                                break;
-                            case 1:
-                                eventsListMutableLiveData = eventsAndPlacesViewModel.getEventsBetweenDatesLiveData(firstDate, endDate);
-                                break;
-                            case 2:
-                                eventsListMutableLiveData = eventsAndPlacesViewModel.getCategoryEventsBetweenDatesLiveData(firstDate, endDate, checkedCategories);
-                                break;
-                            case 3:
-                                eventsListMutableLiveData = eventsAndPlacesViewModel.getCategoriesEventsLiveData(checkedCategories);
-                                break;
-                            default:
-                                eventsListMutableLiveData = eventsAndPlacesViewModel.getEventsResponseLiveData();
-                        }
-
-                        if (eventsListMutableLiveData.getValue() != null &&
-                                eventsListMutableLiveData.getValue().isSuccess()) {
-
-                            eventsAndPlacesViewModel.setLoading(true);
-                            eventsList.add(null);
-                            eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
-                                    eventsList.size() + 1);
-
-                            int page = eventsAndPlacesViewModel.getPage() + 1;
-                            eventsAndPlacesViewModel.setPage(page);
-                            switch (typeOfQuery) {
-                                case 0:
-                                    eventsAndPlacesViewModel.fetchEvents(country, radius + "km@" + location, date, categories, sort, limit);
-                                    break;
-                                case 1:
-                                    eventsAndPlacesViewModel.getEventsBetweenDatesLiveData(firstDate, endDate);
-                                    break;
-                                case 2:
-                                    eventsAndPlacesViewModel.getCategoryEventsBetweenDatesLiveData(firstDate, endDate, checkedCategories);
-                                    break;
-                                case 3:
-                                    eventsAndPlacesViewModel.getCategoriesEventsLiveData(checkedCategories);
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-        });
     }
 
 

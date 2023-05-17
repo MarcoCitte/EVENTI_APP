@@ -20,6 +20,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private boolean isLoading;
     private boolean firstLoading;
     private MutableLiveData<Result> eventsListLiveData; //TUTTI GLI EVENTI
+    private MutableLiveData<Result> eventsFromSearchLiveData; //EVENTI PRESI DALLA SEARCH
     private MutableLiveData<Result> favoriteEventsListLiveData; //EVENTI FAVORITI
     private MutableLiveData<Result> categoryEventsLiveData; //EVENTI APPARTENENTI AD UNA CATEGORIA SPECIFICA
     private MutableLiveData<Result> categoriesEventsLiveData; //EVENTI APPARTENENTI A PIU CATEGORIE
@@ -29,11 +30,14 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<Result> placeEventsLiveData; //EVENTI CHE SI TENGONO IN UN LUOGO SPECIFICO
     private MutableLiveData<Result> singleEventLiveData; //EVENTO SINGOLO
     private MutableLiveData<List<String>> allCategoriesLiveData; //TUTTE LE CATEGORIE DI EVENTI
+    private MutableLiveData<List<String>> categoriesInADateLiveData; //TUTTE LE CATEGORIE DI EVENTI IN UNA DATA SPECIFICA
+
 
     //PLACES
     private MutableLiveData<List<Place>> placesListLiveData; //TUTTI I POSTI
     private MutableLiveData<List<Place>> favoritePlacesListLiveData; //POSTI PREFERITI
     private MutableLiveData<Place> singlePlaceLiveData; //POSTO SINGOLO
+    private MutableLiveData<List<Place>> placesFromSearchLiveData; //POSTI PRESI DALLA SEARCH
 
     public EventsAndPlacesViewModel(IRepositoryWithLiveData iRepositoryWithLiveData) {
         this.iRepositoryWithLiveData = iRepositoryWithLiveData;
@@ -70,6 +74,11 @@ public class EventsAndPlacesViewModel extends ViewModel {
         return favoritePlacesListLiveData;
     }
 
+    public MutableLiveData<Result> getEventsFromSearchLiveData(String input) {
+        eventsFromSearchLiveData = iRepositoryWithLiveData.getEventsFromSearch(input);
+        return eventsFromSearchLiveData;
+    }
+
 
     public MutableLiveData<Result> getCategoryEventsLiveData(String category) {
         categoryEventsLiveData = iRepositoryWithLiveData.getCategoryEvents(category);
@@ -77,30 +86,22 @@ public class EventsAndPlacesViewModel extends ViewModel {
     }
 
     public MutableLiveData<Result> getEventsInADateLiveData(String date) {
-        if (eventsInADateLiveData == null) {
-            eventsInADateLiveData = iRepositoryWithLiveData.getEventsInADate(date);
-        }
+        eventsInADateLiveData = iRepositoryWithLiveData.getEventsInADate(date);
         return eventsInADateLiveData;
     }
 
     public MutableLiveData<Result> getEventsBetweenDatesLiveData(String firstDate, String endDate) {
-        if (eventsBetweenDatesLiveData == null) {
-            eventsBetweenDatesLiveData = iRepositoryWithLiveData.getEventsBetweenDates(firstDate, endDate);
-        }
+        eventsBetweenDatesLiveData = iRepositoryWithLiveData.getEventsBetweenDates(firstDate, endDate);
         return eventsBetweenDatesLiveData;
     }
 
     public MutableLiveData<Result> getCategoryEventsBetweenDatesLiveData(String firstDate, String endDate, List<String> categories) {
-        if (categoryEventsBetweenDatesLiveData == null) {
-            categoryEventsBetweenDatesLiveData = iRepositoryWithLiveData.getCategoryEventsBetweenDates(firstDate, endDate, categories);
-        }
+        categoryEventsBetweenDatesLiveData = iRepositoryWithLiveData.getCategoryEventsBetweenDates(firstDate, endDate, categories);
         return categoryEventsBetweenDatesLiveData;
     }
 
     public MutableLiveData<Result> getCategoriesEventsLiveData(List<String> categories) {
-        if (categoriesEventsLiveData == null) {
-            categoriesEventsLiveData = iRepositoryWithLiveData.getCategoriesEvents(categories);
-        }
+        categoriesEventsLiveData = iRepositoryWithLiveData.getCategoriesEvents(categories);
         return categoriesEventsLiveData;
     }
 
@@ -119,6 +120,11 @@ public class EventsAndPlacesViewModel extends ViewModel {
     public MutableLiveData<Place> getSinglePlace(String id) {
         singlePlaceLiveData = iRepositoryWithLiveData.getSinglePlace(id);
         return singlePlaceLiveData;
+    }
+
+    public MutableLiveData<List<Place>> getPlacesFromSearchLiveData(String input) {
+        placesFromSearchLiveData = iRepositoryWithLiveData.getPlacesFromSearch(input);
+        return placesFromSearchLiveData;
     }
 
     public MutableLiveData<Place> getSinglePlaceByName(String name) {
@@ -147,12 +153,17 @@ public class EventsAndPlacesViewModel extends ViewModel {
         return allCategoriesLiveData;
     }
 
+    public MutableLiveData<List<String>> getCategoriesInADate(String date) {
+        categoriesInADateLiveData = iRepositoryWithLiveData.getCategoriesInADate(date);
+        return categoriesInADateLiveData;
+    }
+
 
     public void fetchEvents(String country, String location, String date, String categories, String sort, int limit) {
         iRepositoryWithLiveData.fetchEvents(country, location, date, categories, sort, limit);
     }
 
-    public void fetchEvents(String country, String location, String date,String categories, String sort, int limit, long lastUpdate) {
+    public void fetchEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
         eventsListLiveData = iRepositoryWithLiveData.fetchEvents(country, location, date, categories, sort, limit, lastUpdate);
     }
 
@@ -160,7 +171,9 @@ public class EventsAndPlacesViewModel extends ViewModel {
         placesListLiveData = iRepositoryWithLiveData.fetchPlaces();
     }
 
-    public void deletePlaces() {iRepositoryWithLiveData.deletePlaces();}
+    public void deletePlaces() {
+        iRepositoryWithLiveData.deletePlaces();
+    }
 
     public int getPage() {
         return page;

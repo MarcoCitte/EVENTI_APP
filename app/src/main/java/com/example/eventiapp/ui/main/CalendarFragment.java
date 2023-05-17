@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -196,7 +198,15 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
             if (date != null) {
                 String formattedDate = formatter.format(date);
                 bundle.putString("date", formattedDate);
-                Navigation.findNavController(requireView()).navigate(R.id.action_containerEventsPlacesCalendar_to_eventsInADateFragment, bundle);
+                //Navigation.findNavController(requireView()).navigate(R.id.action_containerEventsPlacesCalendar_to_eventsInADateFragment, bundle);
+
+                NavController navController = Navigation.findNavController(requireView());
+                NavDestination currentDestination = navController.getCurrentDestination();
+                if (currentDestination != null && currentDestination.getId() == R.id.containerEventsPlacesCalendar) {
+                    navController.navigate(R.id.action_containerEventsPlacesCalendar_to_eventsInADateFragment, bundle);
+                } else {
+                    navController.navigate(R.id.action_searchFragment_to_eventsInADateFragment, bundle);
+                }
             }
         }else{
             String message = "No events in this date";

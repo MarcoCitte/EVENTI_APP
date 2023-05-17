@@ -47,6 +47,7 @@ import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.example.eventiapp.util.ShareUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -425,7 +426,7 @@ public class EventFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-
+                        ShareUtils.shareEvent(requireContext(),events);
                     }
 
 

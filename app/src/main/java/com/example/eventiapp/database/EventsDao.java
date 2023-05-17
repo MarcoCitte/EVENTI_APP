@@ -44,13 +44,16 @@ public interface EventsDao {
     @Query("SELECT DISTINCT category FROM events")
     List<String> getAllCategories();
 
+    @Query("SELECT DISTINCT category FROM events WHERE startDate LIKE  '%' || :date || '%' ")
+    List<String> getCategoriesInADate(String date);
+
     @Query("SELECT * FROM events WHERE category IN (:categories) ORDER BY startDate ASC")
     List<Events> getCategoriesEvents(List<String> categories);
 
     @Query("SELECT * FROM events WHERE strftime('%Y-%m-%d', date(startDate)) BETWEEN strftime('%Y-%m-%d', date(:startDate)) AND strftime('%Y-%m-%d', date(:endDate)) ORDER BY startDate ASC")
     List<Events> getEventsBetweenDates(String startDate, String endDate);
 
-    @Query("SELECT * FROM events WHERE startDate BETWEEN :startDate AND :endDate AND category IN (:categories) ORDER BY startDate ASC")
+    @Query("SELECT * FROM events WHERE strftime('%Y-%m-%d', date(startDate)) BETWEEN strftime('%Y-%m-%d', date(:startDate)) AND strftime('%Y-%m-%d', date(:endDate)) AND category IN (:categories) ORDER BY startDate ASC")
     List<Events> getCategoryEventsBetweenDates(String startDate, String endDate, List<String> categories);
 
     @Query("SELECT startDate FROM events WHERE title = :name")
@@ -58,6 +61,11 @@ public interface EventsDao {
 
     @Query("SELECT hours FROM events WHERE title = :name")
     String[] getMoviesHours(String name);
+
+    //QUERY SEARCH
+    @Query("SELECT * FROM events WHERE title LIKE '%' || :input || '%' OR category LIKE '%' || :input || '%' ")
+    List<Events> getEventsFromSearch(String input);
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     List<Long> insertEventsList(List<Events> eventsList);
