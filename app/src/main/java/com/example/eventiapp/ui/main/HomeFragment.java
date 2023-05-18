@@ -211,7 +211,8 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-                        //SETTA EVENTO COME PREFERITO
+                        eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }
                 });
 
@@ -235,7 +236,8 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-
+                        eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }
                 });
 

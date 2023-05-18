@@ -14,6 +14,8 @@ import androidx.room.TypeConverters;
 
 import com.example.eventiapp.util.Converters;
 import com.example.eventiapp.util.StringUtils;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@IgnoreExtraProperties
 public class Events implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
@@ -39,6 +42,7 @@ public class Events implements Parcelable {
     private String title;
     private String description;
     private String category;
+    @Exclude
     private String[] labels;
     private int rank;
     @SerializedName("local_rank")
@@ -46,13 +50,16 @@ public class Events implements Parcelable {
     @SerializedName("phq_attendance")
     private int attendance;
     @SerializedName("entities") //LUOGO E INDIRIZZO EVENTO
+    @Exclude
     private List<Place> places;
     private int duration;
     @ColumnInfo(name = "startDate")
     private String start;
     private String end;
+    @Exclude
     private String[] hours;
     private String timezone;
+    @Exclude
     @SerializedName("location")
     private double[] coordinates; //COORDINATE
     private String country;
@@ -66,7 +73,6 @@ public class Events implements Parcelable {
 
     public Events() {
     }
-
 
     protected Events(Parcel in) {
         id_db = in.readLong();
@@ -141,7 +147,7 @@ public class Events implements Parcelable {
     public void setCategory(String category) {
         this.category = category;
     }
-
+    @Exclude
     public String[] getLabels() {
         return labels;
     }
@@ -174,6 +180,7 @@ public class Events implements Parcelable {
         this.attendance = attendance;
     }
 
+    @Exclude
     public List<Place> getPlaces() {
         return places;
     }
@@ -205,7 +212,7 @@ public class Events implements Parcelable {
     public void setEnd(String end) {
         this.end = end;
     }
-
+    @Exclude
     public String[] getHours() {
         return hours;
     }
@@ -221,7 +228,7 @@ public class Events implements Parcelable {
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }
-
+    @Exclude
     public double[] getCoordinates() {
         return coordinates;
     }
@@ -261,7 +268,7 @@ public class Events implements Parcelable {
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
     }
-
+    @Exclude
     public boolean isSynchronized() {
         return isSynchronized;
     }

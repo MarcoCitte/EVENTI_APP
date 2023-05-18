@@ -42,14 +42,14 @@ public class FavoriteEventsDataSource extends BaseFavoriteEventsDataSource{
                     else {
                         Log.d(TAG, "Successful read: " + task.getResult().getValue());
 
-                        List<Events> newsList = new ArrayList<>();
+                        List<Events> eventsList = new ArrayList<>();
                         for(DataSnapshot ds : task.getResult().getChildren()) {
-                            Events news = ds.getValue(Events.class);
-                            news.setSynchronized(true);
-                            newsList.add(news);
+                            Events events = ds.getValue(Events.class);
+                            events.setSynchronized(true);
+                            eventsList.add(events);
                         }
 
-                        eventsCallback.onSuccessFromCloudReading(newsList);
+                        eventsCallback.onSuccessFromCloudReading(eventsList);
                     }
                 });
     }

@@ -46,10 +46,10 @@ public class EventsListAdapter extends ArrayAdapter<Events> {
                     inflate(layout, parent, false);
         }
 
-        TextView textViewTitle = convertView.findViewById(R.id.titleTextView);
-        TextView textViewDate = convertView.findViewById(R.id.dateTextView);
-        TextView textViewCategory=convertView.findViewById(R.id.categoryTextView);
-        ImageView imageViewFavoriteEvent = convertView.findViewById(R.id.imageViewFavorite);
+        TextView textViewTitle = convertView.findViewById(R.id.textview_title);
+        TextView textViewDate = convertView.findViewById(R.id.textview_date);
+        //TextView textViewCategory=convertView.findViewById(R.id.categoryTextView);
+        ImageView imageViewFavoriteEvent = convertView.findViewById(R.id.imageview_favorite_news);
 
         imageViewFavoriteEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,9 +59,7 @@ public class EventsListAdapter extends ArrayAdapter<Events> {
         });
 
         textViewTitle.setText(eventsList.get(position).getTitle());
-        String fromTO="FROM: " + DateTimeUtil.getDate(eventsList.get(position).getStart()) + " \nTO: " + DateTimeUtil.getDate(eventsList.get(position).getStart());
-        textViewDate.setText(fromTO);
-        textViewCategory.setText(eventsList.get(position).getCategory());
+        //textViewDate.setText(DateTimeUtil.getDate(eventsList.get(position).getStart()));
 
         return convertView;
     }

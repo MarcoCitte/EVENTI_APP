@@ -372,7 +372,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
                 eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());
                 this.eventsList.addAll(fetchedEvents);
                 if (!eventsList.isEmpty()) {
-                    sortEvents(sortingParameter, eventsList);
+                    //sortEvents(sortingParameter, eventsList);
                 }
                 eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
                         this.eventsList.size());
