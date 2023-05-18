@@ -74,6 +74,10 @@ public class Events implements Parcelable {
     public Events() {
     }
 
+    public Events(List<Place> places) { //SERVE PER SALVARE I POSTI PROVENIENTI DA JSOUP
+        this.places = places;
+    }
+
     protected Events(Parcel in) {
         id_db = in.readLong();
         title = in.readString();

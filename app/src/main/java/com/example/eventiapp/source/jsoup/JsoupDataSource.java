@@ -45,7 +45,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
 
     @Override
     protected void onPostExecute(EventsApiResponse eventsApiResponse) {
-        BaseEventsRemoteDataSource.eventsCallback.onSuccessFromRemote(eventsApiResponse,System.currentTimeMillis());
+        BaseEventsRemoteDataSource.eventsCallback.onSuccessFromRemoteJsoup(eventsApiResponse);
     }
 
     private List<Events> eventsUciCinemas() {

@@ -6,19 +6,139 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.SearchFragment">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/search_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:padding="10sp"
-        android:text="Explore"
-        android:textSize="40sp" />
+        android:orientation="horizontal"
+        android:padding="16sp">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            style="@style/Widget.Material3.SearchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8sp"
+            android:layout_marginTop="8sp"
+            android:background="#fff"
+            android:elevation="4sp"
+            android:ems="10"
+            android:inputType="text"
+            app:iconifiedByDefault="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:focusable="true"
+            app:queryHint="Search events, places..." />
+
+    </LinearLayout>
+
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:id="@+id/linearLayoutEvents"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50sp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textViewEvents"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15sp"
+                        android:layout_weight="1"
+                        android:padding="16sp"
+                        android:text="Events"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="25sp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewEvents"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar_events"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linearLayoutEvents"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textViewPlaces"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5sp"
+                        android:layout_weight="1"
+                        android:padding="16sp"
+                        android:text="Places"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="25sp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewPlaces"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar_places"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck">
+        android:layout_below="@id/search_layout">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
@@ -40,25 +160,7 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tab_layout"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="150sp">
-
-        <com.google.android.material.search.SearchBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.google.android.material.search.SearchView
-            android:id="@+id/searchView"
-            android:hint="Search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="15sp"
-            android:visibility="gone" />
-
-    </RelativeLayout>
+        android:layout_below="@id/tab_layout" />
 
 
 </RelativeLayout>

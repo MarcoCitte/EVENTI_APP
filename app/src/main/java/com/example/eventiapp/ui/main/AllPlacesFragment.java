@@ -20,6 +20,8 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +35,7 @@ import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.example.eventiapp.util.ShareUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -139,12 +142,19 @@ public class AllPlacesFragment extends Fragment {
                         //VAI AI DETTAGLI DEL POSTO
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("place", place);
-                        Navigation.findNavController(view).navigate(R.id.action_containerEventsPlacesCalendar_to_placeFragment, bundle);
+                        //Navigation.findNavController(view).navigate(R.id.action_containerEventsPlacesCalendar_to_placeFragment, bundle);
+                        NavController navController = Navigation.findNavController(requireView());
+                        NavDestination currentDestination = navController.getCurrentDestination();
+                        if (currentDestination != null && currentDestination.getId() == R.id.containerEventsPlacesCalendar) {
+                            navController.navigate(R.id.action_containerEventsPlacesCalendar_to_placeFragment, bundle);
+                        } else {
+                            navController.navigate(R.id.action_searchFragment_to_placeFragment, bundle);
+                        }
                     }
 
                     @Override
                     public void onShareButtonPressed(Place place) {
-
+                        ShareUtils.sharePlace(requireContext(),place);
                     }
 
                     @Override

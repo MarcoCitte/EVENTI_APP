@@ -61,6 +61,15 @@
         <action
             android:id="@+id/action_searchFragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_placeFragment"
+            app:destination="@id/placeFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_eventsInADateFragment"
+            app:destination="@id/eventsInADateFragment" />
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"
@@ -140,5 +149,11 @@
         <action
             android:id="@+id/action_containerEventsPlacesCalendar_to_placeFragment"
             app:destination="@id/placeFragment" />
+        <action
+            android:id="@+id/action_containerEventsPlacesCalendar_to_allEventsFragment"
+            app:destination="@id/allEventsFragment" />
+        <action
+            android:id="@+id/action_containerEventsPlacesCalendar_self"
+            app:destination="@id/containerEventsPlacesCalendar" />
     </fragment>
 </navigation>

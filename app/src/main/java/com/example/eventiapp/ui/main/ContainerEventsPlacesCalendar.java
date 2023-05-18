@@ -15,6 +15,8 @@ import com.example.eventiapp.databinding.FragmentContainerEventsPlacesCalendarBi
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.Objects;
+
 public class ContainerEventsPlacesCalendar extends Fragment {
 
     FragmentContainerEventsPlacesCalendarBinding fragmentbinding;
@@ -39,12 +41,12 @@ public class ContainerEventsPlacesCalendar extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Bundle bundle=null;
-        String isPlace=null;
-        if(getArguments()!=null) {
-            String sort = getArguments().getString("sort");
+        boolean viewAllPlaces=false;
+        if(getArguments()!=null && (!Objects.equals(getArguments().getString("sort"), null))) {  //PROVIENE DA HOMEFRAGMENT PER ANDARE IN ALL EVENTS COL SORT
             bundle = new Bundle();
-            bundle.putString("sort", sort);
-            isPlace=getArguments().getString("place");
+            bundle.putString("sort", getArguments().getString("sort"));
+        }else if(getArguments()!=null && (!Objects.equals(getArguments().getString("place"), null))){ //PROVIENE DA HOMEFRAGMENT PER ANDARE IN ALL PLACES
+            viewAllPlaces=true;
         }
 
         tabLayout=fragmentbinding.tabLayout;
@@ -53,7 +55,7 @@ public class ContainerEventsPlacesCalendar extends Fragment {
         eventsAndPlacesPagerAdapter.setBundle(bundle);
         viewPager2.setAdapter(eventsAndPlacesPagerAdapter);
 
-        if(isPlace!=null){  //HA SCELTO SEE ALL VENUES
+        if(viewAllPlaces){  //HA SCELTO SEE ALL PLACES
           viewPager2.setCurrentItem(1); //IMPOSTA TAB ALL PLACES
         }
 

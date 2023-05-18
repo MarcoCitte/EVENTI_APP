@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 
 import java.util.List;
@@ -25,6 +26,10 @@ public interface PlaceDao {
 
     @Query("SELECT * FROM place WHERE is_favorite = 1 ORDER BY name ASC")
     List<Place> getFavoritePlaces();
+
+    //QUERY SEARCH
+    @Query("SELECT * FROM place WHERE name LIKE '%' || :input || '%' OR address LIKE '%' || :input || '%' ")
+    List<Place> getPlacesFromSearch(String input);
 
     @Query("SELECT COUNT(*) FROM place")
     int count();

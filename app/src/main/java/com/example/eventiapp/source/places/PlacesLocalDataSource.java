@@ -37,6 +37,14 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
         });
     }
 
+    @Override
+    public void getPlacesFromSearch(String input) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Place> placeList = new ArrayList<>(placeDao.getPlacesFromSearch(input));
+            placeCallback.onPlacesFromSearch(placeList);
+        });
+    }
+
 
     @Override
     public void getFavoritePlaces() {

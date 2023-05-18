@@ -38,11 +38,15 @@ public interface EventsCallback {
 
     void onAllCategories(List<String> categories);
 
+    void onCategoriesInADate(List<String> categories);
+
     void onCategoriesEvents(List<Events> events);
 
     void onEventsBetweenDates(List<Events> events);
 
     void onCategoryEventsBetweenDates(List<Events> events);
+
+    void onEventsFromSearch(List<Events>events);
 
     void onSuccessFromCloudReading(List<Events> eventsList);
 

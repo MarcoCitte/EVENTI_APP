@@ -88,6 +88,14 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     }
 
     @Override
+    public void getCategoriesInADate(String date) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<String> categories = eventsDao.getCategoriesInADate(date);
+            eventsCallback.onCategoriesInADate(categories);
+        });
+    }
+
+    @Override
     public void getCategoriesEvents(List<String> categories) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
             List<Events> events = eventsDao.getCategoriesEvents(categories);
@@ -124,6 +132,14 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
             String[] hours = eventsDao.getMoviesHours(name);
             eventsCallback.onMoviesHours(hours);
+        });
+    }
+
+    @Override
+    public void getEventsFromSearch(String input) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> events = eventsDao.getEventsFromSearch(input);
+            eventsCallback.onEventsFromSearch(events);
         });
     }
 

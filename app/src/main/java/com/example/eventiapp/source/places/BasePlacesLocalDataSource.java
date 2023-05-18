@@ -14,6 +14,8 @@ public abstract class BasePlacesLocalDataSource {
 
     public abstract void getPlaces();
 
+    public abstract void getPlacesFromSearch(String input);
+
     public abstract void getFavoritePlaces();
 
     public abstract void getSinglePlace(String id);

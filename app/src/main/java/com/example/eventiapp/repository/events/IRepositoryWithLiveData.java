@@ -26,6 +26,10 @@ public interface IRepositoryWithLiveData {
 
     MutableLiveData<List<String>> getAllCategories();
 
+    MutableLiveData<List<String>> getCategoriesInADate(String date);
+
+    MutableLiveData<Result> getEventsFromSearch(String input);
+
     MutableLiveData<Result> getCategoriesEvents(List<String> categories);
 
     MutableLiveData<Result> getEventsBetweenDates(String firstDate, String endDate);
@@ -41,6 +45,8 @@ public interface IRepositoryWithLiveData {
     MutableLiveData<List<Place>> getFavoritePlaces(boolean isFirstLoading);
 
     MutableLiveData<Place> getSinglePlace(String id);
+
+    MutableLiveData<List<Place>> getPlacesFromSearch(String input);
 
     MutableLiveData<Place> getSinglePlaceByName(String name);
 

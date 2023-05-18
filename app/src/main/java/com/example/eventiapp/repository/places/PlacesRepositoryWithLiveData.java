@@ -70,6 +70,11 @@ public class PlacesRepositoryWithLiveData implements IPlacesRepositoryWithLiveDa
         singlePlaceMutableLiveData.postValue(place);
     }
 
+    @Override
+    public void onPlacesFromSearch(List<Place> places) {
+
+    }
+
 
     @Override
     public void onPlacesFavoriteStatusChanged(Place place, List<Place> favoritePlaces) {

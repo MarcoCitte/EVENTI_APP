@@ -40,6 +40,7 @@ import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.example.eventiapp.util.ShareUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -191,7 +192,7 @@ public class MapsFragment extends Fragment {
                         LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(placeEventsList,
-                requireActivity().getApplication(),0,
+                requireActivity().getApplication(), 0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -209,7 +210,7 @@ public class MapsFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
                     @Override
@@ -275,8 +276,8 @@ public class MapsFragment extends Fragment {
         mapsImageView = view.findViewById(R.id.mapsImageView);
         callImageView = view.findViewById(R.id.callImageView);
         favoriteImageView = view.findViewById(R.id.favoriteImageView);
-        placeTextView= view.findViewById(R.id.placeTextView);
-        addressTextView=view.findViewById(R.id.addressTextView);
+        placeTextView = view.findViewById(R.id.placeTextView);
+        addressTextView = view.findViewById(R.id.addressTextView);
 
 
         mBottomSheetBehavior1.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {

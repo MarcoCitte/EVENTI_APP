@@ -46,6 +46,7 @@ import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.example.eventiapp.util.ShareUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -206,7 +207,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-
+                        ShareUtils.shareEvent(requireContext(),events);
                     }
 
                     @Override
@@ -231,7 +232,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-
+                        ShareUtils.shareEvent(requireContext(),events);
                     }
 
                     @Override
@@ -254,7 +255,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Place place) {
-
+                        ShareUtils.sharePlace(requireContext(),place);
                     }
 
                     @Override
