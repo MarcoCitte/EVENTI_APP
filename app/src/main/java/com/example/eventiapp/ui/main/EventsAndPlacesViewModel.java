@@ -3,6 +3,7 @@ package com.example.eventiapp.ui.main;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
@@ -62,9 +63,18 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public MutableLiveData<Result> getFavoriteEventsLiveData(boolean isFirstLoading) {
         if (favoriteEventsListLiveData == null) {
-            iRepositoryWithLiveData.getFavoriteEvents(isFirstLoading);
+            getFavoriteEvents(isFirstLoading);
         }
         return favoriteEventsListLiveData;
+    }
+
+    /**
+     * It uses the Repository to get the list of favorite news
+     * and to associate it with the LiveData object.
+     */
+    private void getFavoriteEvents(boolean firstLoading) {
+        favoriteEventsListLiveData = iRepositoryWithLiveData.getFavoriteEvents(firstLoading);
+
     }
 
     public MutableLiveData<List<Place>> getFavoritePlacesLiveData(boolean isFirstLoading) {
@@ -77,6 +87,14 @@ public class EventsAndPlacesViewModel extends ViewModel {
     public MutableLiveData<Result> getEventsFromSearchLiveData(String input) {
         eventsFromSearchLiveData = iRepositoryWithLiveData.getEventsFromSearch(input);
         return eventsFromSearchLiveData;
+    }
+
+    /**
+     * Updates the event status.
+     * @param event The news to be updated.
+     */
+    public void updateEvents(Events event) {
+        iRepositoryWithLiveData.updateEvents(event);
     }
 
 
@@ -223,5 +241,8 @@ public class EventsAndPlacesViewModel extends ViewModel {
         return placesListLiveData;
     }
 
+    public void removeFromFavorite(Events events) {
+        iRepositoryWithLiveData.updateEvents(events);
+    }
 
 }

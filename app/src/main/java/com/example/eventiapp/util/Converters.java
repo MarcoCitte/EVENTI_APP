@@ -40,30 +40,40 @@ public class Converters {
 
     @TypeConverter
     public static String JSONArrayfromDoubleArray(double[] values) {
-        JSONArray jsonArray = new JSONArray();
-        for (double value : values) {
-            try {
-                jsonArray.put(value);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        if(values != null){
+            JSONArray jsonArray = new JSONArray();
+            for (double value : values) {
+                try {
+                    jsonArray.put(value);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+            return jsonArray.toString();
+        }else{
+            return null;
         }
-        return jsonArray.toString();
+
+
     }
 
     @TypeConverter
     public static double[] JSONArrayToDoubleArray(String values) {
-        try {
-            JSONArray jsonArray = new JSONArray(values);
-            double[] doubleArray = new double[jsonArray.length()];
-            for (int i = 0; i < jsonArray.length(); i++) {
-                doubleArray[i] = Double.parseDouble(jsonArray.getString(i));
+        if(values != null) {
+            try {
+                JSONArray jsonArray = new JSONArray(values);
+                double[] doubleArray = new double[jsonArray.length()];
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    doubleArray[i] = Double.parseDouble(jsonArray.getString(i));
+                }
+                return doubleArray;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            return doubleArray;
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
+
         return null;
+
     }
 
     @TypeConverter

@@ -259,8 +259,8 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-                        //SETTA EVENTO COME PREFERITO
-                    }
+                        eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updateEvents(eventsList.get(position));                    }
                 });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
@@ -417,7 +417,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
                 this.eventsList.clear();
                 this.eventsList.addAll(fetchedEvents);
                 if (!eventsList.isEmpty()) {
-                    sortEvents(sortingParameter, eventsList);
+                    //sortEvents(sortingParameter, eventsList);
                 }
                 eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
                         this.eventsList.size());

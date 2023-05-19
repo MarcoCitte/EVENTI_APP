@@ -17,6 +17,7 @@ import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.source.events.BaseEventsLocalDataSource;
 import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
+import com.example.eventiapp.source.events.BaseFavoriteEventsDataSource;
 import com.example.eventiapp.source.events.EventsCallback;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
@@ -60,6 +61,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
     private final BaseEventsLocalDataSource eventsLocalDataSource;
     private final BasePlacesLocalDataSource placesLocalDataSource;
+
+    private final BaseFavoriteEventsDataSource backupDataSource;
+
     private final PlaceDetailsSource placeDetailsSource;
     private List<String> dates;
     private int count;
@@ -68,7 +72,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
 
     public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
-                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource) {
+                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource, BaseFavoriteEventsDataSource favoriteEventsDataSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         eventsFromSearchLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
@@ -94,6 +98,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         this.placesLocalDataSource = placesLocalDataSource;
         this.placesLocalDataSource.setPlacesCallback((PlaceCallback) this);
         this.placeDetailsSource = placeDetailsSource;
+        this.backupDataSource = favoriteEventsDataSource;
+        this.backupDataSource.setEventsCallback(this);
 
         lifecycleRegistry = new LifecycleRegistry(new LifecycleOwner() {
             @NonNull
@@ -128,7 +134,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public MutableLiveData<Result> getFavoriteEvents(boolean isFirstLoading) {
         if (isFirstLoading) {
-            //PRENDE I BACKUP
+            backupDataSource.getFavoriteEvents();
         } else {
             eventsLocalDataSource.getFavoriteEvents();
         }
@@ -249,9 +255,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void updateEvents(Events events) {
         eventsLocalDataSource.updateEvents(events);
         if (events.isFavorite()) {
-            //AGGIUNGI EVENTO COME PREFERITO
+            backupDataSource.addFavoriteEvents(events);
         } else {
-            //ELIMINA EVENTO COME PREFERITO
+            backupDataSource.deleteFavoriteEvents(events);
         }
     }
 
@@ -513,7 +519,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         }
 
         if (!notSynchronizedEventsList.isEmpty()) {
-            //BACKUP
+            backupDataSource.synchronizeFavoriteEvents(notSynchronizedEventsList);
         }
 
         favoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
@@ -540,7 +546,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             favoriteEventsMutableLiveData.postValue(result);
         }
 
-        //backupDataSource.deleteAllFavoriteNews();
+        backupDataSource.deleteAllFavoriteEvents();
     }
 
     @Override
@@ -595,7 +601,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             events.setSynchronized(false);
         }
         eventsLocalDataSource.updateEvents(events);
-        //backupDataSource.getFavoriteNews();
+        backupDataSource.getFavoriteEvents();
     }
 
     @Override
