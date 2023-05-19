@@ -15,7 +15,7 @@ import java.util.List;
 
 @Dao
 public interface PlaceDao {
-    @Query("SELECT * FROM place ORDER BY name ASC")
+    @Query("SELECT DISTINCT  * FROM place ORDER BY name ASC")
     List<Place> getAll();
 
     @Query("SELECT * FROM place WHERE id = :id")
@@ -24,14 +24,14 @@ public interface PlaceDao {
     @Query("SELECT * FROM place WHERE name = :name")
     Place getPlaceByName(String name);
 
-    @Query("SELECT * FROM place WHERE is_favorite = 1 ORDER BY name ASC")
+    @Query("SELECT DISTINCT * FROM place WHERE is_favorite = 1 ORDER BY name ASC")
     List<Place> getFavoritePlaces();
 
     //QUERY SEARCH
-    @Query("SELECT * FROM place WHERE name LIKE '%' || :input || '%' OR address LIKE '%' || :input || '%' ")
+    @Query("SELECT DISTINCT * FROM place WHERE name LIKE '%' || :input || '%' OR address LIKE '%' || :input || '%' ")
     List<Place> getPlacesFromSearch(String input);
 
-    @Query("SELECT COUNT(*) FROM place")
+    @Query("SELECT DISTINCT COUNT(*) FROM place")
     int count();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

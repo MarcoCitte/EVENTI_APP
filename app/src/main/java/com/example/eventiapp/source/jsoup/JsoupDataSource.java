@@ -10,6 +10,7 @@ import com.example.eventiapp.model.Place;
 import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
 import com.example.eventiapp.ui.main.AllEventsFragment;
 import com.example.eventiapp.util.DateUtils;
+import com.example.eventiapp.util.EventClassifier;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -39,6 +40,8 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
         List<Events> allEvents = new ArrayList<>();
         allEvents.addAll(eventsUciCinemas());
         allEvents.addAll(eventsPirelliHangar());
+        allEvents.addAll(eventsUnimib());
+        allEvents.addAll(eventsArcimboldi());
 
         return new EventsApiResponse(allEvents);
     }
@@ -154,28 +157,156 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 if (date1 != null) {
                     String formattedDate = formatter.format(date1);
-                    if (formattedDate.compareTo(DateUtils.currentDate()) >= 0) {
+                    if (formattedDate.compareTo(DateUtils.currentDate()) >= 0) { //METTE SOLO EVENTI NUOVI A PARTIRE DALLA DATA CORRENTE
                         event.setStart(formattedDate);
+                        event.setTimezone("Europe/Rome");
+                        Element titleElement = e.select("h2").first();
+                        event.setTitle(titleElement.text());
+                        List<Place> placeList = new ArrayList<>();
+                        double[] coordinates = {45.5203608, 9.2160497};
+                        event.setCoordinates(coordinates);
+                        Place place = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", coordinates);
+                        placeList.add(place);
+                        event.setPlaces(placeList);
+                        Log.i("PIRELLI EVENT: ", event.toString());
+                        events.add(event);
                     }
                 }
-                event.setTimezone("Europe/Rome");
-                Element titleElement = e.select("h2").first();
-                event.setTitle(titleElement.text());
-                List<Place> placeList = new ArrayList<>();
-                double[] coordinates = {45.5203608, 9.2160497};
-                event.setCoordinates(coordinates);
-                Place place = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", coordinates);
-                placeList.add(place);
-                event.setPlaces(placeList);
-                Log.i("PIRELLI EVENT: ", event.toString());
-                events.add(event);
-
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        return events;
+    }
+
+    private List<Events> eventsUnimib() {
+        List<Events> events = new ArrayList<>();
+        String baseUrl = "https://www.unimib.it/eventi"; // Inserisci l'URL di base del sito web degli eventi
+        String urlTemplate = baseUrl + "?page=%d";
+
+        int currentPage = 0;
+        boolean hasNextPage = true;
+        while (hasNextPage) {
+            String url = String.format(urlTemplate, currentPage);
+
+            try {
+                Document document = Jsoup.connect(url).get();
+                Elements eventElements = document.select(".anteprima--evento");
+
+                // Se non ci sono più elementi degli eventi, esci dal loop
+                if (eventElements.isEmpty()) {
+                    hasNextPage = false;
+                    continue;
+                }
+
+                for (Element e : eventElements) {
+                    Events event = new Events();
+
+                    String imageSrc = e.select("img").attr("src");
+                    String title = e.select(".views-field-title a").text();
+                    String dateRange = e.select(".views-field-field-data-evento").text();
+                    String description = e.select(".views-field-field-sottotitolo").text();
+
+                    String imageValue = "https://www.unimib.it" + imageSrc;
+                    event.setEventSource(new EventSource("https://www.unimib.it" + e.select(".views-field-title a").first().attr("href"), imageValue));
+                    String start = "";
+                    String end = "";
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    if (dateRange.contains("da")) { //INIZIO E FINE EVENTO
+                        String[] dates = dateRange.split(" a ");
+                        start = dates[0];
+                        end = dates[1];
+                        Date startDate = DateUtils.parseDate(start, "it");
+                        Date endDate = DateUtils.parseDate(end, "it");
+                        start = outputFormat.format(startDate);
+                        end = outputFormat.format(endDate);
+                    } else {
+                        Date startDate = DateUtils.parseDate(dateRange, "it");
+                        start = outputFormat.format(startDate);
+                        end = null;
+                    }
+                    event.setStart(start);
+                    event.setEnd(end);
+
+                    //TITLE
+                    event.setTitle(title);
+
+                    //DESCRIPTION
+                    event.setDescription(description);
+
+                    //CATEGORY
+                    EventClassifier eventClassifier = new EventClassifier();
+                    String category = eventClassifier.classifyEvent(title, description);
+                    event.setCategory(category);
+
+                    //PLACE
+                    List<Place> placeList = new ArrayList<>();
+                    double[] coordinates = {45.5182898, 9.2111811};
+                    event.setCoordinates(coordinates);
+                    Place place = new Place("unimib", "Università degli Studi di Milano Bicocca", "venue", "Piazza dell'Ateneo Nuovo, 1, 20126 Milano MI, Italy", coordinates);
+                    placeList.add(place);
+                    event.setPlaces(placeList);
+
+                    events.add(event);
+
+
+                }
+                currentPage++;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+        }
+        return events;
+    }
+
+    private List<Events> eventsArcimboldi() {
+        List<Events> events = new ArrayList<>();
+        try {
+            Document document = Jsoup.connect("https://www.teatroarcimboldi.it/all/").get();
+            Element newEvents = document.getElementById("tab-programmazione");
+            Elements eventItems = newEvents.select(".fat-event-item");
+            for (Element eventItem : eventItems) {
+                Events event = new Events();
+                String title = eventItem.select(".fat-event-title a").text();
+                String eventUrl = eventItem.select(".fat-event-tile a").attr("href");
+                String imageUrl = eventItem.select(".fat-event-thumb img").attr("src");
+                String description = eventItem.select(".riassunto").text();
+                String date = eventItem.select(".fe-date").text();
+
+                event.setTitle(title);
+                event.setEventSource(new EventSource(eventUrl, imageUrl));
+                event.setDescription(description);
+
+                SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date startDate = DateUtils.parseDate(date, "it");
+                String start = outputFormat.format(startDate);
+                event.setStart(start);
+
+                //CATEGORY
+                EventClassifier eventClassifier = new EventClassifier();
+                String category = eventClassifier.classifyEvent(title, description);
+                event.setCategory(category);
+
+                //PLACE
+                List<Place> placeList = new ArrayList<>();
+                double[] coordinates = {45.514842, 9.2109728};
+                event.setCoordinates(coordinates);
+                Place place = new Place("QskKAMb7unj4usbvwV4fqC", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", coordinates);
+                placeList.add(place);
+                event.setPlaces(placeList);
+
+                events.add(event);
+
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return events;
     }
 

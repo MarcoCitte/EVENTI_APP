@@ -17,28 +17,28 @@ import java.util.List;
 public interface EventsDao {
 
 
-    @Query("SELECT * FROM events ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events ORDER BY startDate ASC")
     List<Events> getAll();
 
-    @Query("SELECT * FROM events WHERE startDate >= :date ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events WHERE startDate >= :date ORDER BY startDate ASC")
     List<Events> getEventsFromADate(String date);
 
     @Query("SELECT * FROM events WHERE id_db = :id")
     Events getEvents(long id);
 
-    @Query("SELECT * FROM events WHERE is_favorite = 1 ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events WHERE is_favorite = 1 ORDER BY startDate ASC")
     List<Events> getFavoriteEvents();
 
-    @Query("SELECT * FROM events WHERE category LIKE '%' || :category || '%' ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events WHERE category LIKE '%' || :category || '%' ORDER BY startDate ASC")
     List<Events> getCategoryEvents(String category);
 
-    @Query("SELECT * FROM events WHERE places LIKE '%' || :id_place || '%' ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events WHERE places LIKE '%' || :id_place || '%' ORDER BY startDate ASC")
     List<Events> getPlaceEvents(String id_place);
 
-    @Query("SELECT * FROM events WHERE startDate LIKE  '%' || :date || '%' ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events WHERE startDate LIKE  '%' || :date || '%' ORDER BY startDate ASC")
     List<Events> getEventsInADate(String date);
 
-    @Query("SELECT COUNT(*) FROM events")
+    @Query("SELECT DISTINCT COUNT(*) FROM events")
     int count();
 
     @Query("SELECT DISTINCT category FROM events")
@@ -47,13 +47,13 @@ public interface EventsDao {
     @Query("SELECT DISTINCT category FROM events WHERE startDate LIKE  '%' || :date || '%' ")
     List<String> getCategoriesInADate(String date);
 
-    @Query("SELECT * FROM events WHERE category IN (:categories) ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events WHERE category IN (:categories) ORDER BY startDate ASC")
     List<Events> getCategoriesEvents(List<String> categories);
 
-    @Query("SELECT * FROM events WHERE strftime('%Y-%m-%d', date(startDate)) BETWEEN strftime('%Y-%m-%d', date(:startDate)) AND strftime('%Y-%m-%d', date(:endDate)) ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events WHERE strftime('%Y-%m-%d', date(startDate)) BETWEEN strftime('%Y-%m-%d', date(:startDate)) AND strftime('%Y-%m-%d', date(:endDate)) ORDER BY startDate ASC")
     List<Events> getEventsBetweenDates(String startDate, String endDate);
 
-    @Query("SELECT * FROM events WHERE strftime('%Y-%m-%d', date(startDate)) BETWEEN strftime('%Y-%m-%d', date(:startDate)) AND strftime('%Y-%m-%d', date(:endDate)) AND category IN (:categories) ORDER BY startDate ASC")
+    @Query("SELECT DISTINCT * FROM events WHERE strftime('%Y-%m-%d', date(startDate)) BETWEEN strftime('%Y-%m-%d', date(:startDate)) AND strftime('%Y-%m-%d', date(:endDate)) AND category IN (:categories) ORDER BY startDate ASC")
     List<Events> getCategoryEventsBetweenDates(String startDate, String endDate, List<String> categories);
 
     @Query("SELECT startDate FROM events WHERE title = :name")
@@ -63,7 +63,7 @@ public interface EventsDao {
     String[] getMoviesHours(String name);
 
     //QUERY SEARCH
-    @Query("SELECT * FROM events WHERE title LIKE '%' || :input || '%' OR category LIKE '%' || :input || '%' ")
+    @Query("SELECT DISTINCT * FROM events WHERE title LIKE '%' || :input || '%' OR category LIKE '%' || :input || '%' ")
     List<Events> getEventsFromSearch(String input);
 
 

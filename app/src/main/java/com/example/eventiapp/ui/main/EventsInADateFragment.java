@@ -39,9 +39,11 @@ import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.example.eventiapp.util.ShareUtils;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EventsInADateFragment extends Fragment {
@@ -60,6 +62,10 @@ public class EventsInADateFragment extends Fragment {
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     //private SharedPreferencesUtil sharedPreferencesUtil;
+
+    private String sortingParameter;
+    private int lastSelectedSortingParameter;
+    private String[] listItemsSort;
 
     private int totalItemCount; // Total number of events
     private int lastVisibleItem; // The position of the last visible event item
@@ -92,6 +98,7 @@ public class EventsInADateFragment extends Fragment {
         eventsList = new ArrayList<>();
         categoriesInADate = new ArrayList<>();
         checkedCategories = new ArrayList<>();
+        listItemsSort = requireContext().getResources().getStringArray(R.array.sorting_parameters);
     }
 
     @Override
@@ -158,6 +165,7 @@ public class EventsInADateFragment extends Fragment {
         //CATEGORIE DI EVENTI IN QUELLA DATA
         eventsAndPlacesViewModel.getCategoriesInADate(date).observe(getViewLifecycleOwner(), result -> {
             if (result != null) {
+                categoriesInADate.clear();
                 categoriesInADate = result;
                 setChips(categoriesInADate);
             }
@@ -165,6 +173,13 @@ public class EventsInADateFragment extends Fragment {
 
         eventsAndPlacesViewModel.getEventsInADateLiveData(date).observe(getViewLifecycleOwner(), result -> {
             showEvents(result);
+        });
+
+        fragmentEventsInADateBinding.sortingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSorting();
+            }
         });
 
 
@@ -190,6 +205,7 @@ public class EventsInADateFragment extends Fragment {
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
         params.setMarginEnd(16);
+        fragmentEventsInADateBinding.chipsLinearLayout.removeAllViews();
         for (int i = 0; i < categoriesOfthatDate.size(); i++) {
             Chip chip = new Chip(getContext());
             chip.setText(categoriesOfthatDate.get(i));
@@ -270,6 +286,36 @@ public class EventsInADateFragment extends Fragment {
         }
     }
 
+    public void showSorting() {
+        new MaterialAlertDialogBuilder(requireContext()).setTitle("ORDER BY")
+                .setSingleChoiceItems(listItemsSort, lastSelectedSortingParameter, (dialog, i) -> {
+                    sortingParameter = listItemsSort[i];
+                    lastSelectedSortingParameter = i;
+                    if (!eventsList.isEmpty()) {
+                        sortEvents(sortingParameter, eventsList);
+                    }
+                }).setNegativeButton(R.string.cancel_text, (dialogInterface, i) -> {
+                }).show();
+    }
+
+
+    public void sortEvents(String sortingParameter, List<Events> eventsList) {
+        switch (sortingParameter) {
+            case "Rank":
+            case "Più attesi":
+                Collections.sort(eventsList, new Events.SortByRank());
+                break;
+            case "Alphabet (A-Z)":
+            case "Alfabetico (A-Z)":
+                Collections.sort(eventsList, new Events.SortByAlphabetAZ());
+                break;
+            case "Alphabet (Z-A)":
+            case "Alfabetico (Z-A)":
+                Collections.sort(eventsList, new Events.SortByAlphabetZA());
+                break;
+        }
+        eventsRecyclerViewAdapter.notifyDataSetChanged();
+    }
 
     private boolean isConnected() {
         ConnectivityManager cm =

@@ -24,7 +24,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,7 +49,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -58,6 +57,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MapsFragment extends Fragment {
 
@@ -82,6 +82,7 @@ public class MapsFragment extends Fragment {
     private HorizontalScrollView scrollViewImagesPlace;
     private TextView placeTextView;
     private TextView addressTextView;
+    private TextView numberOfEvents;
 
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private RecyclerView recyclerView;
@@ -278,7 +279,7 @@ public class MapsFragment extends Fragment {
         favoriteImageView = view.findViewById(R.id.favoriteImageView);
         placeTextView = view.findViewById(R.id.placeTextView);
         addressTextView = view.findViewById(R.id.addressTextView);
-
+        numberOfEvents = view.findViewById(R.id.number_events_textView);
 
         mBottomSheetBehavior1.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -350,6 +351,7 @@ public class MapsFragment extends Fragment {
                     }
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, placeEventsList.size());
                 }
+                numberOfEvents.setText(String.valueOf(placeEventsList.size()));
             } else {
                 Log.i("FALLITO", "FALLITO");
 
@@ -359,45 +361,6 @@ public class MapsFragment extends Fragment {
                                 getErrorMessage(((Result.Error) result).getMessage()),
                         Snackbar.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.GONE);
-            }
-        });
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                boolean isConnected = isConnected();
-
-                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
-
-                    totalItemCount = layoutManager.getItemCount();
-                    lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-                    visibleItemCount = layoutManager.getChildCount();
-
-                    if (totalItemCount == visibleItemCount ||
-                            (totalItemCount <= (lastVisibleItem + threshold) &&
-                                    dy > 0 &&
-                                    !eventsAndPlacesViewModel.isLoading()
-                            ) &&
-                                    eventsAndPlacesViewModel.getPlaceEventsLiveData(id).getValue() != null &&
-                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
-                    ) {
-                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getPlaceEventsLiveData(id);
-
-                        if (eventsListMutableLiveData.getValue() != null &&
-                                eventsListMutableLiveData.getValue().isSuccess()) {
-
-                            eventsAndPlacesViewModel.setLoading(true);
-                            placeEventsList.add(null);
-                            eventsRecyclerViewAdapter.notifyItemRangeInserted(placeEventsList.size(),
-                                    placeEventsList.size() + 1);
-
-                            int page = eventsAndPlacesViewModel.getPage() + 1;
-                            eventsAndPlacesViewModel.setPage(page);
-                            eventsAndPlacesViewModel.getPlaceEventsLiveData(id);
-                        }
-                    }
-                }
             }
         });
     }
@@ -442,20 +405,31 @@ public class MapsFragment extends Fragment {
                     String idPlace = parts[1];
                     getEventsOfPlace(idPlace);
 
+
                     //SETTA FOTO LUOGO
 
                     eventsAndPlacesViewModel.getSinglePlace(idPlace).observe(getViewLifecycleOwner(), result -> {
                         if (result != null) {
-                            galleryPhotos.removeAllViews();
-                            PlaceDetailsSource.fetchPlacePhotos(result.getImages(), false, new PlaceDetailsSource.PlacePhotosListener() {
+                            List<PhotoMetadata> images = result.getImages();
+                            List<Bitmap> downloadedImages = new ArrayList<>();
+                            AtomicInteger counter = new AtomicInteger(0);
+
+                            PlaceDetailsSource.fetchPlacePhotos(images, false, new PlaceDetailsSource.PlacePhotosListener() {
                                 @Override
                                 public void onPlacePhotosListener(Bitmap bitmap) {
                                     scrollViewImagesPlace.setVisibility(View.VISIBLE);
                                     if (bitmap != null) {
-                                        View viewPlacePhoto = inflater.inflate(R.layout.item_place_photo_maps, galleryPhotos, false);
-                                        ImageView imagePlace = viewPlacePhoto.findViewById(R.id.imagePlace);
-                                        imagePlace.setImageBitmap(bitmap);
-                                        galleryPhotos.addView(viewPlacePhoto);
+                                        downloadedImages.add(bitmap);
+                                        int count = counter.incrementAndGet();
+                                        if (count == images.size()) {
+                                            galleryPhotos.removeAllViews();
+                                            for (Bitmap downloadedImage : downloadedImages) {
+                                                View viewPlacePhoto = inflater.inflate(R.layout.item_place_photo_maps, galleryPhotos, false);
+                                                ImageView imagePlace = viewPlacePhoto.findViewById(R.id.imagePlace);
+                                                imagePlace.setImageBitmap(downloadedImage);
+                                                galleryPhotos.addView(viewPlacePhoto);
+                                            }
+                                        }
                                     }
                                 }
 

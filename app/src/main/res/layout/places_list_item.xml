@@ -2,17 +2,16 @@
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card"
-    style="?attr/materialCardViewFilledStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8sp"
     android:checkable="true"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="@color/cardview_light_background"
-    app:cardElevation="5sp"
-    app:shapeAppearance="?attr/shapeAppearanceMediumComponent">
+    app:cardBackgroundColor="@color/colorBackground"
+    card_view:cardElevation="0sp">
 
 
     <LinearLayout
@@ -22,9 +21,9 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewPlace"
-            android:layout_width="130sp"
-            android:layout_height="130sp"
-            android:layout_gravity="center"
+            android:layout_width="110sp"
+            android:layout_height="110sp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginStart="5sp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_baseline_my_location_24" />
@@ -41,7 +40,7 @@
                 android:id="@+id/nameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10sp"
+                android:layout_marginTop="5sp"
                 android:text="Name"
                 android:lineSpacingExtra="-20sp"
                 android:textColor="@color/colorTextPrimary"
@@ -52,7 +51,6 @@
                 android:id="@+id/addressTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5sp"
                 android:text="Address"
                 android:lineSpacingExtra="-20sp"
                 android:textColor="@color/colorTextSecondary"
@@ -62,11 +60,10 @@
                 android:id="@+id/distanceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5sp"
                 android:text="Distance"
                 android:lineSpacingExtra="-20sp"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

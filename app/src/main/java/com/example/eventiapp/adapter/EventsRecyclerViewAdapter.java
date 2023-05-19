@@ -32,7 +32,7 @@ import java.util.Objects;
 
 public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private int typeOfView;
+    private final int typeOfView;
 
     public interface OnItemClickListener {
         void onEventsItemClick(Events events);
@@ -122,14 +122,16 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public class EventsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView textViewTitle;
-        private TextView textViewDate;
-        private TextView textViewCategory;
-        private TextView textViewPlace;
-        private ImageView imageViewEvent;
-        private ImageView imageViewFavoriteEvent;
-        private ImageView imageViewShare;
-        private ImageView imageViewExport;
+        private final TextView textViewTitle;
+        private final TextView textViewDate;
+        private final TextView textViewCategory;
+        private final TextView textViewPlace;
+        private final TextView textViewAttendance;
+        private final TextView textViewNumberAttendance;
+        private final ImageView imageViewEvent;
+        private final ImageView imageViewFavoriteEvent;
+        private final ImageView imageViewShare;
+        private final ImageView imageViewExport;
 
         public EventsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -137,6 +139,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewDate = itemView.findViewById(R.id.dateTextView);
             textViewCategory = itemView.findViewById(R.id.categoryTextView);
             textViewPlace = itemView.findViewById(R.id.placeTextView);
+            textViewAttendance = itemView.findViewById(R.id.attendanceTextView);
+            textViewNumberAttendance = itemView.findViewById(R.id.numberAttendanceTextView);
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
             imageViewFavoriteEvent = itemView.findViewById(R.id.imageViewFavorite);
             imageViewShare = itemView.findViewById(R.id.imageViewShare);
@@ -173,6 +177,12 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 textViewPlace.setText(events.getPlaces().get(0).getName());
             } else {
                 textViewPlace.setVisibility(View.GONE);
+            }
+            if (events.getAttendance() != 0) {
+                textViewNumberAttendance.setText(String.valueOf(events.getAttendance()));
+            } else {
+                textViewNumberAttendance.setVisibility(View.GONE);
+                textViewAttendance.setVisibility(View.GONE);
             }
             if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
                 Glide.with(itemView).load(events.getEventSource().getUrlPhoto()).into(imageViewEvent);
@@ -212,13 +222,15 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public class Events2ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView textViewTitle;
-        private TextView textViewCategory;
-        private TextView textViewPlace;
-        private TextView textViewDate;
-        private ImageView imageViewEvent;
-        private ImageView imageViewFavoriteEvent;
-        private ImageView imageViewShareEvent;
+        private final TextView textViewTitle;
+        private final TextView textViewCategory;
+        private final TextView textViewPlace;
+        private final TextView textViewDate;
+        private final TextView textViewAttendance;
+        private final TextView textViewNumberAttendance;
+        private final ImageView imageViewEvent;
+        private final ImageView imageViewFavoriteEvent;
+        private final ImageView imageViewShareEvent;
 
         public Events2ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -226,6 +238,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewDate = itemView.findViewById(R.id.dateTextView);
             textViewCategory = itemView.findViewById(R.id.categoryTextView);
             textViewPlace = itemView.findViewById(R.id.placeTextView);
+            textViewAttendance = itemView.findViewById(R.id.attendanceTextView);
+            textViewNumberAttendance = itemView.findViewById(R.id.numberAttendanceTextView);
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
             imageViewFavoriteEvent = itemView.findViewById(R.id.imageViewFavorite);
             imageViewShareEvent = itemView.findViewById(R.id.imageViewShare);
@@ -237,13 +251,13 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
             textViewCategory.setText(events.getCategory());
-            if(events.getStart()!=null) {
+            if (events.getStart() != null) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
                 SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
                 String formattedDate = outputFormat.format(date1);
                 textViewDate.setText(formattedDate);
-            }else{
+            } else {
                 textViewDate.setVisibility(View.GONE);
             }
 
@@ -251,6 +265,12 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 textViewPlace.setText(events.getPlaces().get(0).getName());
             } else {
                 textViewPlace.setVisibility(View.GONE);
+            }
+            if (events.getAttendance() != 0) {
+                textViewNumberAttendance.setText(String.valueOf(events.getAttendance()));
+            } else {
+                textViewNumberAttendance.setVisibility(View.GONE);
+                textViewAttendance.setVisibility(View.GONE);
             }
             if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
                 Glide.with(itemView).load(events.getEventSource().getUrlPhoto()).into(imageViewEvent);

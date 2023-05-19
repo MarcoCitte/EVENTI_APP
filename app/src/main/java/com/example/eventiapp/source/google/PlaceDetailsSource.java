@@ -83,7 +83,9 @@ public class PlaceDetailsSource {
     }
 
     public static void fetchPlacePhotos(List<PhotoMetadata> metadata, boolean onePhoto, PlacePhotosListener listener) {
-
+        if(true){
+            return; // PER NON FARE LA FETCH DELLE FOTO E RISPARMIARE IN DEBUG
+        }
         if (metadata == null || metadata.isEmpty()) {
             Log.w("TAG", "No photo metadata.");
             return;

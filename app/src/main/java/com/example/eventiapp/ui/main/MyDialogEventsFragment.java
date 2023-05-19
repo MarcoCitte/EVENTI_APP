@@ -27,6 +27,7 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -162,6 +163,14 @@ public class MyDialogEventsFragment extends DialogFragment implements View.OnCli
             }
         });
 
+        fragmentDialogBinding.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onFilterApply(Collections.emptyList(),"","");
+                dismiss();
+            }
+        });
+
     }
 
 
@@ -188,6 +197,8 @@ public class MyDialogEventsFragment extends DialogFragment implements View.OnCli
                     chip.setChecked(true);
                     chip.setChipBackgroundColorResource(R.color.colorBackground);
                 }
+            }else{
+                checkedCategories=new ArrayList<>();
             }
             chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override

@@ -1,5 +1,10 @@
 package com.example.eventiapp.util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
+import android.util.Base64;
+
 import androidx.room.TypeConverter;
 
 import com.example.eventiapp.adapter.PhotoMetadataJsonAdapter;
@@ -11,7 +16,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -110,6 +118,4 @@ public class Converters {
         EventSource json = gson.fromJson(value,EventSource.class);
         return json;
     }
-
-
 }

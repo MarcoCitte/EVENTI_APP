@@ -40,7 +40,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource{
                                    @NonNull Response<EventsApiResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
                     getEventsFromJsoup(); //RICHIAMA POI onSuccessFromRemoteJsoup
-                    eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
+                    //eventsCallback.onSuccessFromRemote(response.body(),System.currentTimeMillis());
                     Log.i("RESPONSE", String.valueOf(response.body().getCount()));
                 } else {
                     eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));

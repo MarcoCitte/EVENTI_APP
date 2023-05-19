@@ -293,6 +293,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
          */
 
+        /*
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
         Map<String, Events> map = new HashMap<String, Events>();
         for (Events e : fetchedEvents) {
@@ -358,21 +359,29 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                 }
             }
         });
+
+         */
     }
 
     @Override
     public void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse) {
-        // eventsLocalDataSource.insertEvents(eventsApiResponse);
+        eventsLocalDataSource.insertEvents(eventsApiResponse);
 
-        /*
+
         //PLACES
         Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
         Place pirelli = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", new double[]{45.5203608, 9.2160497});
+        Place unimib = new Place("unimib", "Università degli Studi di Milano Bicocca", "venue", "Piazza dell'Ateneo Nuovo, 1, 20126 Milano MI, Italy", new double[]{45.5182898, 9.2111811});
+        Place arcimboldi = new Place("QskKAMb7unj4usbvwV4fqC", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", new double[]{45.514842, 9.2109728});
+
         List<Place> placeList = new ArrayList<>();
         placeList.add(uci);
         placeList.add(pirelli);
+        placeList.add(unimib);
+        placeList.add(arcimboldi);
 
 
+        /*
         allPlacesMutableLiveData.observe(new LifecycleOwner() {
             @NonNull
             @Override
@@ -410,6 +419,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                 }
             }
         });
+
 
          */
 

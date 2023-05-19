@@ -88,8 +88,9 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
     double radius = 4.2;
     String sort = "start";
     String date = DateUtils.currentDate();
-    String categories = "conferences,expos,concerts,festivals,performing-arts,sports,community";
+    String categoriesString = "conferences,expos,concerts,festivals,performing-arts,sports,community";
     int limit = 5000;
+    String lastUpdate="0";
     List<String> checkedCategories;
     String firstDate, endDate;
 
@@ -264,8 +265,6 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
 
-        String lastUpdate = "0";
-
         fragmentAllEventsBinding.progressBar.setVisibility(View.VISIBLE);
 
         //eventsAndPlacesViewModel.deleteEvents(); //IN QUESTO MODO MI CARICA SEMPRE EVENTI NUOVI A PARTIRE DAL GIORNO CORRENTE
@@ -276,7 +275,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
             }
         });
 
-        eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categories, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categoriesString, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
             showEvents(result, 0);
         });
 
@@ -332,7 +331,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
             case "Più recente":
                 Collections.sort(eventsList, new Events.SortByMostRecent());
                 break;
-            case "Latest recent":
+            case "Latest date":
             case "Meno recente":
                 Collections.sort(eventsList, new Events.SortByLeastRecent());
                 break;
@@ -354,16 +353,18 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
     @Override
     public void onFilterApply(List<String> categories, String fromDate, String toDate) {
-        Log.i(TAG, "FILTRI");
         firstDate = fromDate;
         endDate = toDate;
         if (categories == null || categories.isEmpty()) {
-            checkedCategories = allCategories;
+            checkedCategories = Collections.emptyList();
         } else {
             checkedCategories = categories;
         }
-        if (checkedCategories == allCategories && Objects.equals(fromDate, "") && Objects.equals(toDate, "")) {
+        if (checkedCategories.isEmpty() && Objects.equals(fromDate, "") && Objects.equals(toDate, "")) {
             //MOSTRA TUTTI GLI EVENTI
+            eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categoriesString, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+                showEvents(result, 0);
+            });
         } else if (checkedCategories == allCategories && !Objects.equals(fromDate, "") && !Objects.equals(toDate, "")) {
             //MOSTRA EVENTI TUTTE CATEGORIE TRA DUE DATE
             eventsAndPlacesViewModel.getEventsBetweenDatesLiveData(fromDate, toDate).observe(getViewLifecycleOwner(), result -> {

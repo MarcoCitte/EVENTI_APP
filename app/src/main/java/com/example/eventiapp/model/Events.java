@@ -126,7 +126,7 @@ public class Events implements Parcelable {
     }
 
     public void setTitle(String title) {
-        this.title = StringUtils.capitalizeFirstLetter(title);
+        this.title = title;
     }
 
     public String getDescription() {
@@ -381,13 +381,13 @@ public class Events implements Parcelable {
 
     public static class SortByAlphabetAZ implements java.util.Comparator<Events> {
         public int compare(Events a, Events b) {
-            return a.getTitle().compareTo(b.getTitle());
+            return a.getTitle().compareToIgnoreCase(b.getTitle());
         }
     }
 
     public static class SortByAlphabetZA implements java.util.Comparator<Events> {
         public int compare(Events a, Events b) {
-            return -a.getTitle().compareTo(b.getTitle());
+            return -a.getTitle().compareToIgnoreCase(b.getTitle());
         }
     }
 

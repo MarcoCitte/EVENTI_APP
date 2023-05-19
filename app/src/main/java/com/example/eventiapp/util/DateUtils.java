@@ -9,6 +9,9 @@ import java.util.Locale;
 public class DateUtils {
     private static final String[] DATE_FORMATS = {
             "yyyy-MM-dd'T'HH:mm:ss'Z'",
+            "'da' dd MMMM yyyy 'a' dd MMMM yyyy",
+            "'da' dd MMMM yyyy",
+            "yyyy-MM-dd",
             "dd MMMM yyyy",
             "dd MMM yyyy",
             "dd MMMM",
