@@ -149,7 +149,7 @@ public class PlaceFragment extends Fragment {
         fragmentSinglePlaceBinding.imageViewShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShareUtils.sharePlace(requireContext(),place);
+                ShareUtils.sharePlace(requireContext(), place);
             }
         });
 
@@ -226,7 +226,7 @@ public class PlaceFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
-
+                        ShareUtils.addToCalendar(requireContext(), events);
                     }
 
                     @Override

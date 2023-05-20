@@ -171,28 +171,12 @@ public class SearchFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
-                        ContentValues event = new ContentValues();
-                        event.put(CalendarContract.Events.CALENDAR_ID, events.getId_db());
-                        event.put(CalendarContract.Events.TITLE, events.getTitle());
-                        if (events.getPlaces().get(0).getAddress() != null) {
-                            event.put(CalendarContract.Events.EVENT_LOCATION, events.getPlaces().get(0).getAddress());
-                        }
-                        event.put(CalendarContract.Events.DESCRIPTION, events.getDescription());
-                        if (events.getStart() != null) {
-                            event.put(CalendarContract.Events.DTSTART, events.getStart());
-                        }
-                        if (events.getEnd() != null) {
-                            event.put(CalendarContract.Events.DTEND, events.getEnd());
-                        }
-                        event.put(CalendarContract.Events.EVENT_TIMEZONE, events.getTimezone());
-
-                        // Inserisci l'evento nel calendario
-                        Uri uri = requireContext().getContentResolver().insert(CalendarContract.Events.CONTENT_URI, event);
+                        ShareUtils.addToCalendar(requireContext(), events);
                     }
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-                        ShareUtils.shareEvent(requireContext(),events);
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
                     @Override
@@ -217,7 +201,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onShareButtonPressed(Place place) {
-                ShareUtils.sharePlace(requireContext(),place);
+                ShareUtils.sharePlace(requireContext(), place);
 
             }
 
@@ -233,7 +217,7 @@ public class SearchFragment extends Fragment {
         fragmentSearchBinding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if(!query.equals("")) {
+                if (!query.equals("")) {
                     fragmentSearchBinding.tabLayout.setVisibility(View.GONE);
                     fragmentSearchBinding.viewPager.setVisibility(View.GONE);
                     fragmentSearchBinding.scrollView.setVisibility(View.VISIBLE);
@@ -245,7 +229,7 @@ public class SearchFragment extends Fragment {
                     eventsAndPlacesViewModel.getPlacesFromSearchLiveData(query).observe(getViewLifecycleOwner(), result -> {
                         showPlaces(result);
                     });
-                }else{
+                } else {
                     fragmentSearchBinding.scrollView.setVisibility(View.GONE);
                     fragmentSearchBinding.recyclerViewEvents.setVisibility(View.GONE);
                     fragmentSearchBinding.textViewEvents.setVisibility(View.GONE);
@@ -259,7 +243,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(!newText.equals("")) {
+                if (!newText.equals("")) {
                     fragmentSearchBinding.tabLayout.setVisibility(View.GONE);
                     fragmentSearchBinding.viewPager.setVisibility(View.GONE);
                     fragmentSearchBinding.scrollView.setVisibility(View.VISIBLE);
@@ -270,7 +254,7 @@ public class SearchFragment extends Fragment {
                     eventsAndPlacesViewModel.getPlacesFromSearchLiveData(newText).observe(getViewLifecycleOwner(), result -> {
                         showPlaces(result);
                     });
-                }else{
+                } else {
                     fragmentSearchBinding.scrollView.setVisibility(View.GONE);
                     fragmentSearchBinding.recyclerViewEvents.setVisibility(View.GONE);
                     fragmentSearchBinding.textViewEvents.setVisibility(View.GONE);
@@ -320,7 +304,7 @@ public class SearchFragment extends Fragment {
             if (eventsList.size() > 0) {
                 fragmentSearchBinding.textViewEvents.setVisibility(View.VISIBLE);
                 fragmentSearchBinding.recyclerViewEvents.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 fragmentSearchBinding.recyclerViewEvents.setVisibility(View.GONE);
                 fragmentSearchBinding.textViewEvents.setVisibility(View.GONE);
             }
@@ -381,7 +365,7 @@ public class SearchFragment extends Fragment {
             if (placesList.size() > 0) {
                 fragmentSearchBinding.textViewPlaces.setVisibility(View.VISIBLE);
                 fragmentSearchBinding.recyclerViewPlaces.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 fragmentSearchBinding.textViewPlaces.setVisibility(View.GONE);
                 fragmentSearchBinding.recyclerViewPlaces.setVisibility(View.GONE);
             }

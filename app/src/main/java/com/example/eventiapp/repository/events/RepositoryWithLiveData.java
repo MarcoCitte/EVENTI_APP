@@ -116,6 +116,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public MutableLiveData<Result> fetchEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
 
         long currentTime = System.currentTimeMillis();
+
+
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
             eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
         } else {
@@ -129,6 +131,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public void fetchEvents(String country, String location, String date, String categories, String sort, int limit) {
         eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
+        //eventsLocalDataSource.getEvents();
     }
 
     @Override

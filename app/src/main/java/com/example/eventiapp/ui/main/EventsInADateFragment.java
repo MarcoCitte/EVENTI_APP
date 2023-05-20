@@ -142,12 +142,12 @@ public class EventsInADateFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
-
+                        ShareUtils.addToCalendar(requireContext(), events);
                     }
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-                        ShareUtils.shareEvent(requireContext(),events);
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
                     @Override

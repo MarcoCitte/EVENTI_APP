@@ -6,6 +6,7 @@ import static com.example.eventiapp.util.Constants.REQUEST_CODE;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -90,7 +91,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
     String date = DateUtils.currentDate();
     String categoriesString = "conferences,expos,concerts,festivals,performing-arts,sports,community";
     int limit = 5000;
-    String lastUpdate="0";
+    String lastUpdate = "0";
     List<String> checkedCategories;
     String firstDate, endDate;
 
@@ -202,54 +203,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
                     @Override
                     public void onExportButtonPressed(Events events) {
-                        ContentValues event = new ContentValues();
-                        event.put(CalendarContract.Events.CALENDAR_ID, events.getId_db());
-                        event.put(CalendarContract.Events.TITLE, events.getTitle());
-                        if (events.getPlaces().get(0).getAddress() != null) {
-                            event.put(CalendarContract.Events.EVENT_LOCATION, events.getPlaces().get(0).getName() + " (" + events.getPlaces().get(0).getAddress() + ")");
-                        }
-                        event.put(CalendarContract.Events.DESCRIPTION, events.getDescription());
-                        if (events.getStart() != null) {
-                            Date startDate = DateUtils.parseDateToShow(events.getStart(), "EN");
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            String formattedDateString=dateFormat.format(startDate);
-                            Date formattedDate=null;
-                            try {
-                                formattedDate = dateFormat.parse(formattedDateString);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            long startTime = 0;
-                            if (formattedDate != null) {
-                                startTime = formattedDate.getTime();
-                            }
-                            event.put(CalendarContract.Events.DTSTART, startTime);
-                        }else{
-                            event.put(CalendarContract.Events.DTSTART, "UNKNOWN");
-                        }
-                        if (events.getEnd() != null) {
-                            Date endDate = DateUtils.parseDateToShow(events.getEnd(), "EN");
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            String formattedDateString=dateFormat.format(endDate);
-                            Date formattedDate=null;
-                            try {
-                                formattedDate = dateFormat.parse(formattedDateString);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            long endTime = 0;
-                            if (formattedDate != null) {
-                                endTime = formattedDate.getTime();
-                            }
-                            event.put(CalendarContract.Events.DTEND, endTime);
-                        }else{
-                            event.put(CalendarContract.Events.DURATION,String.valueOf(events.getDuration()));
-                        }
-
-                        event.put(CalendarContract.Events.EVENT_TIMEZONE, events.getTimezone());
-
-                        // Inserisci l'evento nel calendario
-                        Uri uri = requireContext().getContentResolver().insert(CalendarContract.Events.CONTENT_URI, event);
+                        ShareUtils.addToCalendar(requireContext(), events);
                     }
 
                     @Override
@@ -260,7 +214,8 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
                     @Override
                     public void onFavoriteButtonPressed(int position) {
                         eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
-                        eventsAndPlacesViewModel.updateEvents(eventsList.get(position));                    }
+                        eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
+                    }
                 });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);

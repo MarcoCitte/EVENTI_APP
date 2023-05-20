@@ -146,6 +146,27 @@ public class EventFragment extends Fragment {
 
         Events events = getArguments().getParcelable("event", Events.class);
 
+        fragmentEventBinding.imageViewShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShareUtils.shareEvent(requireContext(), events);
+            }
+        });
+
+        fragmentEventBinding.imageViewCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShareUtils.addToCalendar(requireContext(), events);
+            }
+        });
+
+        fragmentEventBinding.imageViewFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //SETTA COME PREFERITO
+            }
+        });
+
         if (!events.getPlaces().isEmpty() && events.getPlaces().get(0).getName() != null) {
             eventsAndPlacesViewModel.getSinglePlace(events.getPlaces().get(0).getId()).observe(getViewLifecycleOwner(), result -> {
                 if (result != null) {
@@ -241,7 +262,7 @@ public class EventFragment extends Fragment {
 
                     if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
                         googleMaps(new LatLng(result.getCoordinates()[0], result.getCoordinates()[1]), result.getName());
-                    }else{
+                    } else {
                         fragmentEventBinding.mapView.setVisibility(View.GONE);
                     }
 
@@ -323,7 +344,7 @@ public class EventFragment extends Fragment {
             //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
             if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
                 googleMaps(new LatLng(events.getCoordinates()[0], events.getCoordinates()[1]), null);
-            }else{
+            } else {
                 fragmentEventBinding.mapView.setVisibility(View.GONE);
             }
         }
@@ -421,12 +442,12 @@ public class EventFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
-
+                        ShareUtils.addToCalendar(requireContext(), events);
                     }
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-                        ShareUtils.shareEvent(requireContext(),events);
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
 

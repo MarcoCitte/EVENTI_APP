@@ -206,7 +206,7 @@ public class MapsFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
-
+                        ShareUtils.addToCalendar(requireContext(), events);
                     }
 
                     @Override

@@ -113,13 +113,14 @@ public class HomeFragment extends Fragment {
     }
 
 
-    public static AllEventsFragment newInstance() {
-        return new AllEventsFragment();
+    public static HomeFragment newInstance() {
+        return new HomeFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         IRepositoryWithLiveData eventsRepositoryWithLiveData =
                 ServiceLocator.getInstance().getRepository(
@@ -204,11 +205,12 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
+                        ShareUtils.addToCalendar(requireContext(), events);
                     }
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-                        ShareUtils.shareEvent(requireContext(),events);
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
                     @Override
@@ -228,12 +230,12 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onExportButtonPressed(Events events) {
-
+                        ShareUtils.addToCalendar(requireContext(), events);
                     }
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-                        ShareUtils.shareEvent(requireContext(),events);
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
                     @Override
@@ -256,12 +258,12 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Place place) {
-                        ShareUtils.sharePlace(requireContext(),place);
+                        ShareUtils.sharePlace(requireContext(), place);
                     }
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-
+                       //SETTA PLACE COME PREFERITO
                     }
                 });
 
@@ -288,7 +290,6 @@ public class HomeFragment extends Fragment {
         fragmentHomeBinding.progressBarEV.setVisibility(View.VISIBLE);
 
 
-
         eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categories, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
             showEvents(result, 0); //UPCOMING EVENTS E ORDER BY RANK
         });
@@ -312,27 +313,27 @@ public class HomeFragment extends Fragment {
         fragmentHomeBinding.textViewAllEventsUE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("sort","Earliest date");
-                Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_containerEventsPlacesCalendar,bundle);
+                Bundle bundle = new Bundle();
+                bundle.putString("sort", "Earliest date");
+                Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_containerEventsPlacesCalendar, bundle);
             }
         });
 
         fragmentHomeBinding.textViewAllEventsMA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("sort","Rank");
-                Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_containerEventsPlacesCalendar,bundle);
+                Bundle bundle = new Bundle();
+                bundle.putString("sort", "Rank");
+                Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_containerEventsPlacesCalendar, bundle);
             }
         });
 
         fragmentHomeBinding.textViewAllPlacesEV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("place","place");
-                Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_containerEventsPlacesCalendar,bundle);
+                Bundle bundle = new Bundle();
+                bundle.putString("place", "place");
+                Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_containerEventsPlacesCalendar, bundle);
             }
         });
 

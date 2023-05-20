@@ -42,7 +42,6 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
         allEvents.addAll(eventsPirelliHangar());
         allEvents.addAll(eventsUnimib());
         allEvents.addAll(eventsArcimboldi());
-
         return new EventsApiResponse(allEvents);
     }
 
@@ -229,6 +228,8 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                     }
                     event.setStart(start);
                     event.setEnd(end);
+                    event.setTimezone("Europe/Rome");
+
 
                     //TITLE
                     event.setTitle(title);
@@ -285,6 +286,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
                 Date startDate = DateUtils.parseDate(date, "it");
                 String start = outputFormat.format(startDate);
                 event.setStart(start);
+                event.setTimezone("Europe/Rome");
 
                 //CATEGORY
                 EventClassifier eventClassifier = new EventClassifier();
