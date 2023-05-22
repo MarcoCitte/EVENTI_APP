@@ -11,6 +11,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.example.eventiapp.source.foursquare.PlaceDetailsSource;
 import com.example.eventiapp.util.Converters;
 import com.example.eventiapp.util.StringUtils;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
@@ -41,6 +42,7 @@ public class Place implements Serializable, Parcelable {
     private boolean isFavorite;
     @ColumnInfo(name = "is_synchronized")
     private boolean isSynchronized;
+
 
     @Ignore
     public Place() {
@@ -236,5 +238,6 @@ public class Place implements Serializable, Parcelable {
             return -a.getName().compareTo(b.getName());
         }
     }
+
 }
 

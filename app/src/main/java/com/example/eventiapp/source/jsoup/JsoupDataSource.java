@@ -26,8 +26,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
+public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
 
+    private OnPostExecuteListener onPostExecuteListener;
+
+    public void setOnPostExecuteListener(OnPostExecuteListener listener) {
+        this.onPostExecuteListener = listener;
+    }
+
+    public interface OnPostExecuteListener {
+        void onPostExecuted(List<Events> eventsList);
+    }
 
     @Override
     protected void onPreExecute() {
@@ -35,19 +44,22 @@ public class JsoupDataSource extends AsyncTask<Void, Void, EventsApiResponse> {
     }
 
     @Override
-    protected EventsApiResponse doInBackground(Void... voids) {
+    protected List<Events> doInBackground(Void... voids) {
 
         List<Events> allEvents = new ArrayList<>();
         allEvents.addAll(eventsUciCinemas());
         allEvents.addAll(eventsPirelliHangar());
         allEvents.addAll(eventsUnimib());
         allEvents.addAll(eventsArcimboldi());
-        return new EventsApiResponse(allEvents);
+        return allEvents;
     }
 
     @Override
-    protected void onPostExecute(EventsApiResponse eventsApiResponse) {
-        BaseEventsRemoteDataSource.eventsCallback.onSuccessFromRemoteJsoup(eventsApiResponse);
+    protected void onPostExecute(List<Events> eventsList) {
+        if (onPostExecuteListener != null) {
+            onPostExecuteListener.onPostExecuted(eventsList);
+        }
+       // BaseEventsRemoteDataSource.eventsCallback.onSuccessFromRemoteJsoup(eventsApiResponse);
     }
 
     private List<Events> eventsUciCinemas() {

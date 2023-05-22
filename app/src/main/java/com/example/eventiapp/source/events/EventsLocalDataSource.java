@@ -188,7 +188,6 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
             if (eventsList != null) {
                 for (Events events : allEvents) {
-                    events.setTitle(events.getTitle());
                     if (eventsList.contains(events)) {
                         eventsList.set(eventsList.indexOf(events), events);
                     }
@@ -213,7 +212,6 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
                 List<Events> allEvents = eventsDao.getAll();
 
                 for (Events events : allEvents) {
-                    events.setTitle(events.getTitle());
                     if (eventsList.contains(events)) {
                         events.setSynchronized(true);
                         eventsList.set(eventsList.indexOf(events), events);

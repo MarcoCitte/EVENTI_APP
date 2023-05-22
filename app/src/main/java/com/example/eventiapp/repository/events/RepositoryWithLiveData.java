@@ -1,6 +1,5 @@
 package com.example.eventiapp.repository.events;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,7 +7,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
@@ -23,15 +21,11 @@ import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
 import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
-import com.example.eventiapp.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCallback, PlaceCallback {
 
@@ -115,8 +109,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public MutableLiveData<Result> fetchEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
 
-        long currentTime = System.currentTimeMillis();
 
+        /*
+        long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
             eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
@@ -124,14 +119,18 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             eventsLocalDataSource.getEvents();
         }
 
+         */
+
+        eventsLocalDataSource.getEvents();
+
         return allEventsMutableLiveData;
     }
 
 
     @Override
     public void fetchEvents(String country, String location, String date, String categories, String sort, int limit) {
-        eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
-        //eventsLocalDataSource.getEvents();
+        //eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
+        eventsLocalDataSource.getEvents();
     }
 
     @Override
@@ -302,7 +301,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
          */
 
-        /*
+ /*
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
         Map<String, Events> map = new HashMap<String, Events>();
         for (Events e : fetchedEvents) {
@@ -372,6 +371,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
          */
     }
 
+
     @Override
     public void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse) {
         eventsLocalDataSource.insertEvents(eventsApiResponse);
@@ -381,7 +381,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
         Place pirelli = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", new double[]{45.5203608, 9.2160497});
         Place unimib = new Place("unimib", "Università degli Studi di Milano Bicocca", "venue", "Piazza dell'Ateneo Nuovo, 1, 20126 Milano MI, Italy", new double[]{45.5182898, 9.2111811});
-        Place arcimboldi = new Place("QskKAMb7unj4usbvwV4fqC", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", new double[]{45.514842, 9.2109728});
+        Place arcimboldi = new Place("arcimboldi", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", new double[]{45.514842, 9.2109728});
 
         List<Place> placeList = new ArrayList<>();
         placeList.add(uci);
@@ -715,6 +715,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onSuccessDeletionP() {
 
     }
+
 
     //-----------------------------------------------------------------
 }

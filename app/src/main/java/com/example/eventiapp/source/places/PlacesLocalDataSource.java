@@ -8,8 +8,6 @@ import android.util.Log;
 
 import com.example.eventiapp.database.PlaceDao;
 import com.example.eventiapp.database.RoomDatabase;
-import com.example.eventiapp.model.Events;
-import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.util.DataEncryptionUtil;
 import com.example.eventiapp.util.SharedPreferencesUtil;
@@ -123,6 +121,7 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
             }
         });
     }
+
 
     @Override
     public void deleteAll() {

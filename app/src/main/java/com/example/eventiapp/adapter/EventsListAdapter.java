@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.util.DateTimeUtil;
 
 import java.util.List;
 
@@ -22,10 +21,6 @@ public class EventsListAdapter extends ArrayAdapter<Events> {
     private final int layout;
     private final OnFavoriteButtonClickListener onFavoriteButtonClickListener;
 
-    /**
-     * Interface to associate a listener to other elements defined in the layout
-     * chosen for the ListView item (e.g., a Button).
-     */
     public interface OnFavoriteButtonClickListener {
         void onFavoriteButtonClick(Events events);
     }
@@ -47,7 +42,7 @@ public class EventsListAdapter extends ArrayAdapter<Events> {
         }
 
         TextView textViewTitle = convertView.findViewById(R.id.textview_title);
-        TextView textViewDate = convertView.findViewById(R.id.textview_date);
+        //TextView textViewDate = convertView.findViewById(R.id.textview_date);
         //TextView textViewCategory=convertView.findViewById(R.id.categoryTextView);
         ImageView imageViewFavoriteEvent = convertView.findViewById(R.id.imageview_favorite_news);
 

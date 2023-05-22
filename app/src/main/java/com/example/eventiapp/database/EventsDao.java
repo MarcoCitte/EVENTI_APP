@@ -56,10 +56,10 @@ public interface EventsDao {
     @Query("SELECT DISTINCT * FROM events WHERE strftime('%Y-%m-%d', date(startDate)) BETWEEN strftime('%Y-%m-%d', date(:startDate)) AND strftime('%Y-%m-%d', date(:endDate)) AND category IN (:categories) ORDER BY startDate ASC")
     List<Events> getCategoryEventsBetweenDates(String startDate, String endDate, List<String> categories);
 
-    @Query("SELECT startDate FROM events WHERE title = :name")
+    @Query("SELECT DISTINCT startDate FROM events WHERE title = :name")
     List<String> getEventsDates(String name);
 
-    @Query("SELECT hours FROM events WHERE title = :name")
+    @Query("SELECT DISTINCT hours FROM events WHERE title = :name")
     String[] getMoviesHours(String name);
 
     //QUERY SEARCH

@@ -29,4 +29,5 @@ public interface EventsApiService {
             @Query(EVENTS_LIMIT) int limit,
             @Header(TOKEN_API) String authorization,
             @Header(CONTENT_TYPE) String contentType);
+
 }

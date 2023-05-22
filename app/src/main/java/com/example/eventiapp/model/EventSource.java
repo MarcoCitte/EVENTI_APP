@@ -1,5 +1,7 @@
 package com.example.eventiapp.model;
 
+import java.util.Objects;
+
 public class EventSource {
 
     private String url;
@@ -24,6 +26,20 @@ public class EventSource {
 
     public void setUrlPhoto(String urlPhoto) {
         this.urlPhoto = urlPhoto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventSource that = (EventSource) o;
+        return Objects.equals(url, that.url) &&
+                Objects.equals(urlPhoto, that.urlPhoto);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(url, urlPhoto);
     }
 
     @Override

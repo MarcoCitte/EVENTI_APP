@@ -22,12 +22,11 @@ public class EventsAndPlacesPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
-            case 0:
-                return AllEventsFragment.newInstance(bundle);
             case 1:
                 return AllPlacesFragment.newInstance(bundle);
             case 2:
                 return new CalendarFragment();
+            case 0:
             default:
                 return AllEventsFragment.newInstance(bundle);
         }

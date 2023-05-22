@@ -5,8 +5,8 @@ import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.LOADING_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.MAX_ITEMS;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.eventiapp.R;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.util.DateTimeUtil;
 import com.example.eventiapp.util.DateUtils;
-import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -78,7 +76,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = null;
+        View view;
 
         if (viewType == EVENTS_VIEW_TYPE) {
             view = LayoutInflater.from(parent.getContext()).
@@ -111,11 +109,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         if (eventsList != null && typeOfView == 0) { //EVENTS
             return eventsList.size();
         } else if (eventsList != null && typeOfView == 3) { //EVENTS2
-            if (eventsList.size() >= MAX_ITEMS) {
-                return MAX_ITEMS;
-            } else {
-                return eventsList.size();
-            }
+            return Math.min(eventsList.size(), MAX_ITEMS);
         }
         return 0;
     }
@@ -130,8 +124,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private final TextView textViewNumberAttendance;
         private final ImageView imageViewEvent;
         private final ImageView imageViewFavoriteEvent;
-        private final ImageView imageViewShare;
-        private final ImageView imageViewExport;
 
         public EventsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -143,8 +135,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewNumberAttendance = itemView.findViewById(R.id.numberAttendanceTextView);
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
             imageViewFavoriteEvent = itemView.findViewById(R.id.imageViewFavorite);
-            imageViewShare = itemView.findViewById(R.id.imageViewShare);
-            imageViewExport = itemView.findViewById(R.id.imageViewExport);
+            ImageView imageViewShare = itemView.findViewById(R.id.imageViewShare);
+            ImageView imageViewExport = itemView.findViewById(R.id.imageViewExport);
             itemView.setOnClickListener(this);
             imageViewShare.setOnClickListener(this);
             imageViewFavoriteEvent.setOnClickListener(this);
@@ -153,21 +145,21 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
-            //EVENTI UCI ED EVENTI PIRELLI HANGAR NON HANNO FINE DATA
+            //EVENTS UCI ED EVENTS PIRELLI HANGAR NON HANNO FINE DATA
             if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
                 String dateStart = events.getStart();
                 String dateEnd = events.getEnd();
                 Date date1 = DateUtils.parseDateToShow(dateStart, "EN");
                 Date date2 = DateUtils.parseDateToShow(dateEnd, "EN");
-                SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-                String formattedDate = outputFormat.format(date1) + " - " + outputFormat.format(date2);
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                String formattedDate = outputFormat.format(Objects.requireNonNull(date1)) + " - " + outputFormat.format(Objects.requireNonNull(date2));
                 textViewDate.setText(formattedDate);
                 textViewDate.setTextSize(13);
             } else if (events.getStart() != null) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
-                SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-                String formattedDate = outputFormat.format(date1);
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
                 textViewDate.setText(formattedDate);
             } else {
                 textViewDate.setVisibility(View.GONE);
@@ -230,7 +222,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private final TextView textViewNumberAttendance;
         private final ImageView imageViewEvent;
         private final ImageView imageViewFavoriteEvent;
-        private final ImageView imageViewShareEvent;
 
         public Events2ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -242,7 +233,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewNumberAttendance = itemView.findViewById(R.id.numberAttendanceTextView);
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
             imageViewFavoriteEvent = itemView.findViewById(R.id.imageViewFavorite);
-            imageViewShareEvent = itemView.findViewById(R.id.imageViewShare);
+            ImageView imageViewShareEvent = itemView.findViewById(R.id.imageViewShare);
             itemView.setOnClickListener(this);
             imageViewFavoriteEvent.setOnClickListener(this);
             imageViewShareEvent.setOnClickListener(this);
@@ -254,8 +245,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             if (events.getStart() != null) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
-                SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-                String formattedDate = outputFormat.format(date1);
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
                 textViewDate.setText(formattedDate);
             } else {
                 textViewDate.setVisibility(View.GONE);

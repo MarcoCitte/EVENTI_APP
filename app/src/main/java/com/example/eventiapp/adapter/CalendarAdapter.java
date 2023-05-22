@@ -1,5 +1,6 @@
 package com.example.eventiapp.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     }
 
 
-    public class CalendarViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class CalendarViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView dayOfMonth;
         public final TextView cellMonthText;
         public final TextView theresEvent;
@@ -70,7 +71,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         public void bind(List<Events> eventsList) {
             for(Events events : eventsList) {
                 if (dayOfMonth.getText() != "") {
-                    String day = String.format("%02d", Integer.parseInt(String.valueOf(dayOfMonth.getText())));
+                    @SuppressLint("DefaultLocale") String day = String.format("%02d", Integer.parseInt(String.valueOf(dayOfMonth.getText())));
                     String date = cellMonthText.getText() + "-" + day;
                     if (events.getStart()!=null && events.getStart().contains(date)) {
                         theresEvent.setVisibility(View.VISIBLE);

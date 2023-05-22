@@ -1,12 +1,11 @@
 package com.example.eventiapp.adapter;
 
-import static com.example.eventiapp.util.Constants.EVENTS2_VIEW_TYPE;
-import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.LOADING_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.MAX_ITEMS;
 import static com.example.eventiapp.util.Constants.PLACES2_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.PLACES_VIEW_TYPE;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -16,13 +15,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.eventiapp.R;
-import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
 
@@ -30,7 +26,7 @@ import java.util.List;
 
 public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private int typeOfView;
+    private final int typeOfView;
 
     public interface OnItemClickListener {
         void onPlacesItemClick(Place place);
@@ -75,7 +71,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = null;
+        View view;
 
         if (viewType == PLACES_VIEW_TYPE) {
             view = LayoutInflater.from(parent.getContext()).
@@ -108,23 +104,18 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         if (placeList != null && typeOfView == 2) { //EVENTS
             return placeList.size();
         } else if (placeList != null && typeOfView == 4) { //EVENTS2
-            if(placeList.size()>=MAX_ITEMS) {
-                return MAX_ITEMS;
-            }else{
-                return placeList.size();
-            }
+            return Math.min(placeList.size(), MAX_ITEMS);
         }
         return 0;
     }
 
     public class PlacesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView textViewName;
-        private TextView textViewAddress;
-        private TextView textViewDistance;
-        private ImageView imageViewPlace;
-        private ImageView imageViewFavorite;
-        private ImageView imageViewShare;
+        private final TextView textViewName;
+        private final TextView textViewAddress;
+        private final TextView textViewDistance;
+        private final ImageView imageViewPlace;
+        private final ImageView imageViewFavorite;
 
 
         public PlacesViewHolder(@NonNull View itemView) {
@@ -134,13 +125,14 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewAddress = itemView.findViewById(R.id.addressTextView);
             imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
             imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
-            imageViewShare = itemView.findViewById(R.id.imageViewShare);
+            ImageView imageViewShare = itemView.findViewById(R.id.imageViewShare);
 
             itemView.setOnClickListener(this);
             imageViewFavorite.setOnClickListener(this);
             imageViewShare.setOnClickListener(this);
         }
 
+        @SuppressLint("SetTextI18n")
         public void bind(Place places) {
             textViewName.setText(places.getName());
             textViewAddress.setText(places.getAddress());
@@ -192,12 +184,11 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public class Places2ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView textViewName;
-        private TextView textViewAddress;
-        private TextView textViewDistance;
-        private ImageView imageViewPlace;
-        private ImageView imageViewFavorite;
-        private ImageView imageViewShare;
+        private final TextView textViewName;
+        private final TextView textViewAddress;
+        private final TextView textViewDistance;
+        private final ImageView imageViewPlace;
+        private final ImageView imageViewFavorite;
 
         public Places2ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -206,7 +197,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewAddress = itemView.findViewById(R.id.addressTextView);
             imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
             imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
-            imageViewShare = itemView.findViewById(R.id.imageViewShare);
+            ImageView imageViewShare = itemView.findViewById(R.id.imageViewShare);
 
             itemView.setOnClickListener(this);
             imageViewFavorite.setOnClickListener(this);
@@ -214,6 +205,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         }
 
+        @SuppressLint("SetTextI18n")
         public void bind(Place places) {
             textViewName.setText(places.getName());
             textViewAddress.setText(places.getAddress());

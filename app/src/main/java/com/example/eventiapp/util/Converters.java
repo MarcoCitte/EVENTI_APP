@@ -2,6 +2,7 @@ package com.example.eventiapp.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.Build;
 import android.util.Base64;
 
@@ -128,4 +129,21 @@ public class Converters {
         EventSource json = gson.fromJson(value,EventSource.class);
         return json;
     }
+
+
+    //FOURSQUARE
+    @TypeConverter
+    public static String fromLocationToString(Location location){
+        Gson gson = new Gson();
+        String json = gson.toJson(location);
+        return json;
+    }
+
+    @TypeConverter
+    public static Location fromStringToLocation(String value){
+        Gson gson = new Gson();
+        Location json = gson.fromJson(value,Location.class);
+        return json;
+    }
+
 }
