@@ -1,9 +1,8 @@
 package com.example.eventiapp.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
-import com.google.gson.annotations.SerializedName;
+import androidx.annotation.NonNull;
 
 import java.util.List;
 
@@ -59,6 +58,7 @@ public class EventsApiResponse extends EventsResponse{
         this.previous = previous;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "EventsApiResponse{" +
@@ -76,7 +76,7 @@ public class EventsApiResponse extends EventsResponse{
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeInt(this.count);
         dest.writeByte(this.overflow ? (byte) 1 : (byte) 0);

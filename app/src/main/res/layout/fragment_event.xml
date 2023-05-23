@@ -288,6 +288,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10sp"
+            android:maxLines="3"
             android:lineSpacingExtra="-20sp"
             android:textSize="20sp"
             android:textColor="@color/colorTextPrimary"
@@ -306,12 +307,19 @@
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="-20sp"
                 android:paddingTop="16sp"
-                android:textColor="@color/colorTextPrimary"
+                android:textColor="@color/colorTextSecondary"
                 android:paddingBottom="8sp"
                 android:text="Similar events"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
+
+            <View
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="1sp"
+                android:visibility="gone"
+                android:background="@color/colorTextPrimary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_events"

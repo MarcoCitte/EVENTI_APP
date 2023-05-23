@@ -28,6 +28,9 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
     private final String apiKey;
 
     private Response<EventsApiResponse> eventsApiResponse;
+    private Response<EventsApiResponse> eventsApiResponse2;
+
+    private int count;
 
     public EventsRemoteDataSource(String apiKey) {
         this.eventsApiService = ServiceLocator.getInstance().getEventsApiService();
@@ -36,8 +39,9 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
 
     @Override
     public void getEvents(String country, String location, String date, String categories, String sort, int limit) {
-        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country,location,date, categories, sort,limit,
-                apiKey,CONTENT_TYPE_VALUE);
+        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country, location, date, categories, sort, limit,
+                apiKey, CONTENT_TYPE_VALUE);
+
         getEventsFromJsoup(); //RICHIAMA POI onSuccessFromRemoteJsoup
 
         eventsResponseCall.enqueue(new Callback<EventsApiResponse>() {
@@ -45,7 +49,34 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
             public void onResponse(@NonNull Call<EventsApiResponse> call,
                                    @NonNull Response<EventsApiResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
-                   eventsApiResponse=response;
+                    count = response.body().getCount();
+                    int limit2=count-50;
+                    eventsApiResponse = response;
+                    getEvents2(country,location,date,categories,"-start",limit2);
+                } else {
+                    eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<EventsApiResponse> call, @NonNull Throwable t) {
+                eventsCallback.onFailureFromRemote(new Exception(RETROFIT_ERROR));
+            }
+        });
+
+
+    }
+
+    public void getEvents2(String country, String location, String date, String categories, String sort, int limit) {
+        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country, location, date, categories, "-start", limit,
+                apiKey, CONTENT_TYPE_VALUE); //FACCIO DUE CHIAMATE PERCHE LE API DANNO SOLO 50 RISULTATI ALLA VOLTA MA SONO DI PIu
+
+        eventsResponseCall.enqueue(new Callback<EventsApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<EventsApiResponse> call,
+                                   @NonNull Response<EventsApiResponse> response) {
+                if (response.body() != null && response.isSuccessful()) {
+                    eventsApiResponse2 = response;
                 } else {
                     eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));
                 }
@@ -61,14 +92,17 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
 
     @Override
     public void getEventsFromJsoup() {
-       JsoupDataSource jsoupDataSource=new JsoupDataSource();
-       jsoupDataSource.setOnPostExecuteListener(this);
-       jsoupDataSource.execute();
+        JsoupDataSource jsoupDataSource = new JsoupDataSource();
+        jsoupDataSource.setOnPostExecuteListener(this);
+        jsoupDataSource.execute();
     }
 
     @Override
     public void onPostExecuted(List<Events> eventsList) {
         List<Events> updatedEventsList = new ArrayList<>(eventsApiResponse.body().getEventsList());
+        List<Events> updatedEventsList2 = new ArrayList<>(eventsApiResponse2.body().getEventsList());
+
+        updatedEventsList.addAll(updatedEventsList2);
         updatedEventsList.addAll(eventsList);
 
         EventsApiResponse updatedResponse = new EventsApiResponse(updatedEventsList);

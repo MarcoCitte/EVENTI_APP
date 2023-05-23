@@ -1,5 +1,7 @@
 package com.example.eventiapp.model;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class EventSource {
@@ -42,6 +44,7 @@ public class EventSource {
         return Objects.hash(url, urlPhoto);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "EventSource{" +

@@ -133,7 +133,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                 Place place = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", coordinates);
                 placeList.add(place);
                 event.setPlaces(placeList);
-                Log.i("UCI MOVIE: ", event.toString());
+                event.setPrivate(false);
                 events.add(event);
             }
 
@@ -179,7 +179,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                         Place place = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", coordinates);
                         placeList.add(place);
                         event.setPlaces(placeList);
-                        Log.i("PIRELLI EVENT: ", event.toString());
+                        event.setPrivate(false);
                         events.add(event);
                     }
                 }
@@ -262,6 +262,9 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                     placeList.add(place);
                     event.setPlaces(placeList);
 
+                    //PRIVATE
+                    event.setPrivate(false);
+
                     events.add(event);
 
 
@@ -309,9 +312,10 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                 List<Place> placeList = new ArrayList<>();
                 double[] coordinates = {45.514842, 9.2109728};
                 event.setCoordinates(coordinates);
-                Place place = new Place("QskKAMb7unj4usbvwV4fqC", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", coordinates);
+                Place place = new Place("arcimboldi", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", coordinates);
                 placeList.add(place);
                 event.setPlaces(placeList);
+                event.setPrivate(false);
 
                 events.add(event);
 

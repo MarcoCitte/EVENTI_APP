@@ -396,6 +396,7 @@ public class EventFragment extends Fragment {
 
                     if (fetchedEvents.size() > 0) {
                         fragmentEventBinding.categoryEventsTV.setVisibility(View.VISIBLE);
+                        fragmentEventBinding.line.setVisibility(View.VISIBLE);
                         fragmentEventBinding.recyclerviewEvents.setVisibility(View.VISIBLE);
                         if (!eventsAndPlacesViewModel.isLoading()) {
                             eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());

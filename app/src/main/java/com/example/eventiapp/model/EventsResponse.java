@@ -45,6 +45,7 @@ public class EventsResponse implements Parcelable {
         this.eventsList = eventsList;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "EventsResponse{" +

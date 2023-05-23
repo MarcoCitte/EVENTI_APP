@@ -143,22 +143,27 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             imageViewExport.setOnClickListener(this);
         }
 
+        @SuppressLint("SimpleDateFormat")
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
             //EVENTS UCI ED EVENTS PIRELLI HANGAR NON HANNO FINE DATA
+            SimpleDateFormat outputFormat;
+            if(events.getEventSource()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+                outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+            }else{
+                outputFormat = new SimpleDateFormat("dd MMM yyyy");
+            }
             if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
                 String dateStart = events.getStart();
                 String dateEnd = events.getEnd();
                 Date date1 = DateUtils.parseDateToShow(dateStart, "EN");
                 Date date2 = DateUtils.parseDateToShow(dateEnd, "EN");
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
                 String formattedDate = outputFormat.format(Objects.requireNonNull(date1)) + " - " + outputFormat.format(Objects.requireNonNull(date2));
                 textViewDate.setText(formattedDate);
                 textViewDate.setTextSize(13);
             } else if (events.getStart() != null) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
                 String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
                 textViewDate.setText(formattedDate);
             } else {
@@ -239,13 +244,19 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             imageViewShareEvent.setOnClickListener(this);
         }
 
+        @SuppressLint("SimpleDateFormat")
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
             textViewCategory.setText(events.getCategory());
+            SimpleDateFormat outputFormat;
+            if(events.getEventSource()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+                outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+            }else{
+                outputFormat = new SimpleDateFormat("dd MMM yyyy");
+            }
             if (events.getStart() != null) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
                 String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
                 textViewDate.setText(formattedDate);
             } else {

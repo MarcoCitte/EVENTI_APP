@@ -3,6 +3,8 @@ package com.example.eventiapp.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.Exclude;
 
 public class User implements Parcelable {
@@ -41,6 +43,7 @@ public class User implements Parcelable {
         this.idToken = idToken;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "User{" +
