@@ -3,6 +3,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -45,7 +46,8 @@
                 android:lineSpacingExtra="-20sp"
                 android:textColor="@color/colorTextPrimary"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
 
             <TextView
                 android:id="@+id/addressTextView"
@@ -54,13 +56,14 @@
                 android:text="Address"
                 android:lineSpacingExtra="-20sp"
                 android:textColor="@color/colorTextSecondary"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:ignore="HardcodedText" />
 
             <TextView
                 android:id="@+id/distanceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Distance"
+                android:text="@string/distance"
                 android:lineSpacingExtra="-20sp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="15sp" />

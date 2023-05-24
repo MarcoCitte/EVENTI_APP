@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_marginEnd="10sp"
-                    android:text="Attendance:"
+                    android:text="@string/attendance"
                     android:lineSpacingExtra="-20sp"
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="13sp" />

@@ -17,7 +17,7 @@
             android:layout_height="130sp"
             android:padding="16sp"
             android:textColor="@color/colorAccent"
-            android:text="Explore Bicocca events"
+            android:text="@string/explore_bicocca_events"
             android:lineSpacingExtra="-45sp"
             android:textSize="40sp"
             android:textStyle="bold" />
@@ -39,7 +39,7 @@
                     android:layout_weight="1"
                     android:padding="16sp"
                     android:textColor="@color/colorTextPrimary"
-                    android:text="Upcoming events"
+                    android:text="@string/upcoming_events"
                     android:textSize="25sp" />
 
                 <TextView
@@ -49,7 +49,7 @@
                     android:textSize="15sp"
                     android:layout_margin="16sp"
                     android:textColor="@color/colorTextSecondary"
-                    android:text="See all events >" />
+                    android:text="@string/see_all_events" />
 
             </LinearLayout>
 
@@ -86,7 +86,7 @@
                     android:layout_weight="1"
                     android:padding="16sp"
                     android:textColor="@color/colorTextPrimary"
-                    android:text="The most awaited"
+                    android:text="@string/the_most_awaited"
                     android:textSize="25sp" />
 
                 <TextView
@@ -96,7 +96,7 @@
                     android:textSize="15sp"
                     android:textColor="@color/colorTextSecondary"
                     android:layout_margin="16sp"
-                    android:text="See all events >" />
+                    android:text="@string/see_all_events" />
 
             </LinearLayout>
 
@@ -133,7 +133,7 @@
                     android:layout_weight="1"
                     android:padding="16sp"
                     android:textColor="@color/colorTextPrimary"
-                    android:text="Chosen for you"
+                    android:text="@string/chosen_for_you"
                     android:textSize="25sp" />
 
                 <TextView
@@ -143,7 +143,7 @@
                     android:textSize="15sp"
                     android:textColor="@color/colorTextSecondary"
                     android:layout_margin="16sp"
-                    android:text="See all events >" />
+                    android:text="@string/see_all_events" />
 
             </LinearLayout>
 
@@ -180,7 +180,7 @@
                     android:layout_weight="1"
                     android:padding="16sp"
                     android:textColor="@color/colorTextPrimary"
-                    android:text="Favorite Events"
+                    android:text="@string/favorite_events"
                     android:textSize="25sp" />
 
                 <TextView
@@ -190,7 +190,7 @@
                     android:textSize="15sp"
                     android:layout_margin="16sp"
                     android:textColor="@color/colorTextSecondary"
-                    android:text="See all events >" />
+                    android:text="@string/see_all_events" />
 
             </LinearLayout>
 
@@ -227,7 +227,7 @@
                     android:layout_weight="1"
                     android:padding="16sp"
                     android:textColor="@color/colorTextPrimary"
-                    android:text="Event venues"
+                    android:text="@string/places"
                     android:textSize="25sp" />
 
                 <TextView
@@ -237,7 +237,7 @@
                     android:id="@+id/textViewAllPlacesEV"
                     android:layout_margin="16sp"
                     android:textColor="@color/colorTextSecondary"
-                    android:text="See all venues >" />
+                    android:text="@string/see_all_venues" />
 
             </LinearLayout>
 

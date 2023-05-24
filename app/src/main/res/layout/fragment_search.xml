@@ -29,7 +29,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:focusable="true"
-            app:queryHint="Search events, places..." />
+            app:queryHint="@string/hintsearch" />
 
     </LinearLayout>
 
@@ -66,7 +66,7 @@
                         android:layout_marginTop="15sp"
                         android:layout_weight="1"
                         android:padding="16sp"
-                        android:text="Events"
+                        android:text="@string/events"
                         android:textColor="@color/colorTextPrimary"
                         android:textSize="25sp"
                         android:visibility="gone" />
@@ -108,7 +108,7 @@
                         android:layout_marginTop="5sp"
                         android:layout_weight="1"
                         android:padding="16sp"
-                        android:text="Places"
+                        android:text="@string/places"
                         android:textColor="@color/colorTextPrimary"
                         android:textSize="25sp"
                         android:visibility="gone" />
@@ -144,17 +144,17 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="All events" />
+            android:text="@string/all_events" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="All venues" />
+            android:text="@string/all_places" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Calendar" />
+            android:text="@string/calendar" />
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager2.widget.ViewPager2

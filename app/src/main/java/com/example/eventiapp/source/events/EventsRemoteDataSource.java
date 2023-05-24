@@ -50,9 +50,11 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
                                    @NonNull Response<EventsApiResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
                     count = response.body().getCount();
-                    int limit2=count-50;
+                    int limit2 = count - 50;
                     eventsApiResponse = response;
-                    getEvents2(country,location,date,categories,"-start",limit2);
+                    if (limit2 > 0) {
+                        getEvents2(country, location, date, categories, "-start", limit2);
+                    }
                 } else {
                     eventsCallback.onFailureFromRemote(new Exception(API_KEY_ERROR));
                 }
@@ -68,7 +70,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
     }
 
     public void getEvents2(String country, String location, String date, String categories, String sort, int limit) {
-        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country, location, date, categories, "-start", limit,
+        Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country, location, date, categories, sort, limit,
                 apiKey, CONTENT_TYPE_VALUE); //FACCIO DUE CHIAMATE PERCHE LE API DANNO SOLO 50 RISULTATI ALLA VOLTA MA SONO DI PIu
 
         eventsResponseCall.enqueue(new Callback<EventsApiResponse>() {

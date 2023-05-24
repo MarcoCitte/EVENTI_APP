@@ -65,7 +65,8 @@
                 android:paddingBottom="8dp"
                 android:text="Nome del luogo"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -86,7 +87,8 @@
                     android:layout_marginStart="30sp"
                     android:layout_marginTop="2sp"
                     android:text="Address"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText" />
 
             </LinearLayout>
 
@@ -99,7 +101,8 @@
                 android:layout_marginTop="2sp"
                 android:text="PHONE NUMBER"
                 android:textColor="@color/colorTextSecondary"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
 
 
             <com.google.android.gms.maps.MapView
@@ -121,7 +124,7 @@
                     android:paddingTop="16dp"
                     android:visibility="gone"
                     android:paddingBottom="8dp"
-                    android:text="Eventi presenti: "
+                    android:text="@string/present_events"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -135,7 +138,8 @@
                     android:text="10"
                     android:textStyle="bold"
                     android:textSize="16sp"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:ignore="HardcodedText" />
 
             </LinearLayout>
 

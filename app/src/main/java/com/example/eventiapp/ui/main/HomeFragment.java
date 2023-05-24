@@ -2,6 +2,8 @@ package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 import static com.example.eventiapp.util.Constants.REQUEST_CODE;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_LANGUAGE;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -45,8 +47,10 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
+import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.example.eventiapp.util.ShareUtils;
+import com.example.eventiapp.util.SharedPreferencesUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -88,7 +92,7 @@ public class HomeFragment extends Fragment {
     private LinearLayoutManager layoutManagerEV;
 
 
-    //private SharedPreferencesUtil sharedPreferencesUtil;
+    private SharedPreferencesUtil sharedPreferencesUtil;
 
     private int totalItemCount; // Total number of events
     private int lastVisibleItem; // The position of the last visible event item
@@ -121,6 +125,9 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        sharedPreferencesUtil=new SharedPreferencesUtil(requireActivity().getApplication());
+        String language = sharedPreferencesUtil.readStringData(SHARED_PREFERENCES_FILE_NAME, SHARED_PREFERENCES_LANGUAGE);
+        LanguageUtil.setAppLanguage(requireContext(), language);
 
         IRepositoryWithLiveData eventsRepositoryWithLiveData =
                 ServiceLocator.getInstance().getRepository(
@@ -152,7 +159,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EVENTI APP</string>
+    <string name="map">MAPPA</string>
+    <string name="myevents">I MIEI EVENTI</string>
+    <string name="search">CERCA</string>
+    <string name="content_description_fav_addition">Aggiungi l\'evento ai preferiti</string>
+    <string name="error_retrieving_events">Errore nello scarimento degli eventi</string>
+    <string name="api_key_error">Chiave API non valida</string>
+    <string name="unexpected_error">Errore inaspettato</string>
+    <string name="cancel_text">Cancella</string>
+    <string name="forgot_password">Hai dimenticato la password?</string>
+    <string name="google_login">Login con Google</string>
+    <string name="new_account">Nuovo su Eventi APP?</string>
+    <string name="register">Registrati</string>
+    <string name="error_email">Inserisci un valido indirizzo email</string>
+    <string name="error_password">La password deve contenere almeno 6 caretteri</string>
+    <string name="check_login_data_message">Controlla i dati inseriti</string>
+    <string name="error_login_user_message">Account non esistente</string>
+    <string name="error_login_password_message">La password è sbagliata</string>
+    <string name="error_user_collision_message">La email è già in uso</string>
+    <string name="error_no_google_account_found_message">Nessun account Google trovato</string>
+    <string name="delete">Cancella</string>
+    <string name="content_description_fav_delete">Rimuovi l\'evento dai preferiti</string>
+    <string name="explore_bicocca_events">Esplora gli eventi in Bicocca!</string>
+    <string name="upcoming_events">In arrivo</string>
+    <string name="see_all_events"><![CDATA[Tutti gli eventi >]]></string>
+    <string name="the_most_awaited">I più attesi</string>
+    <string name="chosen_for_you">Scelti per te</string>
+    <string name="favorite_events">Favoriti</string>
+    <string name="places">Punti di interesse</string>
+    <string name="see_all_venues"><![CDATA[Tutti i punti di interesse >]]></string>
+    <string name="attendance">Spettatori:</string>
+    <string name="favorite_events_account">Eventi favoriti:</string>
+    <string name="settings">Impostazioni</string>
+    <string name="change_username">Cambia username</string>
+    <string name="change_password">Cambia password</string>
+    <string name="change_language">Cambia lingua</string>
+    <string name="version">Versione</string>
+    <string name="number_of_events">Numero di eventi:</string>
+    <string name="back">INDIETRO</string>
+    <string name="forward">AVANTI</string>
+    <string name="sun">DOM</string>
+    <string name="mon">LUN</string>
+    <string name="tue">MAR</string>
+    <string name="wed">MER</string>
+    <string name="thur">GIO</string>
+    <string name="fri">VEN</string>
+    <string name="sat">SAB</string>
+    <string name="all_events">Tutti gli eventi</string>
+    <string name="all_places">Tutti i punti di interesse</string>
+    <string name="calendar">Calendario</string>
+    <string name="select_categories">Selezione le categorie</string>
+    <string name="select_a_date_range">Seleziona un range di date</string>
+    <string name="from">DA:</string>
+    <string name="to">A:</string>
+    <string name="apply">Applica</string>
+    <string name="dismiss">Chiudi</string>
+    <string name="delete_filters">Cancella filtri</string>
+    <string name="description">Descrizione</string>
+    <string name="for_more_information">Per maggiori informazioni:</string>
+    <string name="number_of_places">Numero di punti di interesse:</string>
+    <string name="send_email">Invia mail</string>
+    <string name="events">Eventi</string>
+    <string name="present_events">Eventi presenti</string>
+    <string name="similar_events">Eventi simili</string>
+    <string name="distance">Distanza</string>
+    <string name="hintsearch">Cerca eventi, punti di interesse…</string>
+    <string name="noeventsinthisdate">Non ci sono eventi in questa data</string>
+    <string name="movie_times">Orari film</string>
+
+
+    <string-array name="sorting_parameters">
+        <item>Più recente</item>
+        <item>Meno recente</item>
+        <item>Più attesi</item>
+        <item>Alfabetico (A-Z)</item>
+        <item>Alfabetico (Z-A)</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>IT</item>
+        <item>EN</item>
+    </string-array>
+
+    <string-array name="sorting_parameters_places">
+        <item>Alfabetico (A-Z)</item>
+        <item>Alfabetico (Z-A)</item>
+    </string-array>
+
+</resources>

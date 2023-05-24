@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -179,7 +180,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5sp"
                         android:lineSpacingExtra="-20sp"
-                        android:text="Description"
+                        android:text="@string/description"
                         android:textSize="17sp" />
 
 
@@ -199,7 +200,7 @@
                         android:lineSpacingExtra="-20sp"
                         android:linksClickable="true"
                         android:textColor="@color/colorTextPrimary"
-                        android:text="For more information: " />
+                        android:text="@string/for_more_information" />
 
 
                     <com.google.android.material.textview.MaterialTextView
@@ -254,7 +255,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:lineSpacingExtra="-20sp"
-                    android:text="Movie times"
+                    android:text="@string/movie_times"
                     android:visibility="gone" />
 
                 <HorizontalScrollView
@@ -292,7 +293,8 @@
             android:lineSpacingExtra="-20sp"
             android:textSize="20sp"
             android:textColor="@color/colorTextPrimary"
-            android:text="Address" />
+            android:text="Address"
+            tools:ignore="HardcodedText" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -309,7 +311,7 @@
                 android:paddingTop="16sp"
                 android:textColor="@color/colorTextSecondary"
                 android:paddingBottom="8sp"
-                android:text="Similar events"
+                android:text="@string/similar_events"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:visibility="gone" />

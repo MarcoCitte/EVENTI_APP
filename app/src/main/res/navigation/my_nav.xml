@@ -156,4 +156,9 @@
             android:id="@+id/action_containerEventsPlacesCalendar_self"
             app:destination="@id/containerEventsPlacesCalendar" />
     </fragment>
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.example.eventiapp.ui.user.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" />
 </navigation>

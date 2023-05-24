@@ -1,5 +1,6 @@
 package com.example.eventiapp.ui.main;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.DateUtils;
+import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -193,12 +195,11 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
             Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
             Bundle bundle = new Bundle();
             String dateString = dayText + " " + monthYearFromDate(selectedDate);
-            Date date = DateUtils.parseDate(dateString, "en");
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = DateUtils.parseDate(dateString, LanguageUtil.getLanguage());
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             if (date != null) {
                 String formattedDate = formatter.format(date);
                 bundle.putString("date", formattedDate);
-                //Navigation.findNavController(requireView()).navigate(R.id.action_containerEventsPlacesCalendar_to_eventsInADateFragment, bundle);
 
                 NavController navController = Navigation.findNavController(requireView());
                 NavDestination currentDestination = navController.getCurrentDestination();
@@ -209,7 +210,7 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
                 }
             }
         }else{
-            String message = "No events in this date";
+            String message = getString(R.string.noeventsinthisdate);
             Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
         }
     }

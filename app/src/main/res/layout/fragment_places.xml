@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16sp"
         android:textColor="@color/colorTextPrimary"
-        android:text="Number of places: "
+        android:text="@string/number_of_places"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,7 +23,8 @@
         android:text="0"
         android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
-        app:layout_constraintTop_toTopOf="@id/numberOfEvents0"/>
+        app:layout_constraintTop_toTopOf="@id/numberOfEvents0"
+        tools:ignore="HardcodedText" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/sortingButton"

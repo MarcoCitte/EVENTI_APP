@@ -116,7 +116,7 @@ public class MyDialogEventsFragment extends DialogFragment implements View.OnCli
                     public void onPositiveButtonClick(Pair<Long, Long> selection) {
                         Date start = new Date(selection.first);
                         Date end = new Date(selection.second);
-                        start = DateUtils.parseDate(String.valueOf(start), "US");
+                        start = DateUtils.parseDate(String.valueOf(start), "EN");
                         end = DateUtils.parseDate(String.valueOf(end), "EN");
                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                         if (start != null || end != null) {

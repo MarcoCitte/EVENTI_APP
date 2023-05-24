@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">EVENTI APP</string>
-    <string name="home">HOME</string>
+    <string name="app_name">EVENTS APP</string>
+    <string name="home" translatable="false">HOME</string>
     <string name="map">MAP</string>
-    <string name="events">MY EVENTS</string>
+    <string name="myevents">MY EVENTS</string>
     <string name="search">SEARCH</string>
-    <string name="account">ACCOUNT</string>
+    <string name="account" translatable="false">ACCOUNT</string>
 
 
-    <string name="content_description_fav_addition">Add the news to the favorite list</string>
+    <string name="content_description_fav_addition">Add the event to the favorite list</string>
 
     <string name="error_retrieving_events">Error in retrieving the events</string>
     <string name="api_key_error">API Key not valid or maximum number of requests reached</string>
@@ -23,20 +23,25 @@
         <item>Alphabet (Z-A)</item>
     </string-array>
 
+    <string-array name="languages">
+        <item>IT</item>
+        <item>EN</item>
+    </string-array>
+
     <string-array name="sorting_parameters_places">
         <item>Alphabet (A-Z)</item>
         <item>Alphabet (Z-A)</item>
     </string-array>
 
-    <string name="logo">Logo Application</string>
+    <string name="logo" translatable="false">Logo Application</string>
     <string name="login" translatable="false">Login</string>
     <string name="logout" translatable="false">Logout</string>
     <string name="email" translatable="false">E-mail</string>
     <string name="password" translatable="false">Password</string>
     <string name="forgot_password">Forgot password?</string>
-    <string name="txt_or">OR</string>
+    <string name="txt_or" translatable="false">OR</string>
     <string name="google_login">Login with Google</string>
-    <string name="new_account">New to World News?</string>
+    <string name="new_account">New to Events APP?</string>
     <string name="register">Register</string>
 
 
@@ -51,9 +56,56 @@
 
     <string name="delete">Delete</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="events_list_item_title">Title event</string>
-    <string name="events_list_item_date">12-05-2023 12:28 PM</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="events_list_item_title" translatable="false">Title event</string>
+    <string name="events_list_item_date" translatable="false">12-05-2023 12:28 PM</string>
     <string name="content_description_fav_delete">Remove the event from the favorite list</string>
+    <string name="explore_bicocca_events">Explore Bicocca events!</string>
+    <string name="upcoming_events">Upcoming events</string>
+    <string name="see_all_events"><![CDATA[See all events >]]></string>
+    <string name="the_most_awaited">The most awaited</string>
+    <string name="chosen_for_you">Chosen for you</string>
+    <string name="favorite_events">Favorite Events</string>
+    <string name="places">Places</string>
+    <string name="see_all_venues"><![CDATA[See all places >]]></string>
+    <string name="attendance">Attendance:</string>
+    <string name="favorite_events_account">Favorite events:</string>
+    <string name="settings">Settings</string>
+    <string name="change_username">Change username</string>
+    <string name="change_password">Change password</string>
+    <string name="change_language">Change language</string>
+    <string name="info" translatable="false">Info</string>
+    <string name="version">Version</string>
+    <string name="number_of_events">Number of events:</string>
+    <string name="back">BACK</string>
+    <string name="forward">FORWARD</string>
+    <string name="sun">SUN</string>
+    <string name="mon">MON</string>
+    <string name="tue">TUE</string>
+    <string name="wed">WED</string>
+    <string name="thur">THUR</string>
+    <string name="fri">FRI</string>
+    <string name="sat">SAT</string>
+    <string name="all_events">All events</string>
+    <string name="all_places">All places</string>
+    <string name="calendar">Calendar</string>
+    <string name="select_categories">Select categories</string>
+    <string name="select_a_date_range">Select a date range</string>
+    <string name="from">FROM:</string>
+    <string name="to">TO:</string>
+    <string name="apply">Apply</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="delete_filters">Delete filters</string>
+    <string name="description">Description</string>
+    <string name="for_more_information">For more information:</string>
+    <string name="number_of_places">Number of places:</string>
+    <string name="send_email">Send Email</string>
+    <string name="events">Events</string>
+    <string name="present_events">Present events</string>
+    <string name="similar_events">Similar events</string>
+    <string name="distance">Distance</string>
+    <string name="hintsearch">Search events, places…</string>
+    <string name="noeventsinthisdate">No events in this date</string>
+    <string name="movie_times">Movie times</string>
 
 </resources>

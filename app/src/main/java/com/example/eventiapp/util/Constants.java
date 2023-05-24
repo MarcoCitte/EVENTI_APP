@@ -56,6 +56,8 @@ public class Constants {
 
     //SHARED PREFERENCES
     public static final String SHARED_PREFERENCES_FILE_NAME = "preferences";
+    public static final String SHARED_PREFERENCES_FIRST_LOADING = "first_loading";
+    public static final String SHARED_PREFERENCES_LANGUAGE="IT";
 
     // Constants for EncryptedSharedPreferences
     public static final String ENCRYPTED_SHARED_PREFERENCES_FILE_NAME = "encrypted_preferences";
@@ -71,10 +73,6 @@ public class Constants {
     public static final int EVENTS2_VIEW_TYPE = 3;
     public static final int PLACES2_VIEW_TYPE = 4;
 
-
-
-    // Constants for SharedPreferences
-    public static final String SHARED_PREFERENCES_FIRST_LOADING = "first_loading";
 
     // Constants for EncryptedSharedPreferences
     public static final String EMAIL_ADDRESS = "email_address";

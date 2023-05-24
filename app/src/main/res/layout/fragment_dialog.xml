@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:text="Select categories" />
+        android:text="@string/select_categories" />
 
 
     <HorizontalScrollView
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10sp"
-        android:text="Select a date range" />
+        android:text="@string/select_a_date_range" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
             android:id="@+id/fromTV0"
             android:visibility="gone"
             android:textSize="20sp"
-            android:text="FROM: "/>
+            android:text="@string/from"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -59,11 +59,10 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10sp"
             android:visibility="gone"
             android:textSize="20sp"
             android:id="@+id/toTV0"
-            android:text="TO: " />
+            android:text="@string/to" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -89,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30sp"
-            android:text="Apply"
+            android:text="@string/apply"
             />
 
         <com.google.android.material.button.MaterialButton
@@ -97,16 +96,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30sp"
-            android:layout_marginLeft="15sp"
-            android:text="Dismiss" />
+            android:layout_marginStart="15sp"
+            android:text="@string/dismiss" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30sp"
-            android:layout_marginLeft="15sp"
-            android:text="Delete filters"
+            android:layout_marginStart="15sp"
+            android:text="@string/delete_filters"
             />
 
     </LinearLayout>
