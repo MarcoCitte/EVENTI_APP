@@ -127,7 +127,7 @@ public class HomeFragment extends Fragment {
 
         sharedPreferencesUtil=new SharedPreferencesUtil(requireActivity().getApplication());
         String language = sharedPreferencesUtil.readStringData(SHARED_PREFERENCES_FILE_NAME, SHARED_PREFERENCES_LANGUAGE);
-        LanguageUtil.setAppLanguage(requireContext(), language);
+        //LanguageUtil.setAppLanguage(requireContext(), language);
 
         IRepositoryWithLiveData eventsRepositoryWithLiveData =
                 ServiceLocator.getInstance().getRepository(
@@ -221,6 +221,7 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
+                        Log.e("TAG", "deleteOK: " + eventsList.get(position).hashCode());
                         eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
                         eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }

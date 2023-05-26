@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -133,6 +134,7 @@ public class MyEventsFragment extends Fragment {
         eventsListAdapter =
                 new EventsListAdapter(requireContext(), R.layout.favorite_events_list_item, eventsList,
                         events -> {
+                            Log.e("TAG", "deleteFE2: " + events.hashCode());
                             events.setFavorite(false);
                             eventsAndPlacesViewModel.removeFromFavorite(events);
                         });
@@ -176,15 +178,14 @@ public class MyEventsFragment extends Fragment {
             }
         });
 
-        /*
+
         listViewFavEvents.setOnItemClickListener((parent, view1, position, id) -> {
-            FavoriteEventsFragmentDirections.ActionFavoriteNewsFragmentToNewsDetailFragment action =
-                    FavoriteEventsFragmentDirections.
-                            actionFavoriteNewsFragmentToNewsDetailFragment(eventsList.get(position));
-            Navigation.findNavController(view).navigate(action);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("event", eventsList.get(position));
+            Navigation.findNavController(view).navigate(R.id.action_myEventsFragment_to_eventFragment, bundle);
         });
 
-         */
+
 
 
     }

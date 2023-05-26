@@ -287,7 +287,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
         eventsLocalDataSource.insertEvents(eventsApiResponse);
         //PLACES
-        List<Events> fetchedEvents = eventsApiResponse.getEventsList();
+        //List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
         /*
         Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
@@ -593,6 +593,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             for (Events events : eventsList) {
                 events.setSynchronized(true);
             }
+            Log.e("TAG", "onsucce4");
             eventsLocalDataSource.insertEvents(eventsList);
             favoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
         }
@@ -603,6 +604,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         if (events != null && !events.isFavorite()) {
             events.setSynchronized(false);
         }
+        Log.e("TAG", "onsucc");
+
         eventsLocalDataSource.updateEvents(events);
         backupDataSource.getFavoriteEvents();
     }

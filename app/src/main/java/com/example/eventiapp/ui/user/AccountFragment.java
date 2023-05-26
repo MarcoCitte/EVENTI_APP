@@ -63,7 +63,7 @@ public class AccountFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedLanguage = parent.getItemAtPosition(position).toString();
                 sharedPreferencesUtil.writeStringData(Constants.SHARED_PREFERENCES_FILE_NAME, Constants.SHARED_PREFERENCES_LANGUAGE, selectedLanguage);
-                LanguageUtil.setAppLanguage(requireContext(), selectedLanguage);
+                //LanguageUtil.setAppLanguage(requireContext(), selectedLanguage);
             }
 
             @Override

@@ -87,6 +87,7 @@ public class Events implements Parcelable {
         isSynchronized = in.readByte() != 0;
     }
 
+
     public static final Creator<Events> CREATOR = new Creator<Events>() {
         @Override
         public Events createFromParcel(Parcel in) {
@@ -98,6 +99,8 @@ public class Events implements Parcelable {
             return new Events[size];
         }
     };
+
+
 
     public EventSource getEventSource() {
         return eventSource;
@@ -307,13 +310,8 @@ public class Events implements Parcelable {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(eventSource, title, description, category, rank, localRank, attendance, places, duration, start, end, timezone, country, state, isPrivate);
-        result = 31 * result + Arrays.hashCode(labels);
-        result = 31 * result + Arrays.hashCode(hours);
-        result = 31 * result + Arrays.hashCode(coordinates);
-        return result;
+        return Objects.hash(eventSource, title, description, category, rank, localRank, attendance, duration, start, end, timezone, country, state, isPrivate);
     }
-
 
     @NonNull
     @Override

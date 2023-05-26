@@ -6,6 +6,8 @@ import static com.example.eventiapp.util.Constants.ENCRYPTED_DATA_FILE_NAME;
 import static com.example.eventiapp.util.Constants.ENCRYPTED_SHARED_PREFERENCES_FILE_NAME;
 import static com.example.eventiapp.util.Constants.ID_TOKEN;
 import static com.example.eventiapp.util.Constants.MINIMUM_PASSWORD_LENGTH;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
 import static com.example.eventiapp.util.Constants.USER_COLLISION_ERROR;
 import static com.example.eventiapp.util.Constants.WEAK_PASSWORD_ERROR;
 
@@ -31,6 +33,7 @@ import com.example.eventiapp.databinding.FragmentRegistrationBinding;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.model.User;
 import com.example.eventiapp.util.DataEncryptionUtil;
+import com.example.eventiapp.util.SharedPreferencesUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -195,6 +198,11 @@ public class RegistrationFragment extends Fragment {
                     ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, ID_TOKEN, idToken);
             dataEncryptionUtil.writeSecreteDataOnFile(ENCRYPTED_DATA_FILE_NAME,
                     email.concat(":").concat(password));
+
+            SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(getActivity().getApplication());
+            sharedPreferencesUtil.writeBooleanData(SHARED_PREFERENCES_FILE_NAME,
+                    SHARED_PREFERENCES_FIRST_LOADING, true);
+
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }

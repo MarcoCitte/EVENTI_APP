@@ -23,7 +23,7 @@ public interface EventsDao {
     @Query("SELECT * FROM events WHERE id_db = :id")
     Events getEvents(long id);
 
-    @Query("SELECT DISTINCT * FROM events WHERE is_favorite = 1 ORDER BY startDate ASC")
+    @Query("SELECT * FROM events WHERE is_favorite = 1 ORDER BY startDate DESC")
     List<Events> getFavoriteEvents();
 
     @Query("SELECT DISTINCT * FROM events WHERE category LIKE '%' || :category || '%' ORDER BY startDate ASC")

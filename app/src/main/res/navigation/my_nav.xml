@@ -52,6 +52,9 @@
         <action
             android:id="@+id/action_myEventsFragment_to_welcomeActivity"
             app:destination="@id/welcomeActivity" />
+        <action
+            android:id="@+id/action_myEventsFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"

@@ -213,6 +213,7 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
+                        Log.e("TAG", "deleteOK: " + eventsList.get(position).hashCode());
                         eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
                         eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }

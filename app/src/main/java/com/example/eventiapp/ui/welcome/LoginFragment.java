@@ -10,6 +10,7 @@ import static com.example.eventiapp.util.Constants.INVALID_CREDENTIALS_ERROR;
 import static com.example.eventiapp.util.Constants.INVALID_USER_ERROR;
 import static com.example.eventiapp.util.Constants.PASSWORD;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -374,6 +375,10 @@ public class LoginFragment extends Fragment {
                 dataEncryptionUtil.writeSecreteDataOnFile(ENCRYPTED_DATA_FILE_NAME,
                         email.concat(":").concat(password));
             }
+
+            SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(getActivity().getApplication());
+            sharedPreferencesUtil.writeBooleanData(SHARED_PREFERENCES_FILE_NAME,
+                    SHARED_PREFERENCES_FIRST_LOADING, true);
 
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();

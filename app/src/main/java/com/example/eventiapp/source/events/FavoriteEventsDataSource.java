@@ -106,12 +106,14 @@ public class FavoriteEventsDataSource extends BaseFavoriteEventsDataSource{
     }
 
     @Override
-    public void deleteFavoriteEvents(Events news) {
+    public void deleteFavoriteEvents(Events events) {
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
-                child(FIREBASE_FAVORITE_EVENTS_COLLECTION).child(String.valueOf(news.hashCode())).
+                child(FIREBASE_FAVORITE_EVENTS_COLLECTION).child(String.valueOf(events.hashCode())).
                 removeValue().addOnSuccessListener(aVoid -> {
-                    news.setSynchronized(false);
-                    eventsCallback.onSuccessFromCloudWriting(news);
+                    //QUI
+                    Log.e("TAG", "deleteFE: " + events.hashCode());
+                    events.setSynchronized(false);
+                    eventsCallback.onSuccessFromCloudWriting(events);
                 }).addOnFailureListener(e -> {
                     eventsCallback.onFailureFromCloud(e);
                 });
