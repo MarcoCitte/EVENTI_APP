@@ -34,6 +34,9 @@ public class FavoriteEventsDataSource extends BaseFavoriteEventsDataSource{
 
     @Override
     public void getFavoriteEvents() {
+
+        Log.e(TAG, "getFavoriteEvents: Token" + idToken);
+
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
                 child(FIREBASE_FAVORITE_EVENTS_COLLECTION).get().addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {

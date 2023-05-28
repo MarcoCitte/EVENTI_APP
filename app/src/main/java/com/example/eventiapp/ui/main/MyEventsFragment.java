@@ -90,8 +90,6 @@ public class MyEventsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        eventsAndPlacesViewModel.deleteEvents(); //IN QUESTO MODO MI CARICA SEMPRE EVENTI NUOVI A PARTIRE DAL GIORNO CORRENTE
-        eventsAndPlacesViewModel.deletePlaces();
 
         Button buttonLogout = view.findViewById(R.id.logout_b);
         buttonLogout.setOnClickListener(v -> {
@@ -119,7 +117,7 @@ public class MyEventsFragment extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 if (menuItem.getItemId() == R.id.delete) {
-                    eventsAndPlacesViewModel.deleteEvents();
+                    //eventsAndPlacesViewModel.deleteEvents(); METODO SBAGLIATO
                 }
                 return false;
             }
@@ -193,6 +191,5 @@ public class MyEventsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        eventsAndPlacesViewModel.deleteEvents();
     }
 }

@@ -140,6 +140,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         } else {
             eventsLocalDataSource.getFavoriteEvents();
         }
+
         return favoriteEventsMutableLiveData;
     }
 
