@@ -312,7 +312,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                 List<Place> placeList = new ArrayList<>();
                 double[] coordinates = {45.514842, 9.2109728};
                 event.setCoordinates(coordinates);
-                Place place = new Place("arcimboldi", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", coordinates);
+                Place place = new Place("QskKAMb7unj4usbvwV4fqC", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", coordinates);
                 placeList.add(place);
                 event.setPlaces(placeList);
                 event.setPrivate(false);

@@ -1,0 +1,261 @@
+Index: app/src/main/java/com/example/eventiapp/ui/main/MyEventsFragment.java
+===================================================================
+diff --git a/app/src/main/java/com/example/eventiapp/ui/main/MyEventsFragment.java b/app/src/main/java/com/example/eventiapp/ui/user/MyEventsFragment.java
+rename from app/src/main/java/com/example/eventiapp/ui/main/MyEventsFragment.java
+rename to app/src/main/java/com/example/eventiapp/ui/user/MyEventsFragment.java
+--- a/app/src/main/java/com/example/eventiapp/ui/main/MyEventsFragment.java	
++++ b/app/src/main/java/com/example/eventiapp/ui/user/MyEventsFragment.java	
+@@ -1,4 +1,4 @@
+-package com.example.eventiapp.ui.main;
++package com.example.eventiapp.ui.user;
+ 
+ import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
+ 
+@@ -24,15 +24,14 @@
+ 
+ import com.example.eventiapp.R;
+ import com.example.eventiapp.adapter.EventsListAdapter;
+-import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
+-import com.example.eventiapp.databinding.FragmentCategoryBinding;
++import com.example.eventiapp.databinding.FragmentAddEventBinding;
+ import com.example.eventiapp.databinding.FragmentMyEventsBinding;
+ import com.example.eventiapp.model.Events;
+ import com.example.eventiapp.model.Result;
+ import com.example.eventiapp.repository.user.IUserRepository;
++import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
+ import com.example.eventiapp.ui.welcome.UserViewModel;
+ import com.example.eventiapp.ui.welcome.UserViewModelFactory;
+-import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+ import com.example.eventiapp.util.Constants;
+ import com.example.eventiapp.util.ErrorMessageUtil;
+ import com.example.eventiapp.util.ServiceLocator;
+@@ -42,15 +41,13 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+-/**
+- * A simple {@link Fragment} subclass.
+- * Use the {@link MyEventsFragment#newInstance} factory method to
+- * create an instance of this fragment.
+- */
++
+ public class MyEventsFragment extends Fragment {
+ 
+     private static final String TAG = MyEventsFragment.class.getSimpleName();
+ 
++    private FragmentMyEventsBinding fragmentMyEventsBinding;
++
+     private List<Events> eventsList;
+     private EventsListAdapter eventsListAdapter;
+     private ProgressBar progressBar;
+@@ -83,29 +80,15 @@
+     @Override
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
+-        // Inflate the layout for this fragment
+-        return inflater.inflate(R.layout.fragment_my_events, container, false);
++        fragmentMyEventsBinding = FragmentMyEventsBinding.inflate(inflater, container, false);
++        return fragmentMyEventsBinding.getRoot();
+     }
+ 
+     @Override
+     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+-        eventsAndPlacesViewModel.deleteEvents(); //IN QUESTO MODO MI CARICA SEMPRE EVENTI NUOVI A PARTIRE DAL GIORNO CORRENTE
+-        eventsAndPlacesViewModel.deletePlaces();
++        //eventsAndPlacesViewModel.deleteEvents(); //IN QUESTO MODO MI CARICA SEMPRE EVENTI NUOVI A PARTIRE DAL GIORNO CORRENTE
++        //eventsAndPlacesViewModel.deletePlaces();
+ 
+-        Button buttonLogout = view.findViewById(R.id.logout_b);
+-        buttonLogout.setOnClickListener(v -> {
+-            userViewModel.logout().observe(getViewLifecycleOwner(), result -> {
+-                if (result.isSuccess()) {
+-                    Navigation.findNavController(view).navigate(
+-                            R.id.action_myEventsFragment_to_welcomeActivity);
+-                    requireActivity().finish();
+-                } else {
+-                    Snackbar.make(view,
+-                            requireActivity().getString(R.string.unexpected_error),
+-                            Snackbar.LENGTH_SHORT).show();
+-                }
+-            });
+-        });
+ 
+         requireActivity().addMenuProvider(new MenuProvider() {
+             @Override
+@@ -118,7 +101,7 @@
+             @Override
+             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                 if (menuItem.getItemId() == R.id.delete) {
+-                    eventsAndPlacesViewModel.deleteEvents();
++                    //eventsAndPlacesViewModel.deleteEvents();
+                 }
+                 return false;
+             }
+@@ -126,65 +109,14 @@
+             // associated with a menu icon is called twice
+         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+ 
+-        progressBar = view.findViewById(R.id.progress_bar);
+-
+-        ListView listViewFavEvents = view.findViewById(R.id.listview_fav_events);
+-
+-        eventsListAdapter =
+-                new EventsListAdapter(requireContext(), R.layout.favorite_events_list_item, eventsList,
+-                        events -> {
+-                            events.setFavorite(false);
+-                            eventsAndPlacesViewModel.removeFromFavorite(events);
+-                        });
+-        listViewFavEvents.setAdapter(eventsListAdapter);
+-
+-        progressBar.setVisibility(View.VISIBLE);
+-
+-        SharedPreferencesUtil sharedPreferencesUtil =
+-                new SharedPreferencesUtil(requireActivity().getApplication());
+-
+-        boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+-                SHARED_PREFERENCES_FIRST_LOADING);
+-
+-        // Observe the LiveData associated with the MutableLiveData containing the favorite news
+-        // returned by the method getFavoriteNewsLiveData() of NewsViewModel class.
+-        // Pay attention to which LifecycleOwner you give as value to
+-        // the method observe(LifecycleOwner, Observer).
+-        // In this case, getViewLifecycleOwner() refers to
+-        // androidx.fragment.app.FragmentViewLifecycleOwner and not to the Fragment itself.
+-        // You can read more details here: https://stackoverflow.com/a/58663143/4255576
+-        eventsAndPlacesViewModel.
+-                getFavoriteEventsLiveData(isFirstLoading).
+-                observe(getViewLifecycleOwner(), result -> {
+-            if (result != null) {
+-                if (result.isSuccess()) {
+-                    eventsList.clear();
+-                    eventsList.addAll(((Result.EventsResponseSuccess)result).getData().getEventsList());
+-                    eventsListAdapter.notifyDataSetChanged();
+-                    if (isFirstLoading) {
+-                        sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+-                                SHARED_PREFERENCES_FIRST_LOADING, false);
+-                    }
+-                } else {
+-                    ErrorMessageUtil errorMessagesUtil =
+-                            new ErrorMessageUtil(requireActivity().getApplication());
+-                    Snackbar.make(view, errorMessagesUtil.
+-                                    getErrorMessage(((Result.Error)result).getMessage()),
+-                            Snackbar.LENGTH_SHORT).show();
+-                }
+-                progressBar.setVisibility(View.GONE);
+-            }
+-        });
+ 
+-        /*
+-        listViewFavEvents.setOnItemClickListener((parent, view1, position, id) -> {
+-            FavoriteEventsFragmentDirections.ActionFavoriteNewsFragmentToNewsDetailFragment action =
+-                    FavoriteEventsFragmentDirections.
+-                            actionFavoriteNewsFragmentToNewsDetailFragment(eventsList.get(position));
+-            Navigation.findNavController(view).navigate(action);
+-        });
+-
+-         */
++        //AGGIUNTA EVENTO
++        fragmentMyEventsBinding.createEventButton.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View v) {
++                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_addEventFragment);
++            }
++        });
+ 
+ 
+     }
+@@ -192,6 +124,6 @@
+     @Override
+     public void onDestroyView() {
+         super.onDestroyView();
+-        eventsAndPlacesViewModel.deleteEvents();
++        //eventsAndPlacesViewModel.deleteEvents();
+     }
+ }
+Index: app/src/main/java/com/example/eventiapp/ui/main/PlaceFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.eventiapp.ui.main;\r\n\r\nimport static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;\r\nimport static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;\r\n\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.graphics.Bitmap;\r\nimport android.net.ConnectivityManager;\r\nimport android.net.NetworkInfo;\r\nimport android.net.Uri;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.Menu;\r\nimport android.view.MenuInflater;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.annotation.RequiresApi;\r\nimport androidx.core.view.MenuProvider;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.lifecycle.Lifecycle;\r\nimport androidx.lifecycle.MutableLiveData;\r\nimport androidx.lifecycle.ViewModelProvider;\r\nimport androidx.navigation.NavBackStackEntry;\r\nimport androidx.navigation.Navigation;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.eventiapp.R;\r\nimport com.example.eventiapp.adapter.EventsRecyclerViewAdapter;\r\nimport com.example.eventiapp.model.Events;\r\nimport com.example.eventiapp.model.EventsApiResponse;\r\nimport com.example.eventiapp.model.EventsResponse;\r\nimport com.example.eventiapp.model.Place;\r\nimport com.example.eventiapp.model.Result;\r\nimport com.example.eventiapp.source.google.PlaceDetailsSource;\r\nimport com.example.eventiapp.util.ErrorMessageUtil;\r\nimport com.example.eventiapp.util.ShareUtils;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.MapView;\r\nimport com.google.android.gms.maps.MapsInitializer;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.model.CameraPosition;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\nimport com.google.android.material.snackbar.Snackbar;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\n\r\npublic class PlaceFragment extends Fragment {\r\n\r\n    private com.example.eventiapp.databinding.FragmentSinglePlaceBinding fragmentSinglePlaceBinding;\r\n    private EventsAndPlacesViewModel eventsAndPlacesViewModel;\r\n    private LayoutInflater inflater;\r\n\r\n    MapView mMapView;\r\n    private GoogleMap googleMap;\r\n\r\n    private List<Events> eventsList;\r\n    private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;\r\n    //private SharedPreferencesUtil sharedPreferencesUtil;\r\n\r\n    private int totalItemCount; // Total number of events\r\n    private int lastVisibleItem; // The position of the last visible event item\r\n    private int visibleItemCount; // Number or total visible event items\r\n\r\n    // Based on this value, the process of loading more events is anticipated or postponed\r\n    private final int threshold = 1;\r\n\r\n    public PlaceFragment() {\r\n        // Required empty public constructor\r\n    }\r\n\r\n    public static PlaceFragment newInstance() {\r\n        return new PlaceFragment();\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        eventsAndPlacesViewModel = new ViewModelProvider(requireActivity()).get(EventsAndPlacesViewModel.class);\r\n        eventsList = new ArrayList<>();\r\n    }\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        fragmentSinglePlaceBinding = com.example.eventiapp.databinding.FragmentSinglePlaceBinding.inflate(inflater, container, false);\r\n        return fragmentSinglePlaceBinding.getRoot();\r\n    }\r\n\r\n    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)\r\n    @Override\r\n    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {\r\n        inflater = LayoutInflater.from(getContext());\r\n        requireActivity().addMenuProvider(new MenuProvider() {\r\n            @Override\r\n            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {\r\n                menu.clear();\r\n            }\r\n\r\n            @Override\r\n            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {\r\n                if (menuItem.getItemId() == android.R.id.home) {\r\n                    Navigation.findNavController(requireView()).navigateUp();\r\n                }\r\n                return false;\r\n            }\r\n        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);\r\n\r\n        Place place = getArguments().getParcelable(\"place\", Place.class);\r\n\r\n        PlaceDetailsSource.fetchPlacePhotos(place.getImages(), false, new PlaceDetailsSource.PlacePhotosListener() {\r\n            @Override\r\n            public void onPlacePhotosListener(Bitmap bitmap) {\r\n                fragmentSinglePlaceBinding.scrollViewImagesPlace.setVisibility(View.VISIBLE);\r\n                if (bitmap != null) {\r\n                    View viewPlacePhoto = inflater.inflate(R.layout.item_place_photo_maps, fragmentSinglePlaceBinding.galleryPhotos, false);\r\n                    ImageView imagePlace = viewPlacePhoto.findViewById(R.id.imagePlace);\r\n                    imagePlace.setImageBitmap(bitmap);\r\n                    fragmentSinglePlaceBinding.galleryPhotos.addView(viewPlacePhoto);\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onError(String message) {\r\n                Log.i(\"ERROR\", message);\r\n            }\r\n        });\r\n\r\n        fragmentSinglePlaceBinding.placeName.setText(place.getName());\r\n        fragmentSinglePlaceBinding.placeAddress.setText(place.getAddress());\r\n        fragmentSinglePlaceBinding.phoneNumber.setText(place.getPhoneNumber());\r\n\r\n        fragmentSinglePlaceBinding.imageViewShare.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                ShareUtils.sharePlace(requireContext(), place);\r\n            }\r\n        });\r\n\r\n        fragmentSinglePlaceBinding.imageViewFavorite.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                //POSTO PREFERITO\r\n            }\r\n        });\r\n\r\n        //GOOGLE MAPS\r\n        mMapView = view.findViewById(R.id.mapView);\r\n        mMapView.onCreate(savedInstanceState);\r\n        mMapView.onResume();\r\n\r\n        try {\r\n            MapsInitializer.initialize(getActivity().getApplicationContext());\r\n        } catch (Exception e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        mMapView.getMapAsync(new OnMapReadyCallback() {\r\n            @Override\r\n            public void onMapReady(GoogleMap mMap) {\r\n                googleMap = mMap;\r\n\r\n                // For dropping a marker at a point on the Map\r\n                double[] location = place.getCoordinates();\r\n                LatLng latLng = new LatLng(location[0], location[1]);\r\n                googleMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()).snippet(place.getAddress()));\r\n                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {\r\n                    @Override\r\n                    public boolean onMarkerClick(@NonNull Marker marker) {\r\n                        LatLng position = marker.getPosition();\r\n                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));\r\n                        googleMap.getMaxZoomLevel();\r\n                        marker.showInfoWindow();\r\n\r\n                        return true;\r\n                    }\r\n                });\r\n\r\n                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {\r\n                    @Override\r\n                    public void onMapClick(@NonNull LatLng latLng) {\r\n                        String uri = String.format(Locale.ENGLISH, \"geo:%f,%f\", latLng.latitude, latLng.longitude);\r\n                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));\r\n                        startActivity(intent);\r\n                    }\r\n                });\r\n\r\n                // For zooming automatically to the location of the marker\r\n                CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();\r\n                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));\r\n            }\r\n        });\r\n\r\n\r\n        RecyclerView recyclerView = view.findViewById(R.id.recyclerview_events);\r\n        LinearLayoutManager layoutManager =\r\n                new LinearLayoutManager(requireContext(),\r\n                        LinearLayoutManager.HORIZONTAL, false);\r\n\r\n        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,\r\n                requireActivity().getApplication(), 0,\r\n                new EventsRecyclerViewAdapter.OnItemClickListener() {\r\n                    @Override\r\n                    public void onEventsItemClick(Events events) {\r\n                        //VAI AI DETTAGLI DELL'EVENTO\r\n                        Bundle bundle = new Bundle();\r\n                        bundle.putParcelable(\"event\", events);\r\n                        Navigation.findNavController(view).navigate(R.id.action_placeFragment_to_eventFragment, bundle);\r\n                    }\r\n\r\n                    @Override\r\n                    public void onExportButtonPressed(Events events) {\r\n                        ShareUtils.addToCalendar(requireContext(), events);\r\n                    }\r\n\r\n                    @Override\r\n                    public void onShareButtonPressed(Events events) {\r\n                        ShareUtils.shareEvent(requireContext(), events);\r\n                    }\r\n\r\n\r\n                    @Override\r\n                    public void onFavoriteButtonPressed(int position) {\r\n                        //SETTA EVENTO COME PREFERITO\r\n                    }\r\n                });\r\n        recyclerView.setLayoutManager(layoutManager);\r\n        recyclerView.setAdapter(eventsRecyclerViewAdapter);\r\n\r\n        String lastUpdate = \"0\";\r\n        String id = place.getId();\r\n        fragmentSinglePlaceBinding.progressBar.setVisibility(View.VISIBLE);\r\n\r\n        eventsAndPlacesViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {\r\n            if (result != null) {\r\n                if (result.isSuccess()) {\r\n                    Log.i(\"SUCCESSO\", \"SUCCESSO\");\r\n\r\n                    eventsList.clear();\r\n                    EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();\r\n                    List<Events> fetchedEvents = eventsResponse.getEventsList();\r\n\r\n                    if (!eventsAndPlacesViewModel.isLoading()) {\r\n                        eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, this.eventsList.size());\r\n                        this.eventsList.clear();\r\n                        this.eventsList.addAll(fetchedEvents);\r\n                        eventsRecyclerViewAdapter.notifyItemChanged(0, fetchedEvents.size());\r\n                        fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);\r\n                        fragmentSinglePlaceBinding.placeEvents.setVisibility(View.VISIBLE);\r\n                        fragmentSinglePlaceBinding.numberEventsTextView.setVisibility(View.VISIBLE);\r\n                        fragmentSinglePlaceBinding.numberEventsTextView.setText(Integer.toString(eventsList.size()));\r\n\r\n                    } else {\r\n                        eventsAndPlacesViewModel.setLoading(false);\r\n                        eventsAndPlacesViewModel.setCurrentResults(eventsList.size());\r\n\r\n                        int initialSize = eventsList.size();\r\n\r\n                        for (int i = 0; i < eventsList.size(); i++) {\r\n                            if (eventsList.get(i) == null) {\r\n                                eventsList.remove(eventsList.get(i));\r\n                            }\r\n                        }\r\n                        int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -\r\n                                EVENTS_PAGE_SIZE_VALUE;\r\n                        for (int i = startIndex; i < fetchedEvents.size(); i++) {\r\n                            eventsList.add(fetchedEvents.get(i));\r\n                        }\r\n                        eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());\r\n                    }\r\n                } else {\r\n                    Log.i(\"FALLITO\", \"FALLITO\");\r\n\r\n                    ErrorMessageUtil errorMessagesUtil =\r\n                            new ErrorMessageUtil(requireActivity().getApplication());\r\n                    Snackbar.make(view, errorMessagesUtil.\r\n                                    getErrorMessage(((Result.Error) result).getMessage()),\r\n                            Snackbar.LENGTH_SHORT).show();\r\n                    fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);\r\n                }\r\n            } else {\r\n                //NON CI SONO EVENTI IN QUEL LOCALE\r\n                fragmentSinglePlaceBinding.placeEvents.setVisibility(View.VISIBLE);\r\n                fragmentSinglePlaceBinding.placeEvents.setText(\"There are no events\");\r\n            }\r\n        });\r\n\r\n        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {\r\n            @Override\r\n            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {\r\n                super.onScrolled(recyclerView, dx, dy);\r\n                boolean isConnected = isConnected();\r\n\r\n                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {\r\n\r\n                    totalItemCount = layoutManager.getItemCount();\r\n                    lastVisibleItem = layoutManager.findLastVisibleItemPosition();\r\n                    visibleItemCount = layoutManager.getChildCount();\r\n\r\n                    if (totalItemCount == visibleItemCount ||\r\n                            (totalItemCount <= (lastVisibleItem + threshold) &&\r\n                                    dy > 0 &&\r\n                                    !eventsAndPlacesViewModel.isLoading()\r\n                            ) &&\r\n                                    eventsAndPlacesViewModel.getPlaceEventsLiveData(id).getValue() != null &&\r\n                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()\r\n                    ) {\r\n                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getPlaceEventsLiveData(id);\r\n\r\n                        if (eventsListMutableLiveData.getValue() != null &&\r\n                                eventsListMutableLiveData.getValue().isSuccess()) {\r\n\r\n                            eventsAndPlacesViewModel.setLoading(true);\r\n                            eventsList.add(null);\r\n                            eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),\r\n                                    eventsList.size() + 1);\r\n\r\n                            int page = eventsAndPlacesViewModel.getPage() + 1;\r\n                            eventsAndPlacesViewModel.setPage(page);\r\n                            eventsAndPlacesViewModel.getPlaceEventsLiveData(id);\r\n                        }\r\n                    }\r\n                }\r\n            }\r\n        });\r\n\r\n\r\n        NavBackStackEntry navBackStackEntry = Navigation.\r\n                findNavController(view).getPreviousBackStackEntry();\r\n\r\n        if (navBackStackEntry != null &&\r\n                navBackStackEntry.getDestination().\r\n\r\n                        getId() == R.id.homeFragment) {\r\n            ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).\r\n                    getMenu().findItem(R.id.homeFragment).setChecked(true);\r\n        } else if (navBackStackEntry != null &&\r\n                navBackStackEntry.getDestination().\r\n\r\n                        getId() == R.id.myEventsFragment) {\r\n            ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).\r\n                    getMenu().findItem(R.id.myEventsFragment).setChecked(true);\r\n        } else if (navBackStackEntry != null &&\r\n                navBackStackEntry.getDestination().\r\n\r\n                        getId() == R.id.mapsFragment) {\r\n            ((BottomNavigationView) requireActivity().findViewById(R.id.bottomNavigationView)).\r\n                    getMenu().findItem(R.id.mapsFragment).setChecked(true);\r\n        }\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onDestroy() {\r\n        super.onDestroy();\r\n        eventsAndPlacesViewModel.setFirstLoading(true);\r\n        eventsAndPlacesViewModel.setLoading(false);\r\n        mMapView.onDestroy();\r\n    }\r\n\r\n    @Override\r\n    public void onDestroyView() {\r\n        super.onDestroyView();\r\n        fragmentSinglePlaceBinding = null;\r\n    }\r\n\r\n    @Override\r\n    public void onResume() {\r\n        super.onResume();\r\n        mMapView.onResume();\r\n    }\r\n\r\n    @Override\r\n    public void onPause() {\r\n        super.onPause();\r\n        mMapView.onPause();\r\n    }\r\n\r\n\r\n    private boolean isConnected() {\r\n        ConnectivityManager cm =\r\n                (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);\r\n\r\n        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();\r\n        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/eventiapp/ui/main/PlaceFragment.java b/app/src/main/java/com/example/eventiapp/ui/main/PlaceFragment.java
+--- a/app/src/main/java/com/example/eventiapp/ui/main/PlaceFragment.java	
++++ b/app/src/main/java/com/example/eventiapp/ui/main/PlaceFragment.java	
+@@ -178,7 +178,12 @@
+ 
+                 // For dropping a marker at a point on the Map
+                 double[] location = place.getCoordinates();
+-                LatLng latLng = new LatLng(location[0], location[1]);
++                LatLng latLng;
++                if (location[0] > location[1]) {
++                    latLng = new LatLng(location[0], location[1]);
++                } else {
++                    latLng = new LatLng(location[1], location[0]);
++                }
+                 googleMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()).snippet(place.getAddress()));
+                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                     @Override
+@@ -239,6 +244,16 @@
+                     public void onFavoriteButtonPressed(int position) {
+                         //SETTA EVENTO COME PREFERITO
+                     }
++
++                    @Override
++                    public void onModeEventButtonPressed(Events events) {
++
++                    }
++
++                    @Override
++                    public void onDeleteEventButtonPressed(Events events) {
++
++                    }
+                 });
+         recyclerView.setLayoutManager(layoutManager);
+         recyclerView.setAdapter(eventsRecyclerViewAdapter);
+@@ -301,45 +316,6 @@
+             }
+         });
+ 
+-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+-            @Override
+-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+-                super.onScrolled(recyclerView, dx, dy);
+-                boolean isConnected = isConnected();
+-
+-                if (isConnected && totalItemCount != eventsAndPlacesViewModel.getTotalResults()) {
+-
+-                    totalItemCount = layoutManager.getItemCount();
+-                    lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+-                    visibleItemCount = layoutManager.getChildCount();
+-
+-                    if (totalItemCount == visibleItemCount ||
+-                            (totalItemCount <= (lastVisibleItem + threshold) &&
+-                                    dy > 0 &&
+-                                    !eventsAndPlacesViewModel.isLoading()
+-                            ) &&
+-                                    eventsAndPlacesViewModel.getPlaceEventsLiveData(id).getValue() != null &&
+-                                    eventsAndPlacesViewModel.getCurrentResults() != eventsAndPlacesViewModel.getTotalResults()
+-                    ) {
+-                        MutableLiveData<Result> eventsListMutableLiveData = eventsAndPlacesViewModel.getPlaceEventsLiveData(id);
+-
+-                        if (eventsListMutableLiveData.getValue() != null &&
+-                                eventsListMutableLiveData.getValue().isSuccess()) {
+-
+-                            eventsAndPlacesViewModel.setLoading(true);
+-                            eventsList.add(null);
+-                            eventsRecyclerViewAdapter.notifyItemRangeInserted(eventsList.size(),
+-                                    eventsList.size() + 1);
+-
+-                            int page = eventsAndPlacesViewModel.getPage() + 1;
+-                            eventsAndPlacesViewModel.setPage(page);
+-                            eventsAndPlacesViewModel.getPlaceEventsLiveData(id);
+-                        }
+-                    }
+-                }
+-            }
+-        });
+-
+ 
+         NavBackStackEntry navBackStackEntry = Navigation.
+                 findNavController(view).getPreviousBackStackEntry();

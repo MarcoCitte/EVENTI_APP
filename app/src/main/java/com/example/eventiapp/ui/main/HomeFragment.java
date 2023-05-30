@@ -225,6 +225,16 @@ public class HomeFragment extends Fragment {
                         eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
                         eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
                 });
 
         eventsRecyclerViewAdapterRank = new EventsRecyclerViewAdapter(eventsListOrderByRank,
@@ -250,6 +260,16 @@ public class HomeFragment extends Fragment {
                         eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
                         eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
                 });
 
         placesRecyclerViewAdapter = new PlacesRecyclerViewAdapter(placesList,
@@ -270,7 +290,17 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-                       //SETTA PLACE COME PREFERITO
+                        //SETTA PLACE COME PREFERITO
+                    }
+
+                    @Override
+                    public void onModePlaceButtonPressed(Place place) {
+
+                    }
+
+                    @Override
+                    public void onDeletePlaceButtonPressed(Place place) {
+
                     }
                 });
 
@@ -410,7 +440,7 @@ public class HomeFragment extends Fragment {
                 switch (typeOfQuery) {
                     case 0:
                         fragmentHomeBinding.progressBarUE.setVisibility(View.GONE);
-                        fragmentHomeBinding.progressBarMA.setVisibility(View.GONE); //RIORDINO COL SORT LA LISTA DEGLI EVENTI SENZA FARE PIU QUERY
+                        fragmentHomeBinding.progressBarMA.setVisibility(View.GONE);
                         break;
                     case 1:
                         fragmentHomeBinding.progressBarCFY.setVisibility(View.GONE);
@@ -438,6 +468,7 @@ public class HomeFragment extends Fragment {
                 }
                 eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
             }
+            //RIORDINO COL SORT LA LISTA DEGLI EVENTI SENZA FARE PIU QUERY
             this.eventsListOrderByRank.addAll(eventsList);
             sortEvents("Rank", eventsListOrderByRank);
             recyclerViewMA.setAdapter(eventsRecyclerViewAdapterRank);

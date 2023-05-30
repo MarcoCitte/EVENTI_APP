@@ -2,6 +2,7 @@ package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -38,9 +39,7 @@ import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentEventBinding;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
-import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
@@ -57,7 +56,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -116,12 +114,13 @@ public class EventFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentEventBinding = FragmentEventBinding.inflate(inflater, container, false);
         return fragmentEventBinding.getRoot();
     }
 
+    @SuppressLint("SimpleDateFormat")
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -144,6 +143,7 @@ public class EventFragment extends Fragment {
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
+        assert getArguments() != null;
         Events events = getArguments().getParcelable("event", Events.class);
 
         fragmentEventBinding.imageViewShare.setOnClickListener(new View.OnClickListener() {
@@ -210,19 +210,24 @@ public class EventFragment extends Fragment {
                         fragmentEventBinding.eventDescription.setVisibility(View.GONE);
                     }
 
+                    SimpleDateFormat outputFormat;
+                    if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+                        outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+                    } else {
+                        outputFormat = new SimpleDateFormat("dd MMM yyyy");
+                    }
+
                     if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
                         String dateStart = events.getStart();
                         String dateEnd = events.getEnd();
                         Date date1 = DateUtils.parseDateToShow(dateStart, "EN");
                         Date date2 = DateUtils.parseDateToShow(dateEnd, "EN");
-                        SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-                        String formattedDate = outputFormat.format(date1) + " - " + outputFormat.format(date2);
+                        String formattedDate = outputFormat.format(Objects.requireNonNull(date1)) + " \n " + outputFormat.format(Objects.requireNonNull(date2));
                         fragmentEventBinding.eventDate.setText(formattedDate);
                     } else {
                         String date = events.getStart();
                         Date date1 = DateUtils.parseDateToShow(date, "EN");
-                        SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-                        String formattedDate = outputFormat.format(date1);
+                        String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
                         fragmentEventBinding.eventDate.setText(formattedDate);
                     }
 
@@ -261,12 +266,19 @@ public class EventFragment extends Fragment {
                     //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
 
                     if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
-                        googleMaps(new LatLng(result.getCoordinates()[0], result.getCoordinates()[1]), result.getName());
+                        LatLng latLng;
+                        if (result.getCoordinates()[0] > result.getCoordinates()[1]) {
+                            latLng = new LatLng(result.getCoordinates()[0], result.getCoordinates()[1]);
+                        } else {
+                            latLng = new LatLng(result.getCoordinates()[1], result.getCoordinates()[0]);
+                        }
+
+                        googleMaps(latLng, result.getName());
                     } else {
                         fragmentEventBinding.mapView.setVisibility(View.GONE);
                     }
 
-                }else{  //NON ESISTE IL PLACE DELL'EVENTO NEL DATABASE
+                } else {  //NON ESISTE IL PLACE DELL'EVENTO NEL DATABASE
                     showEventWithNoPlace(events);
                 }
             });
@@ -380,6 +392,16 @@ public class EventFragment extends Fragment {
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
                     }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
                 });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
@@ -439,6 +461,7 @@ public class EventFragment extends Fragment {
 
             } else {
                 //NON CI SONO EVENTI SIMILI
+                fragmentEventBinding.categoryEventsTV.setVisibility(View.GONE);
             }
         });
 
@@ -492,7 +515,7 @@ public class EventFragment extends Fragment {
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(GoogleMap mMap) {
+            public void onMapReady(@NonNull GoogleMap mMap) {
                 googleMap = mMap;
                 Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title(placeName));
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -557,7 +580,8 @@ public class EventFragment extends Fragment {
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
-    private void showEventWithNoPlace(Events events){
+    @SuppressLint("SimpleDateFormat")
+    private void showEventWithNoPlace(Events events) {
         //L'evento non ha il nome del place in cui si tiene
 
         if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
@@ -582,20 +606,24 @@ public class EventFragment extends Fragment {
             fragmentEventBinding.eventDescription.setVisibility(View.GONE);
         }
 
+        SimpleDateFormat outputFormat;
+        if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+        } else {
+            outputFormat = new SimpleDateFormat("dd MMM yyyy");
+        }
 
         if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
             String dateStart = events.getStart();
             String dateEnd = events.getEnd();
             Date date1 = DateUtils.parseDateToShow(dateStart, "EN");
             Date date2 = DateUtils.parseDateToShow(dateEnd, "EN");
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            String formattedDate = outputFormat.format(date1) + "\n" + outputFormat.format(date2);
+            String formattedDate = outputFormat.format(Objects.requireNonNull(date1)) + "\n" + outputFormat.format(Objects.requireNonNull(date2));
             fragmentEventBinding.eventDate.setText(formattedDate);
         } else {
             String date = events.getStart();
             Date date1 = DateUtils.parseDateToShow(date, "EN");
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            String formattedDate = outputFormat.format(date1);
+            String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
             fragmentEventBinding.eventDate.setText(formattedDate);
         }
 
@@ -610,12 +638,12 @@ public class EventFragment extends Fragment {
                     fragmentEventBinding.eventAddress2.setVisibility(View.GONE);
                 }
             } else {
-                fragmentEventBinding.eventPlace.setText("Unknown");
+                fragmentEventBinding.eventPlace.setText(R.string.unknown);
                 fragmentEventBinding.eventAddress.setVisibility(View.GONE);
                 fragmentEventBinding.eventAddress2.setVisibility(View.GONE);
             }
         } else {
-            fragmentEventBinding.eventPlace.setText("Unknown");
+            fragmentEventBinding.eventPlace.setText(R.string.unknown);
             fragmentEventBinding.eventAddress.setVisibility(View.GONE);
             fragmentEventBinding.eventAddress2.setVisibility(View.GONE);
         }
@@ -638,12 +666,11 @@ public class EventFragment extends Fragment {
 
 
         //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
-        if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
-            if(events.getCoordinates()[0] > events.getCoordinates()[1]) { //SONO GIUSTE
+        if (!fragmentEventBinding.eventPlace.getText().equals(R.string.unknown)) {
+            if (events.getCoordinates()[0] > events.getCoordinates()[1]) { //SONO GIUSTE
                 googleMaps(new LatLng(events.getCoordinates()[0], events.getCoordinates()[1]), null);
-            }else{
+            } else {
                 googleMaps(new LatLng(events.getCoordinates()[1], events.getCoordinates()[0]), null);
-
             }
         } else {
             fragmentEventBinding.mapView.setVisibility(View.GONE);

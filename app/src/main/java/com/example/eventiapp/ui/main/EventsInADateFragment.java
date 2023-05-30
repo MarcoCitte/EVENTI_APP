@@ -2,6 +2,7 @@ package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -35,6 +36,7 @@ import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.example.eventiapp.util.ShareUtils;
@@ -42,8 +44,10 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class EventsInADateFragment extends Fragment {
@@ -154,6 +158,16 @@ public class EventsInADateFragment extends Fragment {
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
                     }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
                 });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
@@ -241,6 +255,7 @@ public class EventsInADateFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void showEvents(Result result) {
         if (result != null) {
             if (result.isSuccess()) {
@@ -270,8 +285,8 @@ public class EventsInADateFragment extends Fragment {
                     }
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
                 }
-                fragmentEventsInADateBinding.textViewDate.setText("Events of: " + date);
-                fragmentEventsInADateBinding.numberOfEvents.setText(String.valueOf(eventsList.size()));
+                fragmentEventsInADateBinding.textViewDate.setText(getResources().getString(R.string.eventsinthisdate) + " " + date);
+                fragmentEventsInADateBinding.numberOfEvents.setText(" " + eventsList.size());
             } else {
                 ErrorMessageUtil errorMessagesUtil =
                         new ErrorMessageUtil(requireActivity().getApplication());
@@ -281,8 +296,8 @@ public class EventsInADateFragment extends Fragment {
                 fragmentEventsInADateBinding.progressBar.setVisibility(View.GONE);
             }
         } else {
-            fragmentEventsInADateBinding.textViewDate.setText("No events in " + date);
-            fragmentEventsInADateBinding.numberOfEvents.setText("0");
+            fragmentEventsInADateBinding.textViewDate.setText(getResources().getString(R.string.noeventsinthisdate)  + " " + date);
+            fragmentEventsInADateBinding.numberOfEvents.setText(" 0");
         }
     }
 

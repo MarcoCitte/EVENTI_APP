@@ -11,12 +11,24 @@ import android.widget.ArrayAdapter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentAccountBinding;
+import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.EventsResponse;
+import com.example.eventiapp.model.Result;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
+import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
 import com.example.eventiapp.util.Constants;
 import com.example.eventiapp.util.LanguageUtil;
+import com.example.eventiapp.util.ServiceLocator;
 import com.example.eventiapp.util.SharedPreferencesUtil;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class AccountFragment extends Fragment {
@@ -24,11 +36,27 @@ public class AccountFragment extends Fragment {
     private FragmentAccountBinding fragmentAccountBinding;
     private String[] languages;
     private SharedPreferencesUtil sharedPreferencesUtil;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
+    private List<Events> eventsList;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        IRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
+                        requireActivity().getApplication()
+                );
+
+        if (eventsRepositoryWithLiveData != null) {
+            eventsAndPlacesViewModel = new ViewModelProvider(
+                    requireActivity(),
+                    new EventsAndPlacesViewModelFactory(eventsRepositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
+        } else {
+            Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                    R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
+        }
+        eventsList = new ArrayList<>();
         languages = requireContext().getResources().getStringArray(R.array.languages);
         sharedPreferencesUtil = new SharedPreferencesUtil(requireActivity().getApplication());
     }
@@ -43,6 +71,20 @@ public class AccountFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        eventsAndPlacesViewModel.getFavoriteEventsLiveData(false).observe(getViewLifecycleOwner(), result -> {
+            if(result!=null){
+                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                List<Events> fetchedEvents = eventsResponse.getEventsList();
+                fragmentAccountBinding.numberEventsTextView.setText(String.valueOf(fetchedEvents.size()));
+            }else{
+                fragmentAccountBinding.numberEventsTextView.setText("0");
+            }
+        });
+
+
+
+        //SPINNER LANGUAGE
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, languages);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fragmentAccountBinding.languageSpinner.setAdapter(adapter);

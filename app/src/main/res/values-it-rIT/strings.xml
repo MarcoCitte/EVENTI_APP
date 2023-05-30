@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">EVENTI APP</string>
     <string name="map">MAPPA</string>
     <string name="myevents">I MIEI EVENTI</string>
@@ -31,13 +31,13 @@
     <string name="places">Punti di interesse</string>
     <string name="see_all_venues"><![CDATA[Tutti i punti di interesse >]]></string>
     <string name="attendance">Spettatori:</string>
-    <string name="favorite_events_account">Eventi favoriti:</string>
+    <string name="favorite_events_account">Eventi preferiti</string>
     <string name="settings">Impostazioni</string>
     <string name="change_username">Cambia username</string>
     <string name="change_password">Cambia password</string>
     <string name="change_language">Cambia lingua</string>
     <string name="version">Versione</string>
-    <string name="number_of_events">Numero di eventi:</string>
+    <string name="number_of_events">Numero di eventi: </string>
     <string name="back">INDIETRO</string>
     <string name="forward">AVANTI</string>
     <string name="sun">DOM</string>
@@ -50,7 +50,7 @@
     <string name="all_events">Tutti gli eventi</string>
     <string name="all_places">Tutti i punti di interesse</string>
     <string name="calendar">Calendario</string>
-    <string name="select_categories">Selezione le categorie</string>
+    <string name="select_categories">Seleziona la categoria</string>
     <string name="select_a_date_range">Seleziona un range di date</string>
     <string name="from">DA:</string>
     <string name="to">A:</string>
@@ -62,12 +62,32 @@
     <string name="number_of_places">Numero di punti di interesse:</string>
     <string name="send_email">Invia mail</string>
     <string name="events">Eventi</string>
-    <string name="present_events">Eventi presenti</string>
+    <string name="present_events">Eventi presenti:</string>
     <string name="similar_events">Eventi simili</string>
     <string name="distance">Distanza</string>
     <string name="hintsearch">Cerca eventi, punti di interesse…</string>
-    <string name="noeventsinthisdate">Non ci sono eventi in questa data</string>
+    <string name="noeventsinthisdate">Non ci sono eventi in questa data: </string>
+    <string name="eventsinthisdate">Eventi del:  </string>
     <string name="movie_times">Orari film</string>
+    <string name="date">Data</string>
+    <string name="favorite_category">Categoria preferita</string>
+    <string name="my_places">I miei punti di interesse</string>
+    <string name="favorite_places">Punti di interesse preferiti</string>
+    <string name="create_place">Crea un punto di interesse</string>
+    <string name="create_event">Crea un evento</string>
+    <string name="title">Titolo</string>
+    <string name="duration">Durata:</string>
+    <string name="select_duration">Seleziona la durata</string>
+    <string name="start">Inizio:</string>
+    <string name="select_date">Seleziona la data</string>
+    <string name="select_time">Seleziona l\'ora</string>
+    <string name="end">Fine:</string>
+    <string name="place">Punto di interesse</string>
+    <string name="isprivate">Privato</string>
+    <string name="add">Aggiungi</string>
+    <string name="all_day">Tutto il giorno</string>
+    <string name="unknown">Sconosciuto</string>
+    <string name="noevents">Non ci sono eventi</string>
 
 
     <string-array name="sorting_parameters">
@@ -81,6 +101,28 @@
     <string-array name="languages">
         <item>IT</item>
         <item>EN</item>
+    </string-array>
+
+    <string-array name="categories" tools:ignore="ExtraTranslation">
+        <item>Musica</item>
+        <item>Concerti</item>
+        <item>Arte e Cultura</item>
+        <item>Sport</item>
+        <item>Cibo e Bevande</item>
+        <item>Politica</item>
+        <item>Conferenze</item>
+        <item>Spettacoli ed Intrattenimento</item>
+        <item>Beneficenza e Volontariato</item>
+        <item>Comunità</item>
+        <item>Moda e Design</item>
+        <item>Tecnologia e Innovazione</item>
+        <item>Istruzione e Formazione</item>
+        <item>Feste e Vita notturna</item>
+        <item>Viaggi ed Avventure</item>
+        <item>Salute e Benessere</item>
+        <item>Giochi e Competizioni</item>
+        <item>Networking e Incontri Professionali</item>
+        <item>Altro</item>
     </string-array>
 
     <string-array name="sorting_parameters_places">

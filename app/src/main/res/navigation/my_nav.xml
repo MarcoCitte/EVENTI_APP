@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/myEventsFragment"
-        android:name="com.example.eventiapp.ui.main.MyEventsFragment"
+        android:name="com.example.eventiapp.ui.user.MyEventsFragment"
         android:label="fragment_my_events"
         tools:layout="@layout/fragment_my_events" >
         <action
@@ -164,4 +164,22 @@
         android:name="com.example.eventiapp.ui.user.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/containerMyEventsAndPlaces"
+        android:name="com.example.eventiapp.ui.user.ContainerMyEventsAndPlaces"
+        android:label="fragment_container_my_events_and_places"
+        tools:layout="@layout/fragment_container_my_events_and_places" >
+        <action
+            android:id="@+id/action_containerMyEventsAndPlaces_to_addEventFragment"
+            app:destination="@id/addEventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addEventFragment"
+        android:name="com.example.eventiapp.ui.user.AddEventFragment"
+        android:label="fragment_add_event"
+        tools:layout="@layout/fragment_add_event" >
+        <action
+            android:id="@+id/action_addEventFragment_to_containerMyEventsAndPlaces"
+            app:destination="@id/containerMyEventsAndPlaces" />
+    </fragment>
 </navigation>

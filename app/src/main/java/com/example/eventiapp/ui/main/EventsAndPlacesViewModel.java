@@ -47,6 +47,10 @@ public class EventsAndPlacesViewModel extends ViewModel {
         this.firstLoading = true;
     }
 
+    public void addEvent(Events events){
+        iRepositoryWithLiveData.addEvent(events);
+    }
+
     public MutableLiveData<Result> getEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
         if (eventsListLiveData == null) {
             fetchEvents(country, location, date, categories, sort, limit, lastUpdate);

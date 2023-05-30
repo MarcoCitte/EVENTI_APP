@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
@@ -21,8 +22,10 @@ import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
 import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
+import com.example.eventiapp.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +113,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public MutableLiveData<Result> fetchEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
 
 
-
+        /*
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
@@ -119,9 +122,10 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             eventsLocalDataSource.getEvents();
         }
 
+         */
 
 
-        //eventsLocalDataSource.getEvents();
+        eventsLocalDataSource.getEvents();
 
         return allEventsMutableLiveData;
     }
@@ -129,8 +133,13 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void fetchEvents(String country, String location, String date, String categories, String sort, int limit) {
-        eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
-       // eventsLocalDataSource.getEvents();
+        //eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
+         eventsLocalDataSource.getEvents();
+    }
+
+    @Override
+    public void addEvent(Events events) {
+        eventsLocalDataSource.insertEvents(new ArrayList<>(Collections.singleton(events)));
     }
 
     @Override
@@ -288,7 +297,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
         eventsLocalDataSource.insertEvents(eventsApiResponse);
         //PLACES
-        //List<Events> fetchedEvents = eventsApiResponse.getEventsList();
+        List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
         /*
         Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
@@ -302,79 +311,68 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
          */
 
- /*
+
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
         Map<String, Events> map = new HashMap<String, Events>();
         for (Events e : fetchedEvents) {
             if (!e.getPlaces().isEmpty()) {
-                String idPlace = e.getPlaces().get(0).getId();
-                if (!map.containsKey(idPlace)) {
-                    map.put(idPlace, e);
-                }
-                if (e.getCoordinates()[0] < e.getCoordinates()[1]) {
-                    double temp = e.getCoordinates()[0];
-                    e.getCoordinates()[0] = e.getCoordinates()[1];
-                    e.getCoordinates()[1] = temp;
+                String placeName = e.getPlaces().get(0).getName(); //PRENDO IL NOME PERCHè LE API DI PREDICTQ DANNO ID DIVERSI PER LO STESSO POSTO
+                if (!map.containsKey(placeName)) {
+                    map.put(placeName, e);
                 }
             }
         }
         List<Events> eventsNoDuplicates = new ArrayList<>(map.values());
+        List<Place> placesAlreadyInDb=new ArrayList<>(allPlacesMutableLiveData.getValue());
 
 
-        allPlacesMutableLiveData.observe(new LifecycleOwner() {
-            @NonNull
-            @Override
-            public Lifecycle getLifecycle() {
-                return lifecycleRegistry;
-            }
-        }, new Observer<List<Place>>() {
-            @Override
-            public void onChanged(List<Place> places) {
-                for (Events e : eventsNoDuplicates) {
-                    boolean isPlaceAlreadyAdded = false;
-                    for (Place place : allPlacesMutableLiveData.getValue()) {
-                        if (place.getId().equals(e.getPlaces().get(0).getId())) {
-                            isPlaceAlreadyAdded = true;
-                            break;
-                        }
-                    }
-                    if (!isPlaceAlreadyAdded) {  //COSI RISPARMIO SULLA VELOCITA E SUI SOLDI PER LE API PLACES DI GOOGLE
-                        //DEVO PRENDERE COORDINATE, INDIRIZZO, FOTO E NUMERO DI TELEFONO DEL POSTO  PIU PRECISI
-                        Log.i("POSTO NUOVO", e.getPlaces().toString());
-                        placeDetailsSource.fetchPlaceDetails(e.getPlaces().get(0).getName(), e.getPlaces().get(0).getAddress(), new PlaceDetailsSource.PlaceDetailsListener() {
-                            @Override
-                            public void onPlaceDetailsFetched(com.google.android.libraries.places.api.model.Place place) {
-                                // Hai ottenuto i dettagli del posto
-                                double[] coordinates;
-                                if (place.getLatLng() != null) {
-                                    coordinates = new double[]{place.getLatLng().latitude, place.getLatLng().longitude};
-                                } else {
-                                    coordinates = new double[]{e.getCoordinates()[0], e.getCoordinates()[1]};
-                                }
-                                List<Place> placesList = new ArrayList<>();
-                                placesList.add(new Place(e.getPlaces().get(0).getId(), StringUtils.capitalizeFirstLetter(place.getName()), e.getPlaces().get(0).getType(), place.getAddress(), place.getId(), coordinates, place.getPhoneNumber(), place.getPhotoMetadatas()));
-                                placesLocalDataSource.insertPlaces(placesList);
-                            }
-
-                            @Override
-                            public void onError(String message) {
-                                Log.i("ERRORE FETCH PLACE:", message);
-                                //PER I POSTI NON TROVATI USO IL COSTUTTORE DI DEFAULT CON LE INFORMAZIONI BASE
-                                //placesList.add(new Place(e.getPlaces().get(0).getId(), e.getPlaces().get(0).getName(), e.getPlaces().get(0).getType(), e.getPlaces().get(0).getAddress(), e.getCoordinates()));
-                            }
-                        });
-                    }
-
+        for (Events e : eventsNoDuplicates) {
+            boolean isPlaceAlreadyAdded = false;
+            for (Place place : placesAlreadyInDb) {
+                if (place.getId().equals(e.getPlaces().get(0).getId())) {
+                    isPlaceAlreadyAdded = true;
+                    break;
                 }
             }
-        });
+            if (!isPlaceAlreadyAdded) {  //COSI RISPARMIO SULLA VELOCITA E SUI SOLDI PER LE API PLACES DI GOOGLE
+                //DEVO PRENDERE COORDINATE, INDIRIZZO, FOTO E NUMERO DI TELEFONO DEL POSTO  PIU PRECISI
+                Log.i("POSTO NUOVO", e.getPlaces().toString());
+               /* placeDetailsSource.fetchPlaceDetails(e.getPlaces().get(0).getName(), e.getPlaces().get(0).getAddress(), new PlaceDetailsSource.PlaceDetailsListener() {
+                    @Override
+                    public void onPlaceDetailsFetched(com.google.android.libraries.places.api.model.Place place) {
+                        // Hai ottenuto i dettagli del posto
+                        double[] coordinates;
+                        if (place.getLatLng() != null) {
+                            coordinates = new double[]{place.getLatLng().latitude, place.getLatLng().longitude};
+                        } else {
+                            coordinates = new double[]{e.getCoordinates()[0], e.getCoordinates()[1]};
+                        }
+                        List<Place> placesList = new ArrayList<>();
+                        placesList.add(new Place(e.getPlaces().get(0).getId(), StringUtils.capitalizeFirstLetter(place.getName()), e.getPlaces().get(0).getType(), place.getAddress(), place.getId(), coordinates, place.getPhoneNumber(), place.getPhotoMetadatas()));
+                        placesLocalDataSource.insertPlaces(placesList);
+                    }
 
-         */
+                    @Override
+                    public void onError(String message) {
+                        Log.i("ERRORE FETCH PLACE:", message);
+                        //PER I POSTI NON TROVATI USO IL COSTUTTORE DI DEFAULT CON LE INFORMAZIONI BASE
+                        //placesList.add(new Place(e.getPlaces().get(0).getId(), e.getPlaces().get(0).getName(), e.getPlaces().get(0).getType(), e.getPlaces().get(0).getAddress(), e.getCoordinates()));
+                    }
+                });
+
+                */
+            }else{
+                Log.i("POSTO GIA ESISTENTE", e.getPlaces().toString());
+            }
+
+        }
+
+
     }
 
 
     @Override
-    public void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse) {
+    public void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse) { // NON USATO
         eventsLocalDataSource.insertEvents(eventsApiResponse);
 
 

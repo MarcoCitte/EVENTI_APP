@@ -217,6 +217,16 @@ public class AllEventsFragment extends Fragment implements MyDialogEventsFragmen
                         eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
                         eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
                 });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);

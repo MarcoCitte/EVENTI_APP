@@ -161,6 +161,16 @@ public class AllPlacesFragment extends Fragment {
                     public void onFavoriteButtonPressed(int position) {
 
                     }
+
+                    @Override
+                    public void onModePlaceButtonPressed(Place place) {
+
+                    }
+
+                    @Override
+                    public void onDeletePlaceButtonPressed(Place place) {
+
+                    }
                 });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(placesRecyclerViewAdapter);

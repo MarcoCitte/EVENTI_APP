@@ -22,10 +22,10 @@ public class Constants {
     //API FOURSQUARE
     public static final String FOURSQUARE_API_BASE_URL = "https://api.foursquare.com/v3/places/match";
     public static final String FOURSQUARE_ENDPOINT = "events";
-    public static final String FOURSQUARE_NAME="name";
-    public static final String FOURSQUARE_ADDRESS="address";
-    public static final String FOURSQUARE_CITY="city";
-    public static final String FOURSQUARE_CC="cc";
+    public static final String FOURSQUARE_NAME = "name";
+    public static final String FOURSQUARE_ADDRESS = "address";
+    public static final String FOURSQUARE_CITY = "city";
+    public static final String FOURSQUARE_CC = "cc";
 
 
     public static final String LAST_UPDATE = "last_update";
@@ -57,7 +57,7 @@ public class Constants {
     //SHARED PREFERENCES
     public static final String SHARED_PREFERENCES_FILE_NAME = "preferences";
     public static final String SHARED_PREFERENCES_FIRST_LOADING = "first_loading";
-    public static final String SHARED_PREFERENCES_LANGUAGE="IT";
+    public static final String SHARED_PREFERENCES_LANGUAGE = "IT";
 
     // Constants for EncryptedSharedPreferences
     public static final String ENCRYPTED_SHARED_PREFERENCES_FILE_NAME = "encrypted_preferences";
@@ -72,6 +72,11 @@ public class Constants {
     public static final int PLACES_VIEW_TYPE = 2;
     public static final int EVENTS2_VIEW_TYPE = 3;
     public static final int PLACES2_VIEW_TYPE = 4;
+    public static final int EVENTS3_VIEW_TYPE = 5;
+    public static final int PLACES3_VIEW_TYPE = 6;
+
+    //IMAGE
+    public static final int REQUEST_CODE_PICK_IMAGE = 1000;
 
 
     // Constants for EncryptedSharedPreferences

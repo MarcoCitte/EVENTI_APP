@@ -33,6 +33,28 @@
         <item>Alphabet (Z-A)</item>
     </string-array>
 
+    <string-array name="categories">
+        <item>Music</item>
+        <item>Concerts</item>
+        <item>Art and Culture</item>
+        <item>Sports</item>
+        <item>Food and Drinks</item>
+        <item>Politics</item>
+        <item>Conferences</item>
+        <item>Shows and Entertainment</item>
+        <item>Charity and Volunteering</item>
+        <item>Community</item>
+        <item>Fashion and Design</item>
+        <item>Technology and Innovation</item>
+        <item>Education and Training</item>
+        <item>Parties and Nightlife</item>
+        <item>Travel and Adventures</item>
+        <item>Health and Wellness</item>
+        <item>Games and Competitions</item>
+        <item>Networking and Professional Meetings</item>
+        <item>Other</item>
+    </string-array>
+
     <string name="logo" translatable="false">Logo Application</string>
     <string name="login" translatable="false">Login</string>
     <string name="logout" translatable="false">Logout</string>
@@ -69,14 +91,14 @@
     <string name="places">Places</string>
     <string name="see_all_venues"><![CDATA[See all places >]]></string>
     <string name="attendance">Attendance:</string>
-    <string name="favorite_events_account">Favorite events:</string>
+    <string name="favorite_events_account">Favorite events</string>
     <string name="settings">Settings</string>
     <string name="change_username">Change username</string>
     <string name="change_password">Change password</string>
     <string name="change_language">Change language</string>
     <string name="info" translatable="false">Info</string>
     <string name="version">Version</string>
-    <string name="number_of_events">Number of events:</string>
+    <string name="number_of_events">Number of events: </string>
     <string name="back">BACK</string>
     <string name="forward">FORWARD</string>
     <string name="sun">SUN</string>
@@ -89,7 +111,7 @@
     <string name="all_events">All events</string>
     <string name="all_places">All places</string>
     <string name="calendar">Calendar</string>
-    <string name="select_categories">Select categories</string>
+    <string name="select_categories">Select category</string>
     <string name="select_a_date_range">Select a date range</string>
     <string name="from">FROM:</string>
     <string name="to">TO:</string>
@@ -101,11 +123,32 @@
     <string name="number_of_places">Number of places:</string>
     <string name="send_email">Send Email</string>
     <string name="events">Events</string>
-    <string name="present_events">Present events</string>
+    <string name="present_events">Present events:</string>
     <string name="similar_events">Similar events</string>
     <string name="distance">Distance</string>
     <string name="hintsearch">Search events, places…</string>
-    <string name="noeventsinthisdate">No events in this date</string>
     <string name="movie_times">Movie times</string>
+    <string name="date">Date</string>
+    <string name="eventsinthisdate">Events of: </string>
+    <string name="noeventsinthisdate">There are no events on this date: </string>
+    <string name="favorite_category">Favorite category</string>
+    <string name="my_places">My places</string>
+    <string name="favorite_places">Favorite places</string>
+    <string name="create_place">Create place</string>
+    <string name="create_event">Create event</string>
+    <string name="title">Title</string>
+    <string name="duration">Duration:</string>
+    <string name="select_duration">Select duration</string>
+    <string name="start">Start:</string>
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
+    <string name="end">End:</string>
+    <string name="place">Place</string>
+    <string name="isprivate">Private</string>
+    <string name="add">Add</string>
+    <string name="all_day">All day</string>
+    <string name="unknown">Unknown</string>
+    <string name="noevents">There are no events</string>
+
 
 </resources>

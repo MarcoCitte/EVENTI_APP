@@ -3,6 +3,7 @@ package com.example.eventiapp.ui.main;
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -103,6 +104,7 @@ public class PlaceFragment extends Fragment {
         return fragmentSinglePlaceBinding.getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -176,9 +178,14 @@ public class PlaceFragment extends Fragment {
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
 
-                // For dropping a marker at a point on the Map
-                double[] location = place.getCoordinates();
-                LatLng latLng = new LatLng(location[0], location[1]);
+                LatLng latLng;
+                if (place.getCoordinates()[0] > place.getCoordinates()[1]) { //SONO GIUSTE
+                    double[] location = place.getCoordinates();
+                    latLng = new LatLng(location[0], location[1]);
+                } else {
+                    double[] location = place.getCoordinates();
+                    latLng = new LatLng(location[1], location[0]);  //ALTRIMENTI LE PRENDE AL CONTRARIO
+                }
                 googleMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()).snippet(place.getAddress()));
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
@@ -239,6 +246,16 @@ public class PlaceFragment extends Fragment {
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
                     }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
                 });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
@@ -264,7 +281,7 @@ public class PlaceFragment extends Fragment {
                         fragmentSinglePlaceBinding.progressBar.setVisibility(View.GONE);
                         fragmentSinglePlaceBinding.placeEvents.setVisibility(View.VISIBLE);
                         fragmentSinglePlaceBinding.numberEventsTextView.setVisibility(View.VISIBLE);
-                        fragmentSinglePlaceBinding.numberEventsTextView.setText(Integer.toString(eventsList.size()));
+                        fragmentSinglePlaceBinding.numberEventsTextView.setText(" " + eventsList.size());
 
                     } else {
                         eventsAndPlacesViewModel.setLoading(false);
@@ -297,7 +314,8 @@ public class PlaceFragment extends Fragment {
             } else {
                 //NON CI SONO EVENTI IN QUEL LOCALE
                 fragmentSinglePlaceBinding.placeEvents.setVisibility(View.VISIBLE);
-                fragmentSinglePlaceBinding.placeEvents.setText("There are no events");
+                fragmentSinglePlaceBinding.placeEvents.setText(R.string.noevents);
+                fragmentSinglePlaceBinding.line.setVisibility(View.GONE);
             }
         });
 

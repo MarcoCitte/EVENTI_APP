@@ -1,7 +1,9 @@
 package com.example.eventiapp.source.google;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Geocoder;
+import android.media.ExifInterface;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -83,8 +85,9 @@ public class PlaceDetailsSource {
     }
 
     public static void fetchPlacePhotos(List<PhotoMetadata> metadata, boolean onePhoto, PlacePhotosListener listener) {
-        if(true){
-            return; // PER NON FARE LA FETCH DELLE FOTO E RISPARMIARE IN DEBUG
+
+        if (true) {
+            return; // PER NON FARE LA FETCH DELLE FOTO E RISPARMIARE IN TEST
         }
         if (metadata == null || metadata.isEmpty()) {
             Log.w("TAG", "No photo metadata.");

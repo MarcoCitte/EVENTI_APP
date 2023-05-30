@@ -26,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        SharedPreferencesUtil sharedPreferencesUtil=new SharedPreferencesUtil(getApplication());
+        String language = sharedPreferencesUtil.readStringData(SHARED_PREFERENCES_FILE_NAME, SHARED_PREFERENCES_LANGUAGE);
+        LanguageUtil.setAppLanguage(this, language);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView);
         assert navHostFragment != null;
         NavController navController = navHostFragment.getNavController();

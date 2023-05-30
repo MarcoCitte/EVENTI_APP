@@ -2,6 +2,7 @@ package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -66,10 +67,7 @@ public class MapsFragment extends Fragment {
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     private List<com.example.eventiapp.model.Place> placesList;
     private List<Events> placeEventsList;
-    private Marker marker;
-    private UiSettings mUiSettings;
     GoogleMap myGoogleMap;
-    private Geocoder geoCoder;
     private BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
     LinearLayout tapactionlayout;
@@ -85,8 +83,6 @@ public class MapsFragment extends Fragment {
     private TextView numberOfEvents;
 
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
-    private RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
     private ProgressBar progressBar;
     private int totalItemCount; // Total number of events
     private int lastVisibleItem; // The position of the last visible event item
@@ -96,19 +92,10 @@ public class MapsFragment extends Fragment {
 
     private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
         @Override
-        public void onMapReady(GoogleMap googleMap) {
+        public void onMapReady(@NonNull GoogleMap googleMap) {
             myGoogleMap = googleMap;
-            mUiSettings = myGoogleMap.getUiSettings();
+            UiSettings mUiSettings = myGoogleMap.getUiSettings();
             mUiSettings.setZoomControlsEnabled(true);
             mUiSettings.setMapToolbarEnabled(true);
 
@@ -125,10 +112,10 @@ public class MapsFragment extends Fragment {
             int count = 0;
 
             myGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                @Nullable
+                @NonNull
                 @Override
                 public View getInfoContents(@NonNull Marker marker) {
-                    View v = getLayoutInflater().inflate(R.layout.info_window_maps, null);
+                    @SuppressLint("InflateParams") View v = getLayoutInflater().inflate(R.layout.info_window_maps, null);
                     TextView textViewName = v.findViewById(R.id.place_name);
                     TextView textViewAddress = v.findViewById(R.id.place_address);
                     String[] parts = Objects.requireNonNull(marker.getTitle()).split(":");
@@ -145,7 +132,7 @@ public class MapsFragment extends Fragment {
                 }
             });
 
-            geoCoder = new Geocoder(getContext(), Locale.getDefault());
+            Geocoder geoCoder = new Geocoder(getContext(), Locale.getDefault());
             setMarkers();
         }
     };
@@ -188,9 +175,8 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
 
-        layoutManager =
-                new LinearLayoutManager(requireContext(),
-                        LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),
+                LinearLayoutManager.HORIZONTAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(placeEventsList,
                 requireActivity().getApplication(), 0,
@@ -218,9 +204,19 @@ public class MapsFragment extends Fragment {
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
                     }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
                 });
         progressBar = view.findViewById(R.id.progress_bar);
-        recyclerView = view.findViewById(R.id.recyclerview_events);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerview_events);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
@@ -321,8 +317,6 @@ public class MapsFragment extends Fragment {
         eventsAndPlacesViewModel.getPlaceEventsLiveData(id).observe(getViewLifecycleOwner(), result -> {
 
             if (result.isSuccess()) {
-                Log.i("SUCCESSO", "SUCCESSO");
-
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
 
@@ -353,8 +347,6 @@ public class MapsFragment extends Fragment {
                 }
                 numberOfEvents.setText(String.valueOf(placeEventsList.size()));
             } else {
-                Log.i("FALLITO", "FALLITO");
-
                 ErrorMessageUtil errorMessagesUtil =
                         new ErrorMessageUtil(requireActivity().getApplication());
                 Snackbar.make(requireView(), errorMessagesUtil.
@@ -388,8 +380,15 @@ public class MapsFragment extends Fragment {
 
     private void setMarkers() {
         for (com.example.eventiapp.model.Place p : placesList) {
-            marker = myGoogleMap.addMarker(new MarkerOptions().
-                    position(new LatLng(p.getCoordinates()[0], p.getCoordinates()[1])).
+            double[] location = p.getCoordinates();
+            LatLng latLng;
+            if (location[0] > location[1]) {
+                latLng = new LatLng(location[0], location[1]);
+            } else {
+                latLng = new LatLng(location[1], location[0]);
+            }
+            myGoogleMap.addMarker(new MarkerOptions().
+                    position(latLng).
                     title(p.getName() + ":" + p.getId()).
                     snippet(p.getAddress()));
             myGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

@@ -1,6 +1,7 @@
 package com.example.eventiapp.adapter;
 
 import static com.example.eventiapp.util.Constants.EVENTS2_VIEW_TYPE;
+import static com.example.eventiapp.util.Constants.EVENTS3_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.LOADING_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.MAX_ITEMS;
@@ -40,6 +41,10 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         void onShareButtonPressed(Events events);
 
         void onFavoriteButtonPressed(int position);
+
+        void onModeEventButtonPressed(Events events);
+
+        void onDeleteEventButtonPressed(Events events);
     }
 
     private final List<Events> eventsList;
@@ -69,7 +74,12 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 return EVENTS2_VIEW_TYPE;
             }
-        }
+        } else if (typeOfView == 5) //EVENT 3{
+            if (eventsList.get(position) == null) {
+                return LOADING_VIEW_TYPE;
+            } else {
+                return EVENTS3_VIEW_TYPE;
+            }
         return EVENTS_VIEW_TYPE;
     }
 
@@ -86,6 +96,10 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.events2_list_item, parent, false);
             return new Events2ViewHolder(view);
+        } else if (viewType == EVENTS3_VIEW_TYPE) {
+            view = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.event3_list_item, parent, false);
+            return new Events3ViewHolder(view);
         } else {
             view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.events_loading_item, parent, false);
@@ -101,12 +115,14 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             ((LoadingEventsViewHolder) holder).activate();
         } else if (holder instanceof Events2ViewHolder) {
             ((Events2ViewHolder) holder).bind(eventsList.get(position));
+        } else if (holder instanceof Events3ViewHolder) {
+            ((Events3ViewHolder) holder).bind(eventsList.get(position));
         }
     }
 
     @Override
     public int getItemCount() {
-        if (eventsList != null && typeOfView == 0) { //EVENTS
+        if (eventsList != null && (typeOfView == 0 || typeOfView == 5)) { //EVENTS 1 e EVENTS 3
             return eventsList.size();
         } else if (eventsList != null && typeOfView == 3) { //EVENTS2
             return Math.min(eventsList.size(), MAX_ITEMS);
@@ -148,9 +164,9 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewTitle.setText(events.getTitle());
             //EVENTS UCI ED EVENTS PIRELLI HANGAR NON HANNO FINE DATA
             SimpleDateFormat outputFormat;
-            if(events.getEventSource()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            }else{
+            } else {
                 outputFormat = new SimpleDateFormat("dd MMM yyyy");
             }
             if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
@@ -169,6 +185,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 textViewDate.setVisibility(View.GONE);
             }
+
             textViewCategory.setText(events.getCategory());
             if (events.getPlaces() != null && !events.getPlaces().isEmpty()) {
                 textViewPlace.setText(events.getPlaces().get(0).getName());
@@ -248,10 +265,118 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         public void bind(Events events) {
             textViewTitle.setText(events.getTitle());
             textViewCategory.setText(events.getCategory());
+
             SimpleDateFormat outputFormat;
-            if(events.getEventSource()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            }else{
+            } else {
+                outputFormat = new SimpleDateFormat("dd MMM yyyy");
+            }
+            if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
+                String dateStart = events.getStart();
+                String dateEnd = events.getEnd();
+                Date date1 = DateUtils.parseDateToShow(dateStart, "EN");
+                Date date2 = DateUtils.parseDateToShow(dateEnd, "EN");
+                String formattedDate = outputFormat.format(Objects.requireNonNull(date1)) + " - " + outputFormat.format(Objects.requireNonNull(date2));
+                textViewDate.setText(formattedDate);
+                textViewDate.setTextSize(13);
+            } else if (events.getStart() != null) {
+                String date = events.getStart();
+                Date date1 = DateUtils.parseDateToShow(date, "EN");
+                String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
+                textViewDate.setText(formattedDate);
+            } else {
+                textViewDate.setVisibility(View.GONE);
+            }
+
+            if (events.getPlaces() != null && !events.getPlaces().isEmpty()) {
+                textViewPlace.setText(events.getPlaces().get(0).getName());
+            } else {
+                textViewPlace.setVisibility(View.GONE);
+            }
+            if (events.getAttendance() != 0) {
+                textViewNumberAttendance.setText(String.valueOf(events.getAttendance()));
+            } else {
+                textViewNumberAttendance.setVisibility(View.GONE);
+                textViewAttendance.setVisibility(View.GONE);
+            }
+            if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
+                Glide.with(itemView).load(events.getEventSource().getUrlPhoto()).into(imageViewEvent);
+            } else {
+                imageViewEvent.setVisibility(View.GONE);
+            }
+            setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.imageViewFavorite) {
+                setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
+                onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
+            } else if (v.getId() == R.id.imageViewShare) {
+                onItemClickListener.onShareButtonPressed(eventsList.get(getAdapterPosition()));
+            } else {
+                onItemClickListener.onEventsItemClick(eventsList.get(getAdapterPosition()));
+            }
+        }
+
+        private void setImageViewFavoriteEvent(boolean isFavorite) {
+            if (isFavorite) {
+                imageViewFavoriteEvent.setImageDrawable(
+                        AppCompatResources.getDrawable(application,
+                                R.drawable.ic_baseline_favorite_24));
+            } else {
+                imageViewFavoriteEvent.setImageDrawable(
+                        AppCompatResources.getDrawable(application,
+                                R.drawable.ic_baseline_favorite_border_24));
+            }
+        }
+    }
+
+
+    //MY EVENTS
+
+    public class Events3ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private final TextView textViewTitle;
+        private final TextView textViewCategory;
+        private final TextView textViewPlace;
+        private final TextView textViewDate;
+        private final TextView textViewAttendance;
+        private final TextView textViewNumberAttendance;
+        private final ImageView imageViewEvent;
+        private final ImageView imageViewFavoriteEvent;
+        private final ImageView imageViewModeEvent;
+        private final ImageView imageViewDeleteEvent;
+
+        public Events3ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textViewTitle = itemView.findViewById(R.id.titleTextView);
+            textViewDate = itemView.findViewById(R.id.dateTextView);
+            textViewCategory = itemView.findViewById(R.id.categoryTextView);
+            textViewPlace = itemView.findViewById(R.id.placeTextView);
+            textViewAttendance = itemView.findViewById(R.id.attendanceTextView);
+            textViewNumberAttendance = itemView.findViewById(R.id.numberAttendanceTextView);
+            imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
+            imageViewFavoriteEvent = itemView.findViewById(R.id.imageViewFavorite);
+            imageViewModeEvent = itemView.findViewById(R.id.imageViewMode);
+            imageViewDeleteEvent = itemView.findViewById(R.id.imageViewDelete);
+            ImageView imageViewShareEvent = itemView.findViewById(R.id.imageViewShare);
+            itemView.setOnClickListener(this);
+            imageViewFavoriteEvent.setOnClickListener(this);
+            imageViewShareEvent.setOnClickListener(this);
+            imageViewModeEvent.setOnClickListener(this);
+            imageViewDeleteEvent.setOnClickListener(this);
+        }
+
+        @SuppressLint("SimpleDateFormat")
+        public void bind(Events events) {
+            textViewTitle.setText(events.getTitle());
+            textViewCategory.setText(events.getCategory());
+            SimpleDateFormat outputFormat;
+            if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+                outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+            } else {
                 outputFormat = new SimpleDateFormat("dd MMM yyyy");
             }
             if (events.getStart() != null) {
@@ -289,6 +414,10 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
             } else if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(eventsList.get(getAdapterPosition()));
+            } else if (v.getId() == R.id.imageViewMode) {
+                onItemClickListener.onModeEventButtonPressed(eventsList.get(getAdapterPosition()));
+            } else if (v.getId() == R.id.imageViewDelete) {
+                onItemClickListener.onDeleteEventButtonPressed(eventsList.get(getAdapterPosition()));
             } else {
                 onItemClickListener.onEventsItemClick(eventsList.get(getAdapterPosition()));
             }

@@ -3,6 +3,7 @@ package com.example.eventiapp.adapter;
 import static com.example.eventiapp.util.Constants.LOADING_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.MAX_ITEMS;
 import static com.example.eventiapp.util.Constants.PLACES2_VIEW_TYPE;
+import static com.example.eventiapp.util.Constants.PLACES3_VIEW_TYPE;
 import static com.example.eventiapp.util.Constants.PLACES_VIEW_TYPE;
 
 import android.annotation.SuppressLint;
@@ -15,9 +16,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.eventiapp.R;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
@@ -34,6 +37,10 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         void onShareButtonPressed(Place place);
 
         void onFavoriteButtonPressed(int position);
+
+        void onModePlaceButtonPressed(Place place);
+
+        void onDeletePlaceButtonPressed(Place place);
     }
 
     private final List<Place> placeList;
@@ -63,6 +70,12 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 return PLACES2_VIEW_TYPE;
             }
+        } else if (typeOfView == 6) {  //PLACE 3
+            if (placeList.get(position) == null) {
+                return LOADING_VIEW_TYPE;
+            } else {
+                return PLACES3_VIEW_TYPE;
+            }
         }
         return PLACES_VIEW_TYPE;
     }
@@ -81,6 +94,10 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.place2_list_item, parent, false);
             return new PlacesRecyclerViewAdapter.Places2ViewHolder(view);
+        } else if (viewType == PLACES3_VIEW_TYPE) {
+            view = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.places3_list_item, parent, false);
+            return new PlacesRecyclerViewAdapter.Places3ViewHolder(view);
         } else {
             view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.places_loading_item, parent, false);
@@ -96,14 +113,16 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             ((LoadingPlacesViewHolder) holder).activate();
         } else if (holder instanceof Places2ViewHolder) {
             ((Places2ViewHolder) holder).bind(placeList.get(position));
+        } else if (holder instanceof Places3ViewHolder) {
+            ((Places3ViewHolder) holder).bind(placeList.get(position));
         }
     }
 
     @Override
     public int getItemCount() {
-        if (placeList != null && typeOfView == 2) { //EVENTS
+        if (placeList != null && (typeOfView == 2 || typeOfView == 6)) { //PLACE 1 e PLACE 2
             return placeList.size();
-        } else if (placeList != null && typeOfView == 4) { //EVENTS2
+        } else if (placeList != null && typeOfView == 4) { //PLACE 2
             return Math.min(placeList.size(), MAX_ITEMS);
         }
         return 0;
@@ -137,7 +156,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewName.setText(places.getName());
             textViewAddress.setText(places.getAddress());
             textViewDistance.setText("5.2km");
-            if(places.getImages()!=null && !places.getImages().isEmpty()){
+            if (places.getImages() != null && !places.getImages().isEmpty()) {
                 PlaceDetailsSource.fetchPlacePhotos(places.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
                     @Override
                     public void onPlacePhotosListener(Bitmap bitmap) {
@@ -152,7 +171,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         imageViewPlace.setVisibility(View.GONE);
                     }
                 });
-            }else{
+            } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
         }
@@ -210,7 +229,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewName.setText(places.getName());
             textViewAddress.setText(places.getAddress());
             textViewDistance.setText("5.2km");
-            if(places.getImages()!=null && !places.getImages().isEmpty()){
+            if (places.getImages() != null && !places.getImages().isEmpty()) {
                 PlaceDetailsSource.fetchPlacePhotos(places.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
                     @Override
                     public void onPlacePhotosListener(Bitmap bitmap) {
@@ -225,7 +244,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         imageViewPlace.setVisibility(View.GONE);
                     }
                 });
-            }else{
+            } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
         }
@@ -254,6 +273,89 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             }
         }
     }
+
+    public class Places3ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private final TextView textViewName;
+        private final TextView textViewAddress;
+        private final TextView textViewDistance;
+        private final ImageView imageViewPlace;
+        private final ImageView imageViewFavorite;
+        private final ImageView imageViewMode;
+        private final ImageView imageViewDelete;
+
+        public Places3ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textViewName = itemView.findViewById(R.id.nameTextView);
+            textViewDistance = itemView.findViewById(R.id.distanceTextView);
+            textViewAddress = itemView.findViewById(R.id.addressTextView);
+            imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
+            imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
+            imageViewMode = itemView.findViewById(R.id.imageViewMode);
+            imageViewDelete = itemView.findViewById(R.id.imageViewDelete);
+            ImageView imageViewShare = itemView.findViewById(R.id.imageViewShare);
+
+            itemView.setOnClickListener(this);
+            imageViewFavorite.setOnClickListener(this);
+            imageViewShare.setOnClickListener(this);
+            imageViewMode.setOnClickListener(this);
+            imageViewDelete.setOnClickListener(this);
+        }
+
+        @SuppressLint("SetTextI18n")
+        public void bind(Place places) {
+            textViewName.setText(places.getName());
+            textViewAddress.setText(places.getAddress());
+            textViewDistance.setText("5.2km");
+            if (places.getImages() != null && !places.getImages().isEmpty()) {
+                PlaceDetailsSource.fetchPlacePhotos(places.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
+                    @Override
+                    public void onPlacePhotosListener(Bitmap bitmap) {
+                        if (bitmap != null) {
+                            imageViewPlace.setImageBitmap(bitmap);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.i("ERROR", message);
+                        imageViewPlace.setVisibility(View.GONE);
+                    }
+                });
+            } else {
+                imageViewPlace.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.imageViewFavorite) {
+                //setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
+                onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
+            } else if (v.getId() == R.id.imageViewShare) {
+                onItemClickListener.onShareButtonPressed(placeList.get(getAdapterPosition()));
+            } else if (v.getId() == R.id.imageViewMode) {
+                onItemClickListener.onModePlaceButtonPressed(placeList.get(getAdapterPosition()));
+            } else if (v.getId() == R.id.imageViewDelete) {
+                onItemClickListener.onDeletePlaceButtonPressed(placeList.get(getAdapterPosition()));
+            } else {
+                onItemClickListener.onPlacesItemClick(placeList.get(getAdapterPosition()));
+            }
+        }
+
+        private void setImageViewFavoritePlace(boolean isFavorite) {
+            if (isFavorite) {
+                imageViewFavorite.setImageDrawable(
+                        AppCompatResources.getDrawable(application,
+                                R.drawable.ic_baseline_favorite_24));
+            } else {
+                imageViewFavorite.setImageDrawable(
+                        AppCompatResources.getDrawable(application,
+                                R.drawable.ic_baseline_favorite_border_24));
+            }
+        }
+    }
+
 
     public static class LoadingPlacesViewHolder extends RecyclerView.ViewHolder {
         private final ProgressBar progressBar;

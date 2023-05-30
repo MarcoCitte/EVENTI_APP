@@ -183,6 +183,16 @@ public class SearchFragment extends Fragment {
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
                     }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
                 });
         fragmentSearchBinding.recyclerViewEvents.setLayoutManager(layoutManagerEvents);
         fragmentSearchBinding.recyclerViewEvents.setAdapter(eventsRecyclerViewAdapter);
@@ -207,6 +217,16 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onFavoriteButtonPressed(int position) {
+
+            }
+
+            @Override
+            public void onModePlaceButtonPressed(Place place) {
+
+            }
+
+            @Override
+            public void onDeletePlaceButtonPressed(Place place) {
 
             }
         });

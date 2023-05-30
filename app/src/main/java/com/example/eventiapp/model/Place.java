@@ -54,6 +54,16 @@ public class Place implements Serializable, Parcelable {
         this.isSynchronized = false;
     }
 
+    @Ignore
+    public Place(@NonNull String id, String name, String type, String address) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.address = address;
+        this.isFavorite = false;
+        this.isSynchronized = false;
+    }
+
     public Place(@NonNull String id, String name, String type, String address, String idGoogle, double[] coordinates, String phoneNumber, List<PhotoMetadata> images) {
         this.id = id;
         this.name = name;
@@ -178,14 +188,12 @@ public class Place implements Serializable, Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Place place = (Place) o;
-        return isFavorite == place.isFavorite && isSynchronized == place.isSynchronized && id.equals(place.id) && Objects.equals(name, place.name) && Objects.equals(type, place.type) && Objects.equals(address, place.address) && Objects.equals(idGoogle, place.idGoogle) && Arrays.equals(coordinates, place.coordinates) && Objects.equals(phoneNumber, place.phoneNumber) && Objects.equals(images, place.images);
+        return Objects.equals(name, place.name) && Objects.equals(address, place.address) && Objects.equals(idGoogle, place.idGoogle) && Objects.equals(phoneNumber, place.phoneNumber) && Objects.equals(images, place.images);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name, type, address, idGoogle, phoneNumber, images, isFavorite, isSynchronized);
-        result = 31 * result + Arrays.hashCode(coordinates);
-        return result;
+        return Objects.hash(name, address, idGoogle, phoneNumber, images);
     }
 
     @NonNull
