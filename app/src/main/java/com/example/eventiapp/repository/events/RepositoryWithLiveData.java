@@ -16,6 +16,7 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.source.events.BaseEventsLocalDataSource;
 import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
 import com.example.eventiapp.source.events.BaseFavoriteEventsDataSource;
+import com.example.eventiapp.source.places.BaseFavoritePlacesDataSource;
 import com.example.eventiapp.source.events.EventsCallback;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
@@ -23,9 +24,7 @@ import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCallback, PlaceCallback {
 
@@ -49,6 +48,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     //PLACES
     private final MutableLiveData<List<Place>> allPlacesMutableLiveData;
     private final MutableLiveData<List<Place>> favoritePlacesMutableLiveData;
+
+    private final MutableLiveData<Result> favoritePlacesMutableLiveData2;
+
     private final MutableLiveData<Place> singlePlaceMutableLiveData;
     private final MutableLiveData<List<Place>> placesFromSearchLiveData;
 
@@ -57,6 +59,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final BasePlacesLocalDataSource placesLocalDataSource;
 
     private final BaseFavoriteEventsDataSource backupDataSource;
+    private final BaseFavoritePlacesDataSource backupDataSource2;
+
+
 
     private final PlaceDetailsSource placeDetailsSource;
     private List<String> dates;
@@ -66,7 +71,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
 
     public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
-                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource, BaseFavoriteEventsDataSource favoriteEventsDataSource) {
+                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource, BaseFavoriteEventsDataSource favoriteEventsDataSource, BaseFavoritePlacesDataSource favoritePlacesDataSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         eventsFromSearchLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
@@ -82,6 +87,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         allPlacesMutableLiveData = new MutableLiveData<>();
         placesFromSearchLiveData = new MutableLiveData<>();
         favoritePlacesMutableLiveData = new MutableLiveData<>();
+        favoritePlacesMutableLiveData2 = new MutableLiveData<>();
         singlePlaceMutableLiveData = new MutableLiveData();
         allCategoriesMutableLiveData = new MutableLiveData<>();
         categoriesInADateMutableLiveData = new MutableLiveData<>();
@@ -94,6 +100,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         this.placeDetailsSource = placeDetailsSource;
         this.backupDataSource = favoriteEventsDataSource;
         this.backupDataSource.setEventsCallback(this);
+
+        this.backupDataSource2 = favoritePlacesDataSource;
+        this.backupDataSource2.setPlacesCallback(this);
 
         lifecycleRegistry = new LifecycleRegistry(new LifecycleOwner() {
             @NonNull
@@ -234,6 +243,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         return favoritePlacesMutableLiveData;
     }
 
+
     @Override
     public MutableLiveData<Place> getSinglePlace(String id) {
         placesLocalDataSource.getSinglePlace(id);
@@ -285,12 +295,22 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
+    public void updatePlace(Place place) {
+        placesLocalDataSource.updatePlaces(place);
+        if (place.isFavorite()) {
+            backupDataSource2.addFavoritePlace(place);
+        } else {
+            backupDataSource2.deleteFavoritePlace(place);
+        }
+    }
+
+    @Override
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
         eventsLocalDataSource.insertEvents(eventsApiResponse);
         //PLACES
-        //List<Events> fetchedEvents = eventsApiResponse.getEventsList();
+        List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
-        /*
+
         Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
         Place pirelli = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", new double[]{45.5203608, 9.2160497});
         List<Place> uciList=new ArrayList<>();
@@ -300,7 +320,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         fetchedEvents.add(new Events(uciList));
         fetchedEvents.add(new Events(pirelliList));
 
-         */
+
 
  /*
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
@@ -311,11 +331,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                 if (!map.containsKey(idPlace)) {
                     map.put(idPlace, e);
                 }
-                if (e.getCoordinates()[0] < e.getCoordinates()[1]) {
-                    double temp = e.getCoordinates()[0];
-                    e.getCoordinates()[0] = e.getCoordinates()[1];
-                    e.getCoordinates()[1] = temp;
-                }
+
             }
         }
         List<Events> eventsNoDuplicates = new ArrayList<>(map.values());
@@ -717,6 +733,34 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onSuccessDeletionP() {
+
+    }
+
+    @Override
+    public void onSuccessFromCloudReading2(List<Place> placesList) {
+        if (placesList != null) {
+            for (Place place : placesList) {
+                place.setSynchronized(true);
+            }
+            Log.e("TAG", "onsucce4");
+            placesLocalDataSource.insertPlaces(placesList);
+            favoritePlacesMutableLiveData2.postValue(new Result.PlacesResponseSuccess(placesList));
+        }
+    }
+
+    @Override
+    public void onSuccessFromCloudWriting2(Place place) {
+        if (place != null && !place.isFavorite()) {
+            place.setSynchronized(false);
+        }
+        Log.e("TAG", "onsucc");
+
+        placesLocalDataSource.updatePlaces(place);
+        backupDataSource2.getFavoritePlaces();
+    }
+
+    @Override
+    public void onFailureFromCloud2(Exception exception) {
 
     }
 

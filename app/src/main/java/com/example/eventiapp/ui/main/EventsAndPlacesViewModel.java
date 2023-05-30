@@ -36,7 +36,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     //PLACES
     private MutableLiveData<List<Place>> placesListLiveData; //TUTTI I POSTI
-    private MutableLiveData<List<Place>> favoritePlacesListLiveData; //POSTI PREFERITI
+    private MutableLiveData<Result> favoritePlacesListLiveData; //POSTI PREFERITI
     private MutableLiveData<Place> singlePlaceLiveData; //POSTO SINGOLO
     private MutableLiveData<List<Place>> placesFromSearchLiveData; //POSTI PRESI DALLA SEARCH
 
@@ -77,7 +77,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     }
 
-    public MutableLiveData<List<Place>> getFavoritePlacesLiveData(boolean isFirstLoading) {
+    public MutableLiveData<Result> getFavoritePlacesLiveData(boolean isFirstLoading) {
         if (favoritePlacesListLiveData == null) {
             iRepositoryWithLiveData.getFavoritePlaces(isFirstLoading);
         }
@@ -91,10 +91,14 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     /**
      * Updates the event status.
-     * @param event The news to be updated.
+     * @param event The event to be updated.
      */
     public void updateEvents(Events event) {
         iRepositoryWithLiveData.updateEvents(event);
+    }
+
+    public void updatePlace(Place place) {
+        iRepositoryWithLiveData.updatePlace(place);
     }
 
 
@@ -245,4 +249,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
         iRepositoryWithLiveData.updateEvents(events);
     }
 
+    public void removeFromFavorite(Place place) {
+        iRepositoryWithLiveData.updatePlace(place);
+    }
 }

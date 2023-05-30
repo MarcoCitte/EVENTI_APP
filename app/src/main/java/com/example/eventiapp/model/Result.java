@@ -1,5 +1,7 @@
 package com.example.eventiapp.model;
 
+import java.util.List;
+
 /**
  * Class that represents the result of an action that requires
  * the use of a Web Service or a local database.
@@ -8,7 +10,7 @@ public abstract class Result {
     private Result() {}
 
     public boolean isSuccess() {
-        if (this instanceof EventsResponseSuccess || this instanceof UserResponseSuccess || this instanceof ResetPasswordSuccess) {
+        if (this instanceof EventsResponseSuccess || this instanceof UserResponseSuccess || this instanceof ResetPasswordSuccess || this instanceof PlacesResponseSuccess) {
             return true;
         } else {
             return false;
@@ -22,6 +24,16 @@ public abstract class Result {
         }
         public EventsResponse getData() {
             return eventsResponse;
+        }
+    }
+
+    public static final class PlacesResponseSuccess extends Result {
+        private final List<Place> places;
+        public PlacesResponseSuccess(List<Place> places) {
+            this.places = places;
+        }
+        public List<Place> getData() {
+            return places;
         }
     }
 

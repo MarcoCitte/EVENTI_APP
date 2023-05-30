@@ -164,4 +164,9 @@
         android:name="com.example.eventiapp.ui.user.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/mySavingsFragment"
+        android:name="com.example.eventiapp.ui.main.MySavingsFragment"
+        android:label="fragment_my_savings"
+        tools:layout="@layout/fragment_my_savings" />
 </navigation>

@@ -10,9 +10,9 @@
         android:icon="@drawable/ic_maps"
         android:title="@string/map" />
     <item
-        android:id="@+id/myEventsFragment"
+        android:id="@+id/mySavingsFragment"
         android:icon="@drawable/ic_my_events"
-        android:title="@string/events" />
+        android:title="@string/savings" />
     <item
         android:id="@+id/searchFragment"
         android:icon="@drawable/ic_search"

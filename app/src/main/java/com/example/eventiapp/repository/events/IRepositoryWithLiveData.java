@@ -44,6 +44,7 @@ public interface IRepositoryWithLiveData {
 
     MutableLiveData<List<Place>> getFavoritePlaces(boolean isFirstLoading);
 
+
     MutableLiveData<Place> getSinglePlace(String id);
 
     MutableLiveData<List<Place>> getPlacesFromSearch(String input);
@@ -59,4 +60,6 @@ public interface IRepositoryWithLiveData {
     void deletePlaces();
 
     void deleteFavoriteEvents();
+
+    void updatePlace(Place place);
 }

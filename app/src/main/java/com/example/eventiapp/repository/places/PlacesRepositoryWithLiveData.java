@@ -137,4 +137,19 @@ public class PlacesRepositoryWithLiveData implements IPlacesRepositoryWithLiveDa
     public void onSuccessDeletionP() {
 
     }
+
+    @Override
+    public void onSuccessFromCloudReading2(List<Place> placesList) {
+
+    }
+
+    @Override
+    public void onSuccessFromCloudWriting2(Place place) {
+
+    }
+
+    @Override
+    public void onFailureFromCloud2(Exception exception) {
+
+    }
 }
