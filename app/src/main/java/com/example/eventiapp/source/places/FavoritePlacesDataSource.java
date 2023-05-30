@@ -1,13 +1,15 @@
-package com.example.eventiapp.source.events;
+package com.example.eventiapp.source.places;
 
-import static com.example.eventiapp.util.Constants.FIREBASE_FAVORITE_EVENTS_COLLECTION;
-import static com.example.eventiapp.util.Constants.FIREBASE_REALTIME_DATABASE; import static com.example.eventiapp.util.Constants.FIREBASE_USERS_COLLECTION;
+import static com.example.eventiapp.util.Constants.FIREBASE_FAVORITE_PLACES_COLLECTION;
+import static com.example.eventiapp.util.Constants.FIREBASE_REALTIME_DATABASE;
+import static com.example.eventiapp.util.Constants.FIREBASE_USERS_COLLECTION;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.Place;
+import com.example.eventiapp.source.events.FavoriteEventsDataSource;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -17,89 +19,84 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class to get the user favorite news using Firebase Realtime Database.
- */
-public class FavoriteEventsDataSource extends BaseFavoriteEventsDataSource{
+public class FavoritePlacesDataSource extends BaseFavoritePlacesDataSource{
+
     private static final String TAG = FavoriteEventsDataSource.class.getSimpleName();
 
     private final DatabaseReference databaseReference;
     private final String idToken;
 
-    public FavoriteEventsDataSource(String idToken) {
+    public FavoritePlacesDataSource(String idToken) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(FIREBASE_REALTIME_DATABASE);
         databaseReference = firebaseDatabase.getReference().getRef();
         this.idToken = idToken;
     }
 
     @Override
-    public void getFavoriteEvents() {
-
-        Log.e(TAG, "getFavoriteEvents: Token" + idToken);
-
+    public void getFavoritePlaces() {
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
-                child(FIREBASE_FAVORITE_EVENTS_COLLECTION).get().addOnCompleteListener(task -> {
+                child(FIREBASE_FAVORITE_PLACES_COLLECTION).get().addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
                         Log.d(TAG, "Error getting data", task.getException());
                     }
                     else {
                         Log.d(TAG, "Successful read: " + task.getResult().getValue());
 
-                        List<Events> eventsList = new ArrayList<>();
+                        List<Place> placesList = new ArrayList<>();
                         for(DataSnapshot ds : task.getResult().getChildren()) {
-                            Events events = ds.getValue(Events.class);
-                            events.setSynchronized(true);
-                            eventsList.add(events);
+                            Place place = ds.getValue(Place.class);
+                            place.setSynchronized(true);
+                            placesList.add(place);
                         }
 
-                        eventsCallback.onSuccessFromCloudReading(eventsList);
+                        placeCallback.onSuccessFromCloudReading2(placesList);
                     }
                 });
     }
 
     @Override
-    public void addFavoriteEvents(Events events) {
+    public void addFavoritePlace(Place place) {
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
-                child(FIREBASE_FAVORITE_EVENTS_COLLECTION).
-                child(String.valueOf(events.hashCode())).
-                setValue(events)
+                child(FIREBASE_FAVORITE_PLACES_COLLECTION).
+                child(String.valueOf(place.hashCode())).
+                setValue(place)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        events.setSynchronized(true);
-                        eventsCallback.onSuccessFromCloudWriting(events);
+                        place.setSynchronized(true);
+                        placeCallback.onSuccessFromCloudWriting2(place);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        eventsCallback.onFailureFromCloud(e);
+                        placeCallback.onFailureFromCloud2(e);
                     }
                 });
     }
 
     @Override
-    public void synchronizeFavoriteEvents(List<Events> notSynchronizedEventsList) {
+    public void synchronizeFavoritePlaces(List<Place> notSynchronizedPlacesList) {
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
-                child(FIREBASE_FAVORITE_EVENTS_COLLECTION).get().addOnCompleteListener(task -> {
+                child(FIREBASE_FAVORITE_PLACES_COLLECTION).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        List<Events> eventsList = new ArrayList<>();
+                        List<Place> eventsList = new ArrayList<>();
                         for (DataSnapshot ds : task.getResult().getChildren()) {
-                            Events event = ds.getValue(Events.class);
-                            event.setSynchronized(true);
-                            eventsList.add(event);
+                            Place place = ds.getValue(Place.class);
+                            place.setSynchronized(true);
+                            eventsList.add(place);
                         }
 
-                        eventsList.addAll(notSynchronizedEventsList);
+                        eventsList.addAll(notSynchronizedPlacesList);
 
-                        for (Events event : eventsList) {
+                        for (Place place : eventsList) {
                             databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
-                                    child(FIREBASE_FAVORITE_EVENTS_COLLECTION).
-                                    child(String.valueOf(event.hashCode())).setValue(event).addOnSuccessListener(
+                                    child(FIREBASE_FAVORITE_PLACES_COLLECTION).
+                                    child(String.valueOf(place.hashCode())).setValue(place).addOnSuccessListener(
                                             new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
-                                                    event.setSynchronized(true);
+                                                    place.setSynchronized(true);
                                                 }
                                             }
                                     );
@@ -109,26 +106,26 @@ public class FavoriteEventsDataSource extends BaseFavoriteEventsDataSource{
     }
 
     @Override
-    public void deleteFavoriteEvents(Events events) {
+    public void deleteFavoritePlace(Place place) {
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
-                child(FIREBASE_FAVORITE_EVENTS_COLLECTION).child(String.valueOf(events.hashCode())).
+                child(FIREBASE_FAVORITE_PLACES_COLLECTION).child(String.valueOf(place.hashCode())).
                 removeValue().addOnSuccessListener(aVoid -> {
                     //QUI
-                    Log.e("TAG", "deleteFE: " + events.hashCode());
-                    events.setSynchronized(false);
-                    eventsCallback.onSuccessFromCloudWriting(events);
+                    Log.e("TAG", "deleteFE: " + place.hashCode());
+                    place.setSynchronized(false);
+                    placeCallback.onSuccessFromCloudWriting2(place);
                 }).addOnFailureListener(e -> {
-                    eventsCallback.onFailureFromCloud(e);
+                    placeCallback.onFailureFromCloud2(e);
                 });
     }
 
     @Override
     public void deleteAllFavoriteEvents() {
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
-                child(FIREBASE_FAVORITE_EVENTS_COLLECTION).removeValue().addOnSuccessListener(aVoid -> {
-                    eventsCallback.onSuccessFromCloudWriting(null);
+                child(FIREBASE_FAVORITE_PLACES_COLLECTION).removeValue().addOnSuccessListener(aVoid -> {
+                    placeCallback.onSuccessFromCloudWriting2(null);
                 }).addOnFailureListener(e -> {
-                    eventsCallback.onFailureFromCloud(e);
+                    placeCallback.onFailureFromCloud2(e);
                 });
     }
 }

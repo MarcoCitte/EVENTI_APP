@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -125,12 +126,12 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                 event.setStart(DateUtils.currentDate());
                 String[] hoursArray = new String[hours.size()];
                 hoursArray = hours.toArray(hoursArray);
-                event.setHours(hoursArray);
+                event.setHours(Arrays.asList(hoursArray));
                 event.setTimezone("Europe/Rome");
-                double[] coordinates = {45.5220145, 9.2133497}; //COORDINATE UCI BICOCCA
-                event.setCoordinates(coordinates);
+                Double[] coordinates = {45.5220145, 9.2133497}; //COORDINATE UCI BICOCCA
+                event.setCoordinates(Arrays.asList(coordinates));
                 List<Place> placeList = new ArrayList<>();
-                Place place = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", coordinates);
+                Place place = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", Arrays.asList(coordinates));
                 placeList.add(place);
                 event.setPlaces(placeList);
                 event.setPrivate(false);
@@ -174,9 +175,9 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                         Element titleElement = e.select("h2").first();
                         event.setTitle(titleElement.text());
                         List<Place> placeList = new ArrayList<>();
-                        double[] coordinates = {45.5203608, 9.2160497};
-                        event.setCoordinates(coordinates);
-                        Place place = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", coordinates);
+                        Double[] coordinates = {45.5203608, 9.2160497};
+                        event.setCoordinates(Arrays.asList(coordinates));
+                        Place place = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", Arrays.asList(coordinates));
                         placeList.add(place);
                         event.setPlaces(placeList);
                         event.setPrivate(false);
@@ -256,9 +257,9 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
 
                     //PLACE
                     List<Place> placeList = new ArrayList<>();
-                    double[] coordinates = {45.5182898, 9.2111811};
-                    event.setCoordinates(coordinates);
-                    Place place = new Place("unimib", "Università degli Studi di Milano Bicocca", "venue", "Piazza dell'Ateneo Nuovo, 1, 20126 Milano MI, Italy", coordinates);
+                    Double[] coordinates = {45.5182898, 9.2111811};
+                    event.setCoordinates(Arrays.asList(coordinates));
+                    Place place = new Place("unimib", "Università degli Studi di Milano Bicocca", "venue", "Piazza dell'Ateneo Nuovo, 1, 20126 Milano MI, Italy", Arrays.asList(coordinates));
                     placeList.add(place);
                     event.setPlaces(placeList);
 

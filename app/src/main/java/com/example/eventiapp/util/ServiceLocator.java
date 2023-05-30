@@ -15,6 +15,8 @@ import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.service.EventsApiService;
 import com.example.eventiapp.source.events.BaseFavoriteEventsDataSource;
 import com.example.eventiapp.source.events.FavoriteEventsDataSource;
+import com.example.eventiapp.source.places.BaseFavoritePlacesDataSource;
+import com.example.eventiapp.source.places.FavoritePlacesDataSource;
 import com.example.eventiapp.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.eventiapp.source.user.BaseUserDataRemoteDataSource;
 import com.example.eventiapp.source.user.UserAuthenticationRemoteDataSource;
@@ -73,7 +75,8 @@ public class ServiceLocator {
         BaseEventsLocalDataSource eventsLocalDataSource;
         BasePlacesLocalDataSource placesLocalDataSource;
         PlaceDetailsSource placeDetailsSource;
-        BaseFavoriteEventsDataSource favoriteNewsDataSource;
+        BaseFavoriteEventsDataSource favoriteEventsDataSource;
+        BaseFavoritePlacesDataSource favoritePlacesDataSource;
         SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(application);
         DataEncryptionUtil dataEncryptionUtil = new DataEncryptionUtil(application);
 
@@ -87,7 +90,7 @@ public class ServiceLocator {
         placeDetailsSource = new PlaceDetailsSource(placesClient,geocoder);
 
         try {
-            favoriteNewsDataSource = new FavoriteEventsDataSource(dataEncryptionUtil.
+            favoriteEventsDataSource = new FavoriteEventsDataSource(dataEncryptionUtil.
                     readSecretDataWithEncryptedSharedPreferences(
                             ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, ID_TOKEN
                     )
@@ -96,7 +99,17 @@ public class ServiceLocator {
             return null;
         }
 
-        return new RepositoryWithLiveData(eventsRemoteDataSource, eventsLocalDataSource, placesLocalDataSource, placeDetailsSource, favoriteNewsDataSource);
+        try {
+            favoritePlacesDataSource = new FavoritePlacesDataSource(dataEncryptionUtil.
+                    readSecretDataWithEncryptedSharedPreferences(
+                            ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, ID_TOKEN
+                    )
+            );
+        } catch (GeneralSecurityException | IOException e) {
+            return null;
+        }
+
+        return new RepositoryWithLiveData(eventsRemoteDataSource, eventsLocalDataSource, placesLocalDataSource, placeDetailsSource, favoriteEventsDataSource, favoritePlacesDataSource);
     }
 
     public IUserRepository getUserRepository(Application application) {

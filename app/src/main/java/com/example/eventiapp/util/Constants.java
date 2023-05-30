@@ -39,6 +39,9 @@ public class Constants {
     public static final String FIREBASE_USERS_COLLECTION = "users";
     public static final String FIREBASE_FAVORITE_EVENTS_COLLECTION = "favorite_events";
 
+    public static final String FIREBASE_FAVORITE_PLACES_COLLECTION = "favorite_places";
+
+
     public static final int REQUEST_CODE = 123;
 
 

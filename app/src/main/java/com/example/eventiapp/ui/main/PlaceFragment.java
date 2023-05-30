@@ -178,14 +178,9 @@ public class PlaceFragment extends Fragment {
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
 
-                LatLng latLng;
-                if (place.getCoordinates()[0] > place.getCoordinates()[1]) { //SONO GIUSTE
-                    double[] location = place.getCoordinates();
-                    latLng = new LatLng(location[0], location[1]);
-                } else {
-                    double[] location = place.getCoordinates();
-                    latLng = new LatLng(location[1], location[0]);  //ALTRIMENTI LE PRENDE AL CONTRARIO
-                }
+                // For dropping a marker at a point on the Map
+                Double[] location = place.getCoordinates().toArray(new Double[0]);
+                LatLng latLng = new LatLng(location[0], location[1]);
                 googleMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()).snippet(place.getAddress()));
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override

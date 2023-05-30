@@ -14,4 +14,11 @@ public interface PlaceCallback {
     void onDeleteFavoritePlacesSuccess(List<Place> favoritePlaces);
     void onSuccessSynchronizationP();
     void onSuccessDeletionP();
+
+
+    void onSuccessFromCloudReading2(List<Place> placesList);
+
+    void onSuccessFromCloudWriting2(Place place);
+
+    void onFailureFromCloud2(Exception exception);
 }

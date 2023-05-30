@@ -29,26 +29,21 @@ public class Events implements Parcelable {
     private String title;
     private String description;
     private String category;
-    @Exclude
-    private String[] labels;
     private int rank;
     @SerializedName("local_rank")
     private int localRank;
     @SerializedName("phq_attendance")
     private int attendance;
     @SerializedName("entities") //LUOGO E INDIRIZZO EVENTO
-    @Exclude
     private List<Place> places;
     private int duration;
     @ColumnInfo(name = "startDate")
     private String start;
     private String end;
-    @Exclude
-    private String[] hours;
+    private List<String> hours;
     private String timezone;
-    @Exclude
     @SerializedName("location")
-    private double[] coordinates; //COORDINATE
+    private List<Double> coordinates; //COORDINATE
     private String country;
     private String state; //ATTIVO o DISATTIVO
     @SerializedName("private")
@@ -70,16 +65,16 @@ public class Events implements Parcelable {
         title = in.readString();
         description = in.readString();
         category = in.readString();
-        labels = in.createStringArray();
+        //labels = in.createStringArray();
         rank = in.readInt();
         localRank = in.readInt();
         attendance = in.readInt();
         duration = in.readInt();
         start = in.readString();
         end = in.readString();
-        hours = in.createStringArray();
+        //hours = in.createStringArray();
         timezone = in.readString();
-        coordinates = in.createDoubleArray();
+        //coordinates = in.createDoubleArray();
         country = in.readString();
         state = in.readString();
         isPrivate = in.readByte() != 0;
@@ -141,14 +136,7 @@ public class Events implements Parcelable {
     public void setCategory(String category) {
         this.category = category;
     }
-    @Exclude
-    public String[] getLabels() {
-        return labels;
-    }
 
-    public void setLabels(String[] labels) {
-        this.labels = labels;
-    }
 
     public int getRank() {
         return rank;
@@ -174,7 +162,6 @@ public class Events implements Parcelable {
         this.attendance = attendance;
     }
 
-    @Exclude
     public List<Place> getPlaces() {
         return places;
     }
@@ -206,12 +193,11 @@ public class Events implements Parcelable {
     public void setEnd(String end) {
         this.end = end;
     }
-    @Exclude
-    public String[] getHours() {
+    public List<String> getHours() {
         return hours;
     }
 
-    public void setHours(String[] hours) {
+    public void setHours(List<String> hours) {
         this.hours = hours;
     }
 
@@ -222,12 +208,11 @@ public class Events implements Parcelable {
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }
-    @Exclude
-    public double[] getCoordinates() {
+    public List<Double> getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(double[] coordinates) {
+    public void setCoordinates(List<Double> coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -283,16 +268,15 @@ public class Events implements Parcelable {
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(category);
-        dest.writeStringArray(labels);
         dest.writeInt(rank);
         dest.writeInt(localRank);
         dest.writeInt(attendance);
         dest.writeInt(duration);
         dest.writeString(start);
         dest.writeString(end);
-        dest.writeStringArray(hours);
+        //dest.writeStringArray(hours);
         dest.writeString(timezone);
-        dest.writeDoubleArray(coordinates);
+        //dest.writeDoubleArray(coordinates);
         dest.writeString(country);
         dest.writeString(state);
         dest.writeByte((byte) (isPrivate ? 1 : 0));
@@ -305,7 +289,7 @@ public class Events implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Events events = (Events) o;
-        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && isPrivate == events.isPrivate && Objects.equals(eventSource, events.eventSource) && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Arrays.equals(labels, events.labels) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Arrays.equals(hours, events.hours) && Objects.equals(timezone, events.timezone) && Arrays.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state);
+        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && Objects.equals(eventSource, events.eventSource) && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(hours, events.hours) && Objects.equals(timezone, events.timezone) && Objects.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state);
     }
 
     @Override
@@ -322,7 +306,6 @@ public class Events implements Parcelable {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", category='" + category + '\'' +
-                ", labels=" + Arrays.toString(labels) +
                 ", rank=" + rank +
                 ", localRank=" + localRank +
                 ", attendance=" + attendance +
@@ -330,9 +313,9 @@ public class Events implements Parcelable {
                 ", duration=" + duration +
                 ", start='" + start + '\'' +
                 ", end='" + end + '\'' +
-                ", hours=" + Arrays.toString(hours) +
+                ", hours=" + hours.toString() +
                 ", timezone='" + timezone + '\'' +
-                ", coordinates=" + Arrays.toString(coordinates) +
+                ", coordinates=" + coordinates.toString() +
                 ", country='" + country + '\'' +
                 ", state='" + state + '\'' +
                 ", isPrivate=" + isPrivate +

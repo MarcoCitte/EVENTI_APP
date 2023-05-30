@@ -122,6 +122,7 @@
     <string name="for_more_information">For more information:</string>
     <string name="number_of_places">Number of places:</string>
     <string name="send_email">Send Email</string>
+    <string name="savings">SAVINGS</string>
     <string name="events">Events</string>
     <string name="present_events">Present events:</string>
     <string name="similar_events">Similar events</string>
@@ -150,5 +151,8 @@
     <string name="unknown">Unknown</string>
     <string name="noevents">There are no events</string>
 
+    <string name="places_list_item_name">Place Name</string>
+    <string name="places_list_item_address">Place Address</string>
+    <string name="content_description_favpl_delete">Remove the place from the fav list</string>
 
 </resources>

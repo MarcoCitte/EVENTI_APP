@@ -159,7 +159,8 @@ public class AllPlacesFragment extends Fragment {
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-
+                        placesList.get(position).setFavorite(!placesList.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updatePlace(placesList.get(position));
                     }
 
                     @Override
