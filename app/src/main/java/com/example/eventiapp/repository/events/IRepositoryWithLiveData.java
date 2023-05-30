@@ -42,7 +42,7 @@ public interface IRepositoryWithLiveData {
 
     MutableLiveData<List<Place>> fetchPlaces();
 
-    MutableLiveData<List<Place>> getFavoritePlaces(boolean isFirstLoading);
+    MutableLiveData<Result> getFavoritePlaces(boolean isFirstLoading);
 
 
     MutableLiveData<Place> getSinglePlace(String id);

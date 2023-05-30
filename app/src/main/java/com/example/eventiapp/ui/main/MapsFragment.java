@@ -389,7 +389,7 @@ public class MapsFragment extends Fragment {
     private void setMarkers() {
         for (com.example.eventiapp.model.Place p : placesList) {
             marker = myGoogleMap.addMarker(new MarkerOptions().
-                    position(new LatLng(p.getCoordinates()[0], p.getCoordinates()[1])).
+                    position(new LatLng(p.getCoordinates().get(0), p.getCoordinates().get(1))).
                     title(p.getName() + ":" + p.getId()).
                     snippet(p.getAddress()));
             myGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

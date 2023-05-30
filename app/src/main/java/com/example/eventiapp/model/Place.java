@@ -30,7 +30,7 @@ public class Place implements Serializable, Parcelable {
     @SerializedName("formatted_address")
     private String address;
     private String idGoogle;
-    private double[] coordinates;
+    private List<Double> coordinates;
     private String phoneNumber;
     private List<PhotoMetadata> images;
     @ColumnInfo(name = "is_favorite")
@@ -44,7 +44,7 @@ public class Place implements Serializable, Parcelable {
     }
 
     @Ignore
-    public Place(@NonNull String id, String name, String type, String address, double[] coordinates) {
+    public Place(@NonNull String id, String name, String type, String address, List<Double> coordinates) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -54,7 +54,7 @@ public class Place implements Serializable, Parcelable {
         this.isSynchronized = false;
     }
 
-    public Place(@NonNull String id, String name, String type, String address, String idGoogle, double[] coordinates, String phoneNumber, List<PhotoMetadata> images) {
+    public Place(@NonNull String id, String name, String type, String address, String idGoogle, List<Double> coordinates, String phoneNumber, List<PhotoMetadata> images) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -74,7 +74,7 @@ public class Place implements Serializable, Parcelable {
         type = in.readString();
         address = in.readString();
         idGoogle = in.readString();
-        coordinates = in.createDoubleArray();
+        //coordinates = in.createDoubleArray();
         phoneNumber = in.readString();
         isFavorite = in.readByte() != 0;
         isSynchronized = in.readByte() != 0;
@@ -133,11 +133,11 @@ public class Place implements Serializable, Parcelable {
         this.idGoogle = idGoogle;
     }
 
-    public double[] getCoordinates() {
+    public List<Double> getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(double[] coordinates) {
+    public void setCoordinates(List<Double> coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -173,19 +173,18 @@ public class Place implements Serializable, Parcelable {
         this.images = images;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Place place = (Place) o;
-        return isFavorite == place.isFavorite && isSynchronized == place.isSynchronized && id.equals(place.id) && Objects.equals(name, place.name) && Objects.equals(type, place.type) && Objects.equals(address, place.address) && Objects.equals(idGoogle, place.idGoogle) && Arrays.equals(coordinates, place.coordinates) && Objects.equals(phoneNumber, place.phoneNumber) && Objects.equals(images, place.images);
+        return Objects.equals(name, place.name) && Objects.equals(type, place.type) && Objects.equals(address, place.address) && Objects.equals(idGoogle, place.idGoogle) && Objects.equals(coordinates, place.coordinates) && Objects.equals(phoneNumber, place.phoneNumber) && Objects.equals(images, place.images);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name, type, address, idGoogle, phoneNumber, images, isFavorite, isSynchronized);
-        result = 31 * result + Arrays.hashCode(coordinates);
-        return result;
+        return Objects.hash(name, type, address, idGoogle, coordinates, phoneNumber, images);
     }
 
     @NonNull
@@ -197,7 +196,7 @@ public class Place implements Serializable, Parcelable {
                 ", type='" + type + '\'' +
                 ", address='" + address + '\'' +
                 ", idGoogle='" + idGoogle + '\'' +
-                ", coordinates=" + Arrays.toString(coordinates) +
+                ", coordinates=" + coordinates.toString() +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", images=" + images +
                 ", isFavorite=" + isFavorite +
@@ -217,7 +216,7 @@ public class Place implements Serializable, Parcelable {
         dest.writeString(type);
         dest.writeString(address);
         dest.writeString(idGoogle);
-        dest.writeDoubleArray(coordinates);
+        //dest.writeTypedList(coordinates);
         dest.writeString(phoneNumber);
         dest.writeTypedList(images);
         dest.writeByte((byte) (isFavorite ? 1 : 0));

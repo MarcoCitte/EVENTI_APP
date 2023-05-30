@@ -177,7 +177,7 @@ public class PlaceFragment extends Fragment {
                 googleMap = mMap;
 
                 // For dropping a marker at a point on the Map
-                double[] location = place.getCoordinates();
+                Double[] location = place.getCoordinates().toArray(new Double[0]);
                 LatLng latLng = new LatLng(location[0], location[1]);
                 googleMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()).snippet(place.getAddress()));
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

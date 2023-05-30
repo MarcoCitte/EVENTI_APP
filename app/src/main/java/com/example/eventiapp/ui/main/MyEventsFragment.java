@@ -96,7 +96,7 @@ public class MyEventsFragment extends Fragment {
             userViewModel.logout().observe(getViewLifecycleOwner(), result -> {
                 if (result.isSuccess()) {
                     Navigation.findNavController(view).navigate(
-                            R.id.action_myEventsFragment_to_welcomeActivity);
+                            R.id.action_mySavingsFragment_to_welcomeActivity);
                     requireActivity().finish();
                 } else {
                     Snackbar.make(view,

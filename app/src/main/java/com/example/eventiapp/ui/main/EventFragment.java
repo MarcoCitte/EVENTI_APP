@@ -261,7 +261,7 @@ public class EventFragment extends Fragment {
                     //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
 
                     if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
-                        googleMaps(new LatLng(result.getCoordinates()[0], result.getCoordinates()[1]), result.getName());
+                        googleMaps(new LatLng(result.getCoordinates().get(0), result.getCoordinates().get(1)), result.getName());
                     } else {
                         fragmentEventBinding.mapView.setVisibility(View.GONE);
                     }
@@ -323,7 +323,7 @@ public class EventFragment extends Fragment {
         }
     }
 
-    private void showAllHoursMovie(String[] hours) {
+    private void showAllHoursMovie(List<String> hours) {
         LinearLayout linearLayout = fragmentEventBinding.otherHoursLayout;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -639,10 +639,10 @@ public class EventFragment extends Fragment {
 
         //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
         if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
-            if(events.getCoordinates()[0] > events.getCoordinates()[1]) { //SONO GIUSTE
-                googleMaps(new LatLng(events.getCoordinates()[0], events.getCoordinates()[1]), null);
+            if(events.getCoordinates().get(0) > events.getCoordinates().get(1)) { //SONO GIUSTE
+                googleMaps(new LatLng(events.getCoordinates().get(0), events.getCoordinates().get(1)), null);
             }else{
-                googleMaps(new LatLng(events.getCoordinates()[1], events.getCoordinates()[0]), null);
+                googleMaps(new LatLng(events.getCoordinates().get(1), events.getCoordinates().get(0)), null);
 
             }
         } else {

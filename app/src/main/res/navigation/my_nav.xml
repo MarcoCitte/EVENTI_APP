@@ -168,5 +168,9 @@
         android:id="@+id/mySavingsFragment"
         android:name="com.example.eventiapp.ui.main.MySavingsFragment"
         android:label="fragment_my_savings"
-        tools:layout="@layout/fragment_my_savings" />
+        tools:layout="@layout/fragment_my_savings" >
+        <action
+            android:id="@+id/action_mySavingsFragment_to_welcomeActivity"
+            app:destination="@id/welcomeActivity" />
+    </fragment>
 </navigation>

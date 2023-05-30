@@ -47,7 +47,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     //PLACES
     private final MutableLiveData<List<Place>> allPlacesMutableLiveData;
-    private final MutableLiveData<List<Place>> favoritePlacesMutableLiveData;
+    //private final MutableLiveData<List<Place>> favoritePlacesMutableLiveData;
 
     private final MutableLiveData<Result> favoritePlacesMutableLiveData2;
 
@@ -86,7 +86,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         moviesHoursMutableLiveData = new MutableLiveData<>();
         allPlacesMutableLiveData = new MutableLiveData<>();
         placesFromSearchLiveData = new MutableLiveData<>();
-        favoritePlacesMutableLiveData = new MutableLiveData<>();
+        //favoritePlacesMutableLiveData = new MutableLiveData<>();
         favoritePlacesMutableLiveData2 = new MutableLiveData<>();
         singlePlaceMutableLiveData = new MutableLiveData();
         allCategoriesMutableLiveData = new MutableLiveData<>();
@@ -125,6 +125,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
             eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
         } else {
+            Log.d(TAG, "fetchEvent; else");
             eventsLocalDataSource.getEvents();
         }
 
@@ -234,13 +235,13 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
-    public MutableLiveData<List<Place>> getFavoritePlaces(boolean isFirstLoading) {
+    public MutableLiveData<Result> getFavoritePlaces(boolean isFirstLoading) {
         if (isFirstLoading) {
-            //PRENDE I BACKUP
+            backupDataSource2.getFavoritePlaces();
         } else {
             placesLocalDataSource.getFavoritePlaces();
         }
-        return favoritePlacesMutableLiveData;
+        return favoritePlacesMutableLiveData2;
     }
 
 
@@ -308,6 +309,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
         eventsLocalDataSource.insertEvents(eventsApiResponse);
         //PLACES
+        /*
         List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
 
@@ -319,7 +321,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         pirelliList.add(pirelli);
         fetchedEvents.add(new Events(uciList));
         fetchedEvents.add(new Events(pirelliList));
-
+*/
 
 
  /*
@@ -393,7 +395,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse) {
         eventsLocalDataSource.insertEvents(eventsApiResponse);
 
-
+/*
         //PLACES
         Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
         Place pirelli = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", new double[]{45.5203608, 9.2160497});
@@ -405,7 +407,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         placeList.add(pirelli);
         placeList.add(unimib);
         placeList.add(arcimboldi);
-
+*/
 
         /*
         allPlacesMutableLiveData.observe(new LifecycleOwner() {
@@ -684,7 +686,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                 allPlacesMutableLiveData.postValue(allPlaces);
             }
         }
-        favoritePlacesMutableLiveData.postValue(favoritePlaces);
+        favoritePlacesMutableLiveData2.postValue(new Result.PlacesResponseSuccess(favoritePlaces));
     }
 
     @Override
@@ -701,7 +703,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             //BACKUP
         }
 
-        favoritePlacesMutableLiveData.postValue(placeList);
+        favoritePlacesMutableLiveData2.postValue(new Result.PlacesResponseSuccess(placeList));
     }
 
     @Override
@@ -718,9 +720,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             allPlacesMutableLiveData.postValue(allPlaces);
         }
 
-        if (favoritePlacesMutableLiveData.getValue() != null) {
+        if (favoritePlacesMutableLiveData2.getValue() != null) {
             favoritePlaces.clear();
-            favoritePlacesMutableLiveData.postValue(favoritePlaces);
+            favoritePlacesMutableLiveData2.postValue(new Result.PlacesResponseSuccess(favoritePlaces));
         }
 
         //backupDataSource.deleteAllFavoriteNews();

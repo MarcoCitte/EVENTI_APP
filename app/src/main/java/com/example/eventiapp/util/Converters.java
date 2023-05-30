@@ -25,57 +25,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class Converters {
-    @TypeConverter
-    public static String[] fromString(String value) {
-        Type listType = new TypeToken<String[]>() {
-        }.getType();
-        return new Gson().fromJson(value, listType);
-    }
-
-    @TypeConverter
-    public static String fromArrayList(String[] list) {
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-        return json;
-    }
-
-    @TypeConverter
-    public static String JSONArrayfromDoubleArray(double[] values) {
-        if(values != null){
-            JSONArray jsonArray = new JSONArray();
-            for (double value : values) {
-                try {
-                    jsonArray.put(value);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            return jsonArray.toString();
-        }else{
-            return null;
-        }
-
-
-    }
-
-    @TypeConverter
-    public static double[] JSONArrayToDoubleArray(String values) {
-        if(values != null) {
-            try {
-                JSONArray jsonArray = new JSONArray(values);
-                double[] doubleArray = new double[jsonArray.length()];
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    doubleArray[i] = Double.parseDouble(jsonArray.getString(i));
-                }
-                return doubleArray;
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return null;
-
-    }
 
     @TypeConverter
     public static List<Place> fromStringPlace(String value) {
@@ -88,7 +37,41 @@ public class Converters {
     }
 
     @TypeConverter
+    public static List<Double> fromStringDouble(String value) {
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        Type listType = new TypeToken<List<Double>>() {
+        }.getType();
+        return new Gson().fromJson(value, listType);
+    }
+
+    @TypeConverter
+    public static List<String> fromStringString(String value) {
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
+        return new Gson().fromJson(value, listType);
+    }
+
+    @TypeConverter
     public static String fromListOfPlace(List<Place> list) {
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        return json;
+    }
+
+    @TypeConverter
+    public static String fromListOfDouble(List<Double> list) {
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        return json;
+    }
+
+    @TypeConverter
+    public static String fromListOfString(List<String> list) {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         return json;
