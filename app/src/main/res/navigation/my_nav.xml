@@ -163,7 +163,11 @@
         android:id="@+id/accountFragment"
         android:name="com.example.eventiapp.ui.user.AccountFragment"
         android:label="fragment_account"
-        tools:layout="@layout/fragment_account" />
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/action_accountFragment_to_welcomeActivity"
+            app:destination="@id/welcomeActivity" />
+    </fragment>
     <fragment
         android:id="@+id/containerMyEventsAndPlaces"
         android:name="com.example.eventiapp.ui.user.ContainerMyEventsAndPlaces"
@@ -172,6 +176,15 @@
         <action
             android:id="@+id/action_containerMyEventsAndPlaces_to_addEventFragment"
             app:destination="@id/addEventFragment" />
+        <action
+            android:id="@+id/action_containerMyEventsAndPlaces_to_addPlaceFragment"
+            app:destination="@id/addPlaceFragment" />
+        <action
+            android:id="@+id/action_containerMyEventsAndPlaces_to_eventFragment"
+            app:destination="@id/eventFragment" />
+        <action
+            android:id="@+id/action_containerMyEventsAndPlaces_to_placeFragment"
+            app:destination="@id/placeFragment" />
     </fragment>
     <fragment
         android:id="@+id/addEventFragment"
@@ -180,6 +193,15 @@
         tools:layout="@layout/fragment_add_event" >
         <action
             android:id="@+id/action_addEventFragment_to_containerMyEventsAndPlaces"
+            app:destination="@id/containerMyEventsAndPlaces" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPlaceFragment"
+        android:name="com.example.eventiapp.ui.user.AddPlaceFragment"
+        android:label="fragment_add_place"
+        tools:layout="@layout/fragment_add_place" >
+        <action
+            android:id="@+id/action_addPlaceFragment_to_containerMyEventsAndPlaces"
             app:destination="@id/containerMyEventsAndPlaces" />
     </fragment>
 </navigation>

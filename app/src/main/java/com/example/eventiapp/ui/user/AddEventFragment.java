@@ -255,39 +255,39 @@ public class AddEventFragment extends Fragment {
 
                 boolean isOk = true;
                 if (title == null || title.isEmpty()) {
-                    fragmentAddEventBinding.editTextTitle.setError("The field is mandatory");
+                    fragmentAddEventBinding.editTextTitle.setError(getString(R.string.field_mandatory));
                     isOk = false;
                 }
                 if (description == null || description.isEmpty()) {
-                    fragmentAddEventBinding.editTextDescription.setError("The field is mandatory");
+                    fragmentAddEventBinding.editTextDescription.setError(getString(R.string.field_mandatory));
                     isOk = false;
                 }
                 if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {
                     if (startDate == null || startDate.isEmpty()) {
-                        fragmentAddEventBinding.editTextStartTime.setError("The field is mandatory");
+                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                 } else {
                     if (startDate == null || startDate.isEmpty()) {
-                        fragmentAddEventBinding.editTextStartTime.setError("The field is mandatory");
+                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                     if (endDate == null || endDate.isEmpty()) {
-                        fragmentAddEventBinding.editTextEndTime.setError("The field is mandatory");
+                        fragmentAddEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                     if (startTime == null || startTime.isEmpty()) {
-                        fragmentAddEventBinding.editTextStartTime.setError("The field is mandatory");
+                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                     if (endTime == null || endTime.isEmpty()) {
-                        fragmentAddEventBinding.editTextEndTime.setError("The field is mandatory");
+                        fragmentAddEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                 }
 
                 if (address == null || address.isEmpty()) {
-                    fragmentAddEventBinding.editTextPlace.setError("The field is mandatory");
+                    fragmentAddEventBinding.editTextPlace.setError(getString(R.string.field_mandatory));
                     isOk = false;
                 }
 
@@ -336,7 +336,7 @@ public class AddEventFragment extends Fragment {
                     eventsAndPlacesViewModel.addEvent(event);
                     Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
                     Snackbar.make(requireActivity().findViewById(android.R.id.content),
-                            "Event successfully added", Snackbar.LENGTH_SHORT).show();
+                            getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();
 
                 }
             }

@@ -10,6 +10,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import com.example.eventiapp.util.StringUtils;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.firebase.database.Exclude;
 import com.google.gson.annotations.SerializedName;
 
 
@@ -32,6 +33,7 @@ public class Place implements Serializable, Parcelable {
     private String idGoogle;
     private List<Double> coordinates;
     private String phoneNumber;
+    @Exclude
     private List<PhotoMetadata> images;
     @ColumnInfo(name = "is_favorite")
     private boolean isFavorite;
@@ -175,6 +177,7 @@ public class Place implements Serializable, Parcelable {
         this.phoneNumber = phoneNumber;
     }
 
+    @Exclude
     public List<PhotoMetadata> getImages() {
         return images;
     }

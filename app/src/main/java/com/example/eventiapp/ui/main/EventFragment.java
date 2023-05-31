@@ -267,10 +267,10 @@ public class EventFragment extends Fragment {
 
                     if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
                         LatLng latLng;
-                        if (result.getCoordinates()[0] > result.getCoordinates()[1]) {
-                            latLng = new LatLng(result.getCoordinates()[0], result.getCoordinates()[1]);
+                        if (result.getCoordinates().get(0) > result.getCoordinates().get(1)) {
+                            latLng = new LatLng(result.getCoordinates().get(0), result.getCoordinates().get(1));
                         } else {
-                            latLng = new LatLng(result.getCoordinates()[1], result.getCoordinates()[0]);
+                            latLng = new LatLng(result.getCoordinates().get(1), result.getCoordinates().get(0));
                         }
 
                         googleMaps(latLng, result.getName());
@@ -335,7 +335,7 @@ public class EventFragment extends Fragment {
         }
     }
 
-    private void showAllHoursMovie(String[] hours) {
+    private void showAllHoursMovie(List<String> hours) {
         LinearLayout linearLayout = fragmentEventBinding.otherHoursLayout;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -587,6 +587,8 @@ public class EventFragment extends Fragment {
         if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
             fragmentEventBinding.eventImage.setVisibility(View.VISIBLE);
             Glide.with(this).load(events.getEventSource().getUrlPhoto()).into(fragmentEventBinding.eventImage);
+        }else{
+            fragmentEventBinding.eventImage.setVisibility(View.GONE);
         }
 
         fragmentEventBinding.eventTitle.setText(events.getTitle());
@@ -667,10 +669,10 @@ public class EventFragment extends Fragment {
 
         //GOOGLE MAPS ---------------------------------------------------------------------------------------------------
         if (!fragmentEventBinding.eventPlace.getText().equals(R.string.unknown)) {
-            if (events.getCoordinates()[0] > events.getCoordinates()[1]) { //SONO GIUSTE
-                googleMaps(new LatLng(events.getCoordinates()[0], events.getCoordinates()[1]), null);
+            if (events.getCoordinates().get(0) > events.getCoordinates().get(1)) { //SONO GIUSTE
+                googleMaps(new LatLng(events.getCoordinates().get(0), events.getCoordinates().get(1)), null);
             } else {
-                googleMaps(new LatLng(events.getCoordinates()[1], events.getCoordinates()[0]), null);
+                googleMaps(new LatLng(events.getCoordinates().get(1), events.getCoordinates().get(0)), null);
             }
         } else {
             fragmentEventBinding.mapView.setVisibility(View.GONE);

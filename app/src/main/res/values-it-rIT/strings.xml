@@ -131,6 +131,15 @@
     </string-array>
 
     <string name="savings">SALVATAGGI</string>
+    <string name="name">Nome</string>
+    <string name="address">Indirizzo</string>
+    <string name="city">Città</string>
+    <string name="select_point_on_the_map">Seleziona punto sulla mappa</string>
+    <string name="cap">Cap</string>
+    <string name="nation">Nazione</string>
+    <string name="field_mandatory">Il campo è obbligatorio</string>
+    <string name="place_added">Punto di interesse aggiunto</string>
+    <string name="event_added">Evento aggiunto</string>
 
 
 </resources>

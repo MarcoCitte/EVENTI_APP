@@ -6,36 +6,27 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.adapter.EventsListAdapter;
-import com.example.eventiapp.databinding.FragmentAddEventBinding;
+import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentMyEventsBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.user.IUserRepository;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
-import com.example.eventiapp.ui.welcome.UserViewModel;
-import com.example.eventiapp.ui.welcome.UserViewModelFactory;
+import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
 import com.example.eventiapp.util.Constants;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.example.eventiapp.util.ShareUtils;
 import com.example.eventiapp.util.SharedPreferencesUtil;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -49,10 +40,11 @@ public class MyEventsFragment extends Fragment {
     private FragmentMyEventsBinding fragmentMyEventsBinding;
 
     private List<Events> eventsList;
-    private EventsListAdapter eventsListAdapter;
-    private ProgressBar progressBar;
+    private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
-    private UserViewModel userViewModel;
+
+    private LinearLayoutManager layoutManagerMyEvents;
+    private LinearLayoutManager layoutManagerFavoriteEvents;
 
 
     public MyEventsFragment() {
@@ -67,14 +59,21 @@ public class MyEventsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        eventsList = new ArrayList<>();
-        eventsAndPlacesViewModel = new ViewModelProvider(requireActivity()).get(EventsAndPlacesViewModel.class);
+        IRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
+                        requireActivity().getApplication()
+                );
 
-        IUserRepository userRepository = ServiceLocator.getInstance().
-                getUserRepository(requireActivity().getApplication());
-        userViewModel = new ViewModelProvider(
-                requireActivity(),
-                new UserViewModelFactory(userRepository)).get(UserViewModel.class);
+        if (eventsRepositoryWithLiveData != null) {
+            eventsAndPlacesViewModel = new ViewModelProvider(
+                    requireActivity(),
+                    new EventsAndPlacesViewModelFactory(eventsRepositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
+        } else {
+            Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                    R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
+        }
+
+        eventsList = new ArrayList<>();
     }
 
     @Override
@@ -86,6 +85,88 @@ public class MyEventsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        layoutManagerMyEvents =
+                new LinearLayoutManager(requireContext(),
+                        LinearLayoutManager.VERTICAL, false);
+        layoutManagerFavoriteEvents=
+                new LinearLayoutManager(requireContext(),
+                        LinearLayoutManager.VERTICAL, false);
+
+        eventsRecyclerViewAdapter=new EventsRecyclerViewAdapter(eventsList,
+                requireActivity().getApplication(), 0,
+                new EventsRecyclerViewAdapter.OnItemClickListener() {
+                    @Override
+                    public void onEventsItemClick(Events events) {
+                        //VAI AI DETTAGLI DELL'EVENTO
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("event", events);
+                        Navigation.findNavController(requireView()
+                        ).navigate(R.id.action_containerMyEventsAndPlaces_to_eventFragment, bundle);
+                    }
+
+                    @Override
+                    public void onExportButtonPressed(Events events) {
+                        ShareUtils.addToCalendar(requireContext(), events);
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
+                       ShareUtils.shareEvent(requireContext(),events);
+                    }
+
+                    @Override
+                    public void onFavoriteButtonPressed(int position) {
+                        eventsList.get(position).setFavorite(false);
+                        eventsAndPlacesViewModel.removeFromFavorite(eventsList.get(position));
+                    }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
+                });
+
+        fragmentMyEventsBinding.recyclerViewFavoriteEvents.setLayoutManager(layoutManagerFavoriteEvents);
+        fragmentMyEventsBinding.recyclerViewFavoriteEvents.setAdapter(eventsRecyclerViewAdapter);
+
+        fragmentMyEventsBinding.progressBarFavoriteEvents.setVisibility(View.VISIBLE);
+
+        SharedPreferencesUtil sharedPreferencesUtil =
+                new SharedPreferencesUtil(requireActivity().getApplication());
+
+        boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING);
+
+        eventsAndPlacesViewModel.
+                getFavoriteEventsLiveData(isFirstLoading).
+                observe(getViewLifecycleOwner(), result -> {
+                    if (result != null) {
+                        if (result.isSuccess()) {
+                            eventsList.clear();
+                            eventsList.addAll(((Result.EventsResponseSuccess)result).getData().getEventsList());
+                            eventsRecyclerViewAdapter.notifyDataSetChanged();
+                            if (isFirstLoading) {
+                                sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                                        SHARED_PREFERENCES_FIRST_LOADING, false);
+                            }
+                        } else {
+                            ErrorMessageUtil errorMessagesUtil =
+                                    new ErrorMessageUtil(requireActivity().getApplication());
+                            Snackbar.make(view, errorMessagesUtil.
+                                            getErrorMessage(((Result.Error)result).getMessage()),
+                                    Snackbar.LENGTH_SHORT).show();
+                        }
+                        fragmentMyEventsBinding.progressBarFavoriteEvents.setVisibility(View.GONE);
+                    }
+                });
+
+
          fragmentMyEventsBinding.createEventButton.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {

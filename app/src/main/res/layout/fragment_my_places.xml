@@ -44,7 +44,7 @@
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewEvents"
+                    android:id="@+id/recyclerViewMyPlaces"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16sp" />
@@ -85,7 +85,7 @@
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewPlaces"
+                    android:id="@+id/recyclerViewFavoritePlaces"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16sp" />
@@ -109,10 +109,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorBackgroundSecondary">
+        android:background="@color/colorBackground">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/createEventButton"
+            android:id="@+id/createPlaceButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/create_place"

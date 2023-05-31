@@ -26,9 +26,11 @@ import com.example.eventiapp.util.Constants;
 import com.example.eventiapp.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCallback, PlaceCallback {
 
@@ -64,7 +66,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     private final BaseFavoriteEventsDataSource backupDataSource;
     private final BaseFavoritePlacesDataSource backupDataSource2;
-
 
 
     private final PlaceDetailsSource placeDetailsSource;
@@ -122,8 +123,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public MutableLiveData<Result> fetchEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
 
-
-        /*
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
@@ -131,20 +130,14 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         } else {
             eventsLocalDataSource.getEvents();
         }
-
-         */
-
-
-        eventsLocalDataSource.getEvents();
-
         return allEventsMutableLiveData;
     }
 
 
     @Override
     public void fetchEvents(String country, String location, String date, String categories, String sort, int limit) {
-        //eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
-         eventsLocalDataSource.getEvents();
+        eventsRemoteDataSource.getEvents(country, location, date, categories, sort, limit);
+        //eventsLocalDataSource.getEvents();
     }
 
     @Override
@@ -318,11 +311,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
         eventsLocalDataSource.insertEvents(eventsApiResponse);
         //PLACES
-        /*
-        List<Events> fetchedEvents = eventsApiResponse.getEventsList();
+
         List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
 
+/*
         Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
         Place pirelli = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", new double[]{45.5203608, 9.2160497});
         List<Place> uciList=new ArrayList<>();
@@ -331,7 +324,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         pirelliList.add(pirelli);
         fetchedEvents.add(new Events(uciList));
         fetchedEvents.add(new Events(pirelliList));
-*/
+
+
 
 
 
@@ -360,18 +354,18 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             if (!isPlaceAlreadyAdded) {  //COSI RISPARMIO SULLA VELOCITA E SUI SOLDI PER LE API PLACES DI GOOGLE
                 //DEVO PRENDERE COORDINATE, INDIRIZZO, FOTO E NUMERO DI TELEFONO DEL POSTO  PIU PRECISI
                 Log.i("POSTO NUOVO", e.getPlaces().toString());
-               /* placeDetailsSource.fetchPlaceDetails(e.getPlaces().get(0).getName(), e.getPlaces().get(0).getAddress(), new PlaceDetailsSource.PlaceDetailsListener() {
+               placeDetailsSource.fetchPlaceDetails(e.getPlaces().get(0).getName(), e.getPlaces().get(0).getAddress(), new PlaceDetailsSource.PlaceDetailsListener() {
                     @Override
                     public void onPlaceDetailsFetched(com.google.android.libraries.places.api.model.Place place) {
                         // Hai ottenuto i dettagli del posto
-                        double[] coordinates;
+                        Double[] coordinates;
                         if (place.getLatLng() != null) {
-                            coordinates = new double[]{place.getLatLng().latitude, place.getLatLng().longitude};
+                            coordinates = new Double[]{place.getLatLng().latitude, place.getLatLng().longitude};
                         } else {
-                            coordinates = new double[]{e.getCoordinates()[0], e.getCoordinates()[1]};
+                            coordinates = new Double[]{e.getCoordinates().get(0), e.getCoordinates().get(1)};
                         }
                         List<Place> placesList = new ArrayList<>();
-                        placesList.add(new Place(e.getPlaces().get(0).getId(), StringUtils.capitalizeFirstLetter(place.getName()), e.getPlaces().get(0).getType(), place.getAddress(), place.getId(), coordinates, place.getPhoneNumber(), place.getPhotoMetadatas()));
+                        placesList.add(new Place(e.getPlaces().get(0).getId(), StringUtils.capitalizeFirstLetter(place.getName()), e.getPlaces().get(0).getType(), place.getAddress(), place.getId(), Arrays.asList(coordinates), place.getPhoneNumber(), place.getPhotoMetadatas()));
                         placesLocalDataSource.insertPlaces(placesList);
                     }
 
@@ -383,13 +377,13 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                     }
                 });
 
-                */
+
             }else{
                 Log.i("POSTO GIA ESISTENTE", e.getPlaces().toString());
             }
 
         }
-
+*/
 
     }
 

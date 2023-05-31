@@ -380,7 +380,7 @@ public class MapsFragment extends Fragment {
 
     private void setMarkers() {
         for (com.example.eventiapp.model.Place p : placesList) {
-            double[] location = p.getCoordinates();
+            Double[] location = p.getCoordinates().toArray(new Double[0]);
             LatLng latLng;
             if (location[0] > location[1]) {
                 latLng = new LatLng(location[0], location[1]);

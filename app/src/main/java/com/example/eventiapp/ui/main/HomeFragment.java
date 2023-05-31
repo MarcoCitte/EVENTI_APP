@@ -1,6 +1,7 @@
 package com.example.eventiapp.ui.main;
 
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
+import static com.example.eventiapp.util.Constants.LAST_UPDATE;
 import static com.example.eventiapp.util.Constants.REQUEST_CODE;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_LANGUAGE;
@@ -325,6 +326,12 @@ public class HomeFragment extends Fragment {
         fragmentHomeBinding.progressBarCFY.setVisibility(View.VISIBLE);
         fragmentHomeBinding.progressBarFE.setVisibility(View.VISIBLE);
         fragmentHomeBinding.progressBarEV.setVisibility(View.VISIBLE);
+
+        if (sharedPreferencesUtil.readStringData(
+                SHARED_PREFERENCES_FILE_NAME, LAST_UPDATE) != null) {
+            lastUpdate = sharedPreferencesUtil.readStringData(
+                    SHARED_PREFERENCES_FILE_NAME, LAST_UPDATE);
+        }
 
 
         eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categories, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {

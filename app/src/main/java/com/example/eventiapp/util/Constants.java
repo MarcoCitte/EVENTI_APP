@@ -1,5 +1,7 @@
 package com.example.eventiapp.util;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Constants {
 
     // Constants for EventsApi (https://api.predicthq.com)
@@ -18,6 +20,8 @@ public class Constants {
     public static final String TOKEN_API = "Authorization";
     public static final String CONTENT_TYPE = "Accept";
     public static final String CONTENT_TYPE_VALUE = "application/json";
+    public static final LatLng BICOCCA_LATLNG = new LatLng(45.51851, 9.2075123);
+
 
     //API FOURSQUARE
     public static final String FOURSQUARE_API_BASE_URL = "https://api.foursquare.com/v3/places/match";

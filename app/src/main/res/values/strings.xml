@@ -151,8 +151,17 @@
     <string name="unknown">Unknown</string>
     <string name="noevents">There are no events</string>
 
-    <string name="places_list_item_name">Place Name</string>
-    <string name="places_list_item_address">Place Address</string>
-    <string name="content_description_favpl_delete">Remove the place from the fav list</string>
+    <string name="places_list_item_name" translatable="false">Place Name</string>
+    <string name="places_list_item_address" translatable="false">Place Address</string>
+    <string name="content_description_favpl_delete" translatable="false">Remove the place from the fav list</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+    <string name="city">City</string>
+    <string name="select_point_on_the_map">Select point on the map</string>
+    <string name="cap">Cap</string>
+    <string name="nation">Nation</string>
+    <string name="field_mandatory">The field is mandatory</string>
+    <string name="place_added">Place successfully added</string>
+    <string name="event_added">Event successfully added</string>
 
 </resources>

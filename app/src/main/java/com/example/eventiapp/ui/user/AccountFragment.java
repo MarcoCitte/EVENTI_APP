@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentAccountBinding;
@@ -19,8 +21,11 @@ import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.user.IUserRepository;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
+import com.example.eventiapp.ui.welcome.UserViewModel;
+import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.util.Constants;
 import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
@@ -37,6 +42,7 @@ public class AccountFragment extends Fragment {
     private String[] languages;
     private SharedPreferencesUtil sharedPreferencesUtil;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
+    private UserViewModel userViewModel;
     private List<Events> eventsList;
 
 
@@ -56,6 +62,13 @@ public class AccountFragment extends Fragment {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
+
+        IUserRepository userRepository = ServiceLocator.getInstance().
+                getUserRepository(requireActivity().getApplication());
+        userViewModel = new ViewModelProvider(
+                requireActivity(),
+                new UserViewModelFactory(userRepository)).get(UserViewModel.class);
+
         eventsList = new ArrayList<>();
         languages = requireContext().getResources().getStringArray(R.array.languages);
         sharedPreferencesUtil = new SharedPreferencesUtil(requireActivity().getApplication());
@@ -80,6 +93,23 @@ public class AccountFragment extends Fragment {
             }else{
                 fragmentAccountBinding.numberEventsTextView.setText("0");
             }
+        });
+
+        //LOGOUT
+
+
+        fragmentAccountBinding.logoutB.setOnClickListener(v -> {
+            userViewModel.logout().observe(getViewLifecycleOwner(), result -> {
+                if (result.isSuccess()) {
+                    Navigation.findNavController(view).navigate(
+                            R.id.action_accountFragment_to_welcomeActivity);
+                    requireActivity().finish();
+                } else {
+                    Snackbar.make(view,
+                            requireActivity().getString(R.string.unexpected_error),
+                            Snackbar.LENGTH_SHORT).show();
+                }
+            });
         });
 
 
