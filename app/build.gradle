@@ -19,7 +19,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         Properties properties = new Properties()
-        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        //properties.load(project.rootProject.file("local.properties").newDataInputStream())
         resValue "string", "events_api_key", properties.getProperty("events_api_key", "")
         resValue "string", "maps_api_key", properties.getProperty("maps_api_key", "")
         resValue "string", "foursquare_api_key",properties.getProperty("foursquare_api_key","")

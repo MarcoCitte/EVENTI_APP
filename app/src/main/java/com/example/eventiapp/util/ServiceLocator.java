@@ -80,11 +80,11 @@ public class ServiceLocator {
         SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(application);
         DataEncryptionUtil dataEncryptionUtil = new DataEncryptionUtil(application);
 
-        Places.initialize(application, application.getString(R.string.maps_api_key));
+        Places.initialize(application,  "AIzaSyBfUbHrX9y475T-c7v--HuxDmxjUMldAE8");
         PlacesClient placesClient = Places.createClient(application);
         Geocoder geocoder = new Geocoder(application, Locale.getDefault());
 
-        eventsRemoteDataSource = new EventsRemoteDataSource(application.getString(R.string.events_api_key));
+        eventsRemoteDataSource = new EventsRemoteDataSource("Bearer UknXMoIYysP2b-WqH72XUQ0A1IwE7FvvQllwrJxI");
         eventsLocalDataSource = new EventsLocalDataSource(getDao(application), sharedPreferencesUtil, dataEncryptionUtil);
         placesLocalDataSource = new PlacesLocalDataSource(getDao(application), sharedPreferencesUtil, dataEncryptionUtil);
         placeDetailsSource = new PlaceDetailsSource(placesClient,geocoder);

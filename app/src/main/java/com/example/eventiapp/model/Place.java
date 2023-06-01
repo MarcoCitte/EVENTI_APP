@@ -197,7 +197,7 @@ public class Place implements Serializable, Parcelable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, address, idGoogle, coordinates, phoneNumber, images);
+        return Objects.hash(name, type, address, idGoogle, coordinates, phoneNumber);  //rimosso images per problea dell'hash diverso
     }
 
     @NonNull

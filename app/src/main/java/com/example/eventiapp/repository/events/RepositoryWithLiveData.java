@@ -312,22 +312,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         eventsLocalDataSource.insertEvents(eventsApiResponse);
         //PLACES
 
+        /*
         List<Events> fetchedEvents = eventsApiResponse.getEventsList();
-
-
-/*
-        Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
-        Place pirelli = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", new double[]{45.5203608, 9.2160497});
-        List<Place> uciList=new ArrayList<>();
-        uciList.add(uci);
-        List<Place> pirelliList=new ArrayList<>();
-        pirelliList.add(pirelli);
-        fetchedEvents.add(new Events(uciList));
-        fetchedEvents.add(new Events(pirelliList));
-
-
-
-
 
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
         Map<String, Events> map = new HashMap<String, Events>();
@@ -383,7 +369,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             }
 
         }
-*/
+
+         */
+
 
     }
 

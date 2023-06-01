@@ -83,7 +83,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public MutableLiveData<Result> getFavoritePlacesLiveData(boolean isFirstLoading) {
         if (favoritePlacesListLiveData == null) {
-            iRepositoryWithLiveData.getFavoritePlaces(isFirstLoading);
+            favoritePlacesListLiveData = iRepositoryWithLiveData.getFavoritePlaces(isFirstLoading);
         }
         return favoritePlacesListLiveData;
     }

@@ -291,7 +291,8 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-                        //SETTA PLACE COME PREFERITO
+                        placesList.get(position).setFavorite(!placesList.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updatePlace(placesList.get(position));
                     }
 
                     @Override

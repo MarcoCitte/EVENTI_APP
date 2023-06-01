@@ -110,7 +110,8 @@ public class MyPlacesFragment extends Fragment {
 
             @Override
             public void onFavoriteButtonPressed(int position) {
-
+                placeList.get(position).setFavorite(false);
+                eventsAndPlacesViewModel.removeFromFavorite(placeList.get(position));
             }
 
             @Override
@@ -134,7 +135,7 @@ public class MyPlacesFragment extends Fragment {
         boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
                 SHARED_PREFERENCES_FIRST_LOADING);
 
-        /*
+
         eventsAndPlacesViewModel.
                 getFavoritePlacesLiveData(isFirstLoading).
                 observe(getViewLifecycleOwner(), result -> {
@@ -158,7 +159,7 @@ public class MyPlacesFragment extends Fragment {
                     }
                 });
 
-         */
+
 
 
         fragmentMyPlacesBinding.createPlaceButton.setOnClickListener(new View.OnClickListener() {

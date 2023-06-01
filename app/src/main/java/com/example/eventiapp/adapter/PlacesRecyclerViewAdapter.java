@@ -174,12 +174,14 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
+
+            setImageViewFavoritePlace(placeList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.imageViewFavorite) {
-                //setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
+                setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
                 onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
             } else if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(placeList.get(getAdapterPosition()));
@@ -252,7 +254,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.imageViewFavorite) {
-                //setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
+                setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
                 onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
             } else if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(placeList.get(getAdapterPosition()));
@@ -330,7 +332,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.imageViewFavorite) {
-                //setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
+                setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
                 onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
             } else if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(placeList.get(getAdapterPosition()));
