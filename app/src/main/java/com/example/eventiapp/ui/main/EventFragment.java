@@ -24,6 +24,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
@@ -144,7 +145,8 @@ public class EventFragment extends Fragment {
         mMapView.onResume();
 
         assert getArguments() != null;
-        Events events = getArguments().getParcelable("event", Events.class);
+        Events events = getArguments().getParcelable("event");
+        setImageViewFavoriteEvent(events.isFavorite());
 
         fragmentEventBinding.imageViewShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,8 +165,9 @@ public class EventFragment extends Fragment {
         fragmentEventBinding.imageViewFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //SETTA COME PREFERITO
-            }
+                setImageViewFavoriteEvent(!events.isFavorite());
+                events.setFavorite(!events.isFavorite());
+                eventsAndPlacesViewModel.updateEvents(events);            }
         });
 
         if (!events.getPlaces().isEmpty() && events.getPlaces().get(0).getName() != null) {
@@ -676,6 +679,18 @@ public class EventFragment extends Fragment {
             }
         } else {
             fragmentEventBinding.mapView.setVisibility(View.GONE);
+        }
+    }
+
+    private void setImageViewFavoriteEvent(boolean isFavorite) {
+        if (isFavorite) {
+            fragmentEventBinding.imageViewFavorite.setImageDrawable(
+                    AppCompatResources.getDrawable(getContext(),
+                            R.drawable.ic_baseline_favorite_24));
+        } else {
+            fragmentEventBinding.imageViewFavorite.setImageDrawable(
+                    AppCompatResources.getDrawable(getContext(),
+                            R.drawable.ic_baseline_favorite_border_24));
         }
     }
 
