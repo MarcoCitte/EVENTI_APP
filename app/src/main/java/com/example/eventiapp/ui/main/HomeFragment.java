@@ -557,4 +557,14 @@ public class HomeFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categories, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+            showEvents(result, 0); //UPCOMING EVENTS E ORDER BY RANK
+        });
+        eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
+            showPlaces(result); //POSTI
+        });
+    }
 }

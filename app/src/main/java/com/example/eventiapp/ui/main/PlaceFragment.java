@@ -124,7 +124,7 @@ public class PlaceFragment extends Fragment {
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-        Place place = getArguments().getParcelable("place", Place.class);
+        Place place = getArguments().getParcelable("place");
 
         PlaceDetailsSource.fetchPlacePhotos(place.getImages(), false, new PlaceDetailsSource.PlacePhotosListener() {
             @Override
