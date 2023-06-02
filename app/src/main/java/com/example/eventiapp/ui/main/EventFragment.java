@@ -77,8 +77,6 @@ public class EventFragment extends Fragment {
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private List<Events> eventsList; //EVENTI SIMILI
 
-    private Events events;
-
     private int totalItemCount; // Total number of events
     private int lastVisibleItem; // The position of the last visible event item
     private int visibleItemCount; // Number or total visible event items
@@ -148,14 +146,8 @@ public class EventFragment extends Fragment {
 
 
         assert getArguments() != null;
-        events = getArguments().getParcelable("event", Events.class);
-        eventsAndPlacesViewModel.getSingleEvent(events.getId_db()).observe(getViewLifecycleOwner(), result -> {
-            if (result != null) {
-                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
-                events = eventsResponse.getEventsList().get(0);
-                setImageFavorite(events); //SETTA CUORE IN BASE A SE L'EVENTO è FAVORITO
-            }
-        });
+        Events events = getArguments().getParcelable("event");
+        setImageViewFavoriteEvent(events.isFavorite());
 
         fragmentEventBinding.imageViewShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,11 +166,9 @@ public class EventFragment extends Fragment {
         fragmentEventBinding.imageViewFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //SETTA COME PREFERITO
+                setImageViewFavoriteEvent(!events.isFavorite());
                 events.setFavorite(!events.isFavorite());
-                eventsAndPlacesViewModel.updateEvents(events);
-                setImageFavorite(events);
-            }
+                eventsAndPlacesViewModel.updateEvents(events);            }
         });
 
 
@@ -580,7 +570,6 @@ public class EventFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
-        setImageFavorite(events);
     }
 
     @Override
@@ -696,16 +685,18 @@ public class EventFragment extends Fragment {
         }
     }
 
-    private void setImageFavorite(Events events) {
-        if (events.isFavorite()) {
+    private void setImageViewFavoriteEvent(boolean isFavorite) {
+        if (isFavorite) {
             fragmentEventBinding.imageViewFavorite.setImageDrawable(
-                    AppCompatResources.getDrawable(requireActivity().getApplication(),
+                    AppCompatResources.getDrawable(getContext(),
                             R.drawable.ic_baseline_favorite_24));
         } else {
             fragmentEventBinding.imageViewFavorite.setImageDrawable(
-                    AppCompatResources.getDrawable(requireActivity().getApplication(),
+                    AppCompatResources.getDrawable(getContext(),
                             R.drawable.ic_baseline_favorite_border_24));
         }
     }
+
+
 
 }
