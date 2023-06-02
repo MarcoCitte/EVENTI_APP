@@ -32,7 +32,8 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<Result> singleEventLiveData; //EVENTO SINGOLO
     private MutableLiveData<List<String>> allCategoriesLiveData; //TUTTE LE CATEGORIE DI EVENTI
     private MutableLiveData<List<String>> categoriesInADateLiveData; //TUTTE LE CATEGORIE DI EVENTI IN UNA DATA SPECIFICA
-
+    private MutableLiveData<String> favoriteCategoryLiveData; //CATEGORIA PREFERITA DALL'UTENTE
+    private MutableLiveData<Result> favoriteCategoryEventsLiveData; //EVENTI DELLA CATEGORIA PREFERITI NON ANCORA AGGIUNTI AI PREFERITI
 
     //PLACES
     private MutableLiveData<List<Place>> placesListLiveData; //TUTTI I POSTI
@@ -47,7 +48,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
         this.firstLoading = true;
     }
 
-    public void addEvent(Events events){
+    public void addEvent(Events events) {
         iRepositoryWithLiveData.addEvent(events);
     }
 
@@ -78,7 +79,16 @@ public class EventsAndPlacesViewModel extends ViewModel {
      */
     private void getFavoriteEvents(boolean firstLoading) {
         favoriteEventsListLiveData = iRepositoryWithLiveData.getFavoriteEvents(firstLoading);
+    }
 
+    public MutableLiveData<String> getFavoriteCategory() {
+        favoriteCategoryLiveData = iRepositoryWithLiveData.getFavoriteCategory();
+        return favoriteCategoryLiveData;
+    }
+
+    public MutableLiveData<Result> getFavoriteCategoryEventsLiveData() {
+        favoriteCategoryEventsLiveData = iRepositoryWithLiveData.getFavoriteCategoryEvents();
+        return favoriteCategoryEventsLiveData;
     }
 
     public MutableLiveData<Result> getFavoritePlacesLiveData(boolean isFirstLoading) {
@@ -95,6 +105,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     /**
      * Updates the event status.
+     *
      * @param event The event to be updated.
      */
     public void updateEvents(Events event) {

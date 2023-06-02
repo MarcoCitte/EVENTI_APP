@@ -95,6 +95,15 @@ public class AccountFragment extends Fragment {
             }
         });
 
+        //FAVORITE CATEGORY
+        eventsAndPlacesViewModel.getFavoriteCategory().observe(getViewLifecycleOwner(), result ->{
+            if(result!=null){
+                fragmentAccountBinding.favoriteCategoryTextView.setText(result);
+            }else{
+                fragmentAccountBinding.favoriteCategoryTextView.setText(R.string.none);
+            }
+        });
+
         //LOGOUT
 
 

@@ -18,6 +18,10 @@ public interface IRepositoryWithLiveData {
 
     MutableLiveData<Result> getFavoriteEvents(boolean isFirstLoading);
 
+    MutableLiveData<String> getFavoriteCategory();
+
+    MutableLiveData<Result> getFavoriteCategoryEvents();
+
     MutableLiveData<Result> getCategoryEvents(String category);
 
     MutableLiveData<Result> getPlaceEvents(String id);

@@ -17,6 +17,10 @@ public abstract class BaseEventsLocalDataSource {
 
     public abstract void getFavoriteEvents();
 
+    public abstract void getFavoriteCategory();
+
+    public abstract void getFavoriteCategoryEvents();
+
     public abstract void getCategoryEvents(String category);
 
     public abstract void getSingleEvent(long id);

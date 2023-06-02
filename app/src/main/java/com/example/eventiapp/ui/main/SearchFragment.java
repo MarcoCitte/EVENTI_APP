@@ -182,6 +182,8 @@ public class SearchFragment extends Fragment {
                     @Override
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
+                        eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }
 
                     @Override
@@ -217,7 +219,8 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onFavoriteButtonPressed(int position) {
-
+                placeList.get(position).setFavorite(!placeList.get(position).isFavorite());
+                eventsAndPlacesViewModel.updatePlace(placeList.get(position));
             }
 
             @Override

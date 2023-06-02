@@ -3,6 +3,7 @@
     <string name="home" translatable="false">HOME</string>
     <string name="map">MAP</string>
     <string name="myevents">MY EVENTS</string>
+    <string name="myevents_min">My events</string>
     <string name="search">SEARCH</string>
     <string name="account" translatable="false">ACCOUNT</string>
 
@@ -163,5 +164,8 @@
     <string name="field_mandatory">The field is mandatory</string>
     <string name="place_added">Place successfully added</string>
     <string name="event_added">Event successfully added</string>
+    <string name="number_not_found">Number not found</string>
+    <string name="none">None</string>
+    <string name="save_events_to_see_recommended_ones">Save events to see recommended ones</string>
 
 </resources>

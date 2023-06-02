@@ -50,6 +50,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final MutableLiveData<String[]> moviesHoursMutableLiveData;
     private final MutableLiveData<List<String>> allCategoriesMutableLiveData;
     private final MutableLiveData<List<String>> categoriesInADateMutableLiveData;
+    private final MutableLiveData<String> favoriteCategoryMutableLiveData;
+    private final MutableLiveData<Result> favoriteCategoryEventsMutableLiveData;
 
     //PLACES
     private final MutableLiveData<List<Place>> allPlacesMutableLiveData;
@@ -96,6 +98,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         singlePlaceMutableLiveData = new MutableLiveData();
         allCategoriesMutableLiveData = new MutableLiveData<>();
         categoriesInADateMutableLiveData = new MutableLiveData<>();
+        favoriteCategoryMutableLiveData = new MutableLiveData<>();
+        favoriteCategoryEventsMutableLiveData = new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
         this.eventsLocalDataSource = eventsLocalDataSource;
@@ -154,6 +158,18 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         }
 
         return favoriteEventsMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<String> getFavoriteCategory() {
+        eventsLocalDataSource.getFavoriteCategory();
+        return favoriteCategoryMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Result> getFavoriteCategoryEvents() {
+        eventsLocalDataSource.getFavoriteCategoryEvents();
+        return favoriteCategoryEventsMutableLiveData;
     }
 
 
@@ -499,6 +515,16 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         if (hours.length > 1) {
             moviesHoursMutableLiveData.postValue(hours);
         }
+    }
+
+    @Override
+    public void onFavoriteCategory(String category) {
+        favoriteCategoryMutableLiveData.postValue(category);
+    }
+
+    @Override
+    public void onFavoriteCategoryEvents(List<Events> events) {
+        favoriteCategoryEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
     }
 
     @Override

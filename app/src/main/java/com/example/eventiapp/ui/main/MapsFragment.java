@@ -203,6 +203,8 @@ public class MapsFragment extends Fragment {
                     @Override
                     public void onFavoriteButtonPressed(int position) {
                         //SETTA EVENTO COME PREFERITO
+                        placeEventsList.get(position).setFavorite(!placeEventsList.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updateEvents(placeEventsList.get(position));
                     }
 
                     @Override
@@ -473,7 +475,7 @@ public class MapsFragment extends Fragment {
                                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
                                         startActivity(intent);
                                     } else {
-                                        Toast.makeText(requireContext(), "NUMERO NON TROVATO", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(requireContext(), R.string.number_not_found, Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
@@ -483,6 +485,8 @@ public class MapsFragment extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     //AGGIUNGI POSTO AI FAVORITI DELL' UTENTE
+                                    finalP.setFavorite(!finalP.isFavorite());
+                                    eventsAndPlacesViewModel.updatePlace(finalP);
                                 }
                             });
                         }

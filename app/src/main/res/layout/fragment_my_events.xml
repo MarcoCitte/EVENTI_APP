@@ -38,12 +38,20 @@
                         android:layout_marginTop="15sp"
                         android:layout_weight="1"
                         android:padding="16sp"
-                        android:text="@string/myevents"
+                        android:text="@string/myevents_min"
                         android:textColor="@color/colorTextPrimary"
                         android:textSize="25sp"
                         android:visibility="visible" />
 
                 </LinearLayout>
+
+                <View
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1sp"
+                    android:visibility="visible"
+                    android:background="@color/colorTextPrimary" />
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewMyEvents"
@@ -85,6 +93,14 @@
                         android:visibility="visible" />
 
                 </LinearLayout>
+
+                <View
+                    android:id="@+id/line2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1sp"
+                    android:visibility="visible"
+                    android:background="@color/colorTextPrimary" />
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewFavoriteEvents"

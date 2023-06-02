@@ -4,6 +4,7 @@ import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 import static com.example.eventiapp.util.Constants.LAST_UPDATE;
 import static com.example.eventiapp.util.Constants.REQUEST_CODE;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_LANGUAGE;
 
 import android.Manifest;
@@ -46,6 +47,7 @@ import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.util.Constants;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.LanguageUtil;
@@ -70,12 +72,12 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding fragmentHomeBinding;
 
     private List<Events> eventsList;
-    private List<Events> eventListOrderByDate;
     private List<Events> eventsListOrderByRank;
     private List<Events> eventsListForYou;
     private List<Place> placesList;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapterRank;
+    private EventsRecyclerViewAdapter eventsRecyclerViewAdapterChosenForYou;
     private PlacesRecyclerViewAdapter placesRecyclerViewAdapter;
 
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
@@ -83,13 +85,11 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerViewUE;
     private RecyclerView recyclerViewMA;
     private RecyclerView recyclerViewCFY;
-    private RecyclerView recyclerViewFE;
     private RecyclerView recyclerViewEV;
 
     private LinearLayoutManager layoutManagerUE;
     private LinearLayoutManager layoutManagerMA;
     private LinearLayoutManager layoutManagerCFY;
-    private LinearLayoutManager layoutManagerFE;
     private LinearLayoutManager layoutManagerEV;
 
 
@@ -126,7 +126,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPreferencesUtil=new SharedPreferencesUtil(requireActivity().getApplication());
+        sharedPreferencesUtil = new SharedPreferencesUtil(requireActivity().getApplication());
         String language = sharedPreferencesUtil.readStringData(SHARED_PREFERENCES_FILE_NAME, SHARED_PREFERENCES_LANGUAGE);
         //LanguageUtil.setAppLanguage(requireContext(), language);
 
@@ -144,7 +144,6 @@ public class HomeFragment extends Fragment {
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
         eventsList = new ArrayList<>();
-        eventListOrderByDate = new ArrayList<>();
         eventsListForYou = new ArrayList<>();
         eventsListOrderByRank = new ArrayList<>();
         placesList = new ArrayList<>();
@@ -176,7 +175,6 @@ public class HomeFragment extends Fragment {
         recyclerViewUE = fragmentHomeBinding.recyclerViewUE;
         recyclerViewMA = fragmentHomeBinding.recyclerViewMA;
         recyclerViewCFY = fragmentHomeBinding.recyclerViewCFY;
-        recyclerViewFE = fragmentHomeBinding.recyclerViewFE;
         recyclerViewEV = fragmentHomeBinding.recyclerViewEV;
 
         layoutManagerUE =
@@ -188,10 +186,6 @@ public class HomeFragment extends Fragment {
                         LinearLayoutManager.VERTICAL, false);
 
         layoutManagerCFY =
-                new LinearLayoutManager(requireContext(),
-                        LinearLayoutManager.VERTICAL, false);
-
-        layoutManagerFE =
                 new LinearLayoutManager(requireContext(),
                         LinearLayoutManager.VERTICAL, false);
 
@@ -243,7 +237,10 @@ public class HomeFragment extends Fragment {
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
-
+                        //VAI AI DETTAGLI DELL'EVENTO
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("event", events);
+                        Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_eventFragment, bundle);
                     }
 
                     @Override
@@ -258,8 +255,46 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-                        eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
-                        eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
+                        eventsListOrderByRank.get(position).setFavorite(!eventsListOrderByRank.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updateEvents(eventsListOrderByRank.get(position));
+                    }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
+                });
+
+        eventsRecyclerViewAdapterChosenForYou = new EventsRecyclerViewAdapter(eventsListForYou,
+                requireActivity().getApplication(), 3,
+                new EventsRecyclerViewAdapter.OnItemClickListener() {
+                    @Override
+                    public void onEventsItemClick(Events events) {
+                        //VAI AI DETTAGLI DELL'EVENTO
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("event", events);
+                        Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_eventFragment, bundle);
+                    }
+
+                    @Override
+                    public void onExportButtonPressed(Events events) {
+                        ShareUtils.addToCalendar(requireContext(), events);
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
+                        ShareUtils.shareEvent(requireContext(), events);
+                    }
+
+                    @Override
+                    public void onFavoriteButtonPressed(int position) {
+                        eventsListForYou.get(position).setFavorite(!eventsListForYou.get(position).isFavorite());
+                        eventsAndPlacesViewModel.updateEvents(eventsListForYou.get(position));
                     }
 
                     @Override
@@ -313,10 +348,7 @@ public class HomeFragment extends Fragment {
         recyclerViewMA.setLayoutManager(layoutManagerMA);
 
         recyclerViewCFY.setLayoutManager(layoutManagerCFY);
-        recyclerViewCFY.setAdapter(eventsRecyclerViewAdapter);
-
-        recyclerViewFE.setLayoutManager(layoutManagerFE);
-        recyclerViewFE.setAdapter(eventsRecyclerViewAdapter);
+        recyclerViewCFY.setAdapter(eventsRecyclerViewAdapterChosenForYou);
 
         recyclerViewEV.setLayoutManager(layoutManagerEV);
         recyclerViewEV.setAdapter(placesRecyclerViewAdapter);
@@ -325,7 +357,6 @@ public class HomeFragment extends Fragment {
         fragmentHomeBinding.progressBarUE.setVisibility(View.VISIBLE);
         fragmentHomeBinding.progressBarMA.setVisibility(View.VISIBLE);
         fragmentHomeBinding.progressBarCFY.setVisibility(View.VISIBLE);
-        fragmentHomeBinding.progressBarFE.setVisibility(View.VISIBLE);
         fragmentHomeBinding.progressBarEV.setVisibility(View.VISIBLE);
 
         if (sharedPreferencesUtil.readStringData(
@@ -334,21 +365,15 @@ public class HomeFragment extends Fragment {
                     SHARED_PREFERENCES_FILE_NAME, LAST_UPDATE);
         }
 
-
         eventsAndPlacesViewModel.getEvents(country, radius + "km@" + location, date, categories, sort, limit, Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
-            showEvents(result, 0); //UPCOMING EVENTS E ORDER BY RANK
+            showEvents(result); //UPCOMING EVENTS E ORDER BY RANK
         });
 
-        /*
-        eventsAndPlacesViewModel.getEventsChosenForYou(true).observe(getViewLifecycleOwner(), result -> {
-            showEvents(result, 1);  //SCELTI PER L'UTENTE IN BASE ALLE SUE PREFERENZE
+
+        eventsAndPlacesViewModel.getFavoriteCategoryEventsLiveData().observe(getViewLifecycleOwner(), result -> {
+            showCategoryEvents(result);  //SCELTI PER L'UTENTE IN BASE ALLE SUE PREFERENZE
         });
-        */
-/*
-        eventsAndPlacesViewModel.getFavoriteEventsLiveData(true).observe(getViewLifecycleOwner(), result -> {
-            showEvents(result, 2); //FAVORITI DELL UTENTE
-        });
- */
+
         eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
             showPlaces(result); //POSTI
         });
@@ -420,45 +445,27 @@ public class HomeFragment extends Fragment {
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
-    private void showEvents(Result result, int typeOfQuery) {
+    private void showEvents(Result result) {
         if (result.isSuccess()) {
-            Log.i("SUCCESSO", "SUCCESSO GET EVENTS");
-
             EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
             List<Events> fetchedEvents = eventsResponse.getEventsList();
-
             if (!eventsAndPlacesViewModel.isLoading()) {
                 if (eventsAndPlacesViewModel.isFirstLoading()) {
-                    Log.i(TAG, "FIRST LOADING");
                     eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
                     eventsAndPlacesViewModel.setFirstLoading(false);
                     this.eventsList.addAll(fetchedEvents);
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
                             this.eventsList.size());
-
                 } else {
-                    Log.i(TAG, "NOT FIRST LOADING");
-
-                    // Updates related to the favorite status of the events
+                    eventsListOrderByRank.clear();
                     eventsRecyclerViewAdapter.notifyItemRangeRemoved(0, eventsList.size());
                     eventsList.clear();
                     eventsList.addAll(fetchedEvents);
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(0, fetchedEvents.size());
                 }
-                switch (typeOfQuery) {
-                    case 0:
-                        fragmentHomeBinding.progressBarUE.setVisibility(View.GONE);
-                        fragmentHomeBinding.progressBarMA.setVisibility(View.GONE);
-                        break;
-                    case 1:
-                        fragmentHomeBinding.progressBarCFY.setVisibility(View.GONE);
-                        break;
-                    case 2:
-                        fragmentHomeBinding.progressBarFE.setVisibility(View.GONE);
-                        break;
-                }
+                fragmentHomeBinding.progressBarUE.setVisibility(View.GONE);
+                fragmentHomeBinding.progressBarMA.setVisibility(View.GONE);
             } else {
-                Log.i(TAG, "IS LOADING");
                 eventsAndPlacesViewModel.setLoading(false);
                 eventsAndPlacesViewModel.setCurrentResults(eventsList.size());
 
@@ -476,33 +483,82 @@ public class HomeFragment extends Fragment {
                 }
                 eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
             }
+
             //RIORDINO COL SORT LA LISTA DEGLI EVENTI SENZA FARE PIU QUERY
             this.eventsListOrderByRank.addAll(eventsList);
             sortEvents("Rank", eventsListOrderByRank);
             recyclerViewMA.setAdapter(eventsRecyclerViewAdapterRank);
 
         } else {
-            Log.i("FALLITO", "FALLITO ALL EVENTS");
-
             ErrorMessageUtil errorMessagesUtil =
                     new ErrorMessageUtil(requireActivity().getApplication());
             Snackbar.make(requireView(), errorMessagesUtil.
                             getErrorMessage(((Result.Error) result).getMessage()),
                     Snackbar.LENGTH_SHORT).show();
-            switch (typeOfQuery) {
-                case 0:
-                    fragmentHomeBinding.progressBarUE.setVisibility(View.GONE);
-                    fragmentHomeBinding.progressBarMA.setVisibility(View.GONE); //RIORDINO COL SORT LA LISTA DEGLI EVENTI SENZA FARE PIU QUERY
-                    break;
-                case 1:
-                    fragmentHomeBinding.progressBarCFY.setVisibility(View.GONE);
-                    break;
-                case 2:
-                    fragmentHomeBinding.progressBarFE.setVisibility(View.GONE);
-                    break;
-            }
+            fragmentHomeBinding.progressBarUE.setVisibility(View.GONE);
+            fragmentHomeBinding.progressBarMA.setVisibility(View.GONE);
+
         }
     }
+
+    private void showCategoryEvents(Result result) {
+        if (result.isSuccess()) {
+            EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+            List<Events> fetchedEvents = eventsResponse.getEventsList();
+            if (!fetchedEvents.isEmpty()) {
+                fragmentHomeBinding.textViewAddFavoriteEvents.setVisibility(View.GONE);
+                fragmentHomeBinding.textViewAllEventsCFY.setVisibility(View.VISIBLE);
+
+                if (!eventsAndPlacesViewModel.isLoading()) {
+                    if (eventsAndPlacesViewModel.isFirstLoading()) {
+                        // eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
+                        eventsAndPlacesViewModel.setFirstLoading(false);
+                        eventsRecyclerViewAdapterChosenForYou.notifyItemRangeRemoved(0, eventsListForYou.size());
+                        this.eventsListForYou.addAll(fetchedEvents);
+                        eventsRecyclerViewAdapterChosenForYou.notifyItemRangeInserted(0,
+                                this.eventsListForYou.size());
+                    } else {
+                        // Updates related to the favorite status of the events
+                        eventsRecyclerViewAdapterChosenForYou.notifyItemRangeRemoved(0, eventsListForYou.size());
+                        eventsListForYou.clear();
+                        eventsListForYou.addAll(fetchedEvents);
+                        eventsRecyclerViewAdapterChosenForYou.notifyItemRangeInserted(0, fetchedEvents.size());
+                    }
+                    fragmentHomeBinding.progressBarCFY.setVisibility(View.GONE);
+                } else {
+                    eventsAndPlacesViewModel.setLoading(false);
+                    eventsAndPlacesViewModel.setCurrentResults(eventsListForYou.size());
+                    int initialSize = eventsListForYou.size();
+
+                    for (int i = 0; i < eventsListForYou.size(); i++) {
+                        if (eventsListForYou.get(i) == null) {
+                            eventsListForYou.remove(eventsListForYou.get(i));
+                        }
+                    }
+                    int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                            EVENTS_PAGE_SIZE_VALUE;
+                    for (int i = startIndex; i < fetchedEvents.size(); i++) {
+                        eventsListForYou.add(fetchedEvents.get(i));
+                    }
+                    eventsRecyclerViewAdapterChosenForYou.notifyItemRangeInserted(initialSize, eventsListForYou.size());
+                }
+            } else {
+                eventsRecyclerViewAdapterChosenForYou.notifyItemRangeRemoved(0, eventsListForYou.size());
+                eventsListForYou.clear();
+                fragmentHomeBinding.textViewAddFavoriteEvents.setVisibility(View.VISIBLE);
+                fragmentHomeBinding.textViewAllEventsCFY.setVisibility(View.GONE);
+                fragmentHomeBinding.progressBarCFY.setVisibility(View.GONE);
+            }
+        } else {
+            ErrorMessageUtil errorMessagesUtil =
+                    new ErrorMessageUtil(requireActivity().getApplication());
+            Snackbar.make(requireView(), errorMessagesUtil.
+                            getErrorMessage(((Result.Error) result).getMessage()),
+                    Snackbar.LENGTH_SHORT).show();
+            fragmentHomeBinding.progressBarCFY.setVisibility(View.GONE);
+        }
+    }
+
 
     private void showPlaces(List<Place> placesList) {
         if (placesList != null) {

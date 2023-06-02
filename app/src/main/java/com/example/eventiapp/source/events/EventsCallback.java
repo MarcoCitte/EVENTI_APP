@@ -28,6 +28,10 @@ public interface EventsCallback {
 
     void onMoviesHours(String[] hours);
 
+    void onFavoriteCategory(String category);
+
+    void onFavoriteCategoryEvents(List<Events> events);
+
     void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
 
     void onEventsFavoriteStatusChanged(List<Events> events);

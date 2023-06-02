@@ -43,6 +43,14 @@
 
                 </LinearLayout>
 
+                <View
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1sp"
+                    android:visibility="visible"
+                    android:background="@color/colorTextPrimary" />
+
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewMyPlaces"
                     android:layout_width="match_parent"
@@ -83,6 +91,14 @@
                         android:visibility="visible" />
 
                 </LinearLayout>
+
+                <View
+                    android:id="@+id/line2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1sp"
+                    android:visibility="visible"
+                    android:background="@color/colorTextPrimary" />
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewFavoritePlaces"

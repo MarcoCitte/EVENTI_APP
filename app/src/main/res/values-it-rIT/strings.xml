@@ -3,6 +3,7 @@
     <string name="app_name">EVENTI APP</string>
     <string name="map">MAPPA</string>
     <string name="myevents">I MIEI EVENTI</string>
+    <string name="myevents_min">I miei eventi</string>
     <string name="search">CERCA</string>
     <string name="content_description_fav_addition">Aggiungi l\'evento ai preferiti</string>
     <string name="error_retrieving_events">Errore nello scarimento degli eventi</string>
@@ -140,6 +141,9 @@
     <string name="field_mandatory">Il campo è obbligatorio</string>
     <string name="place_added">Punto di interesse aggiunto</string>
     <string name="event_added">Evento aggiunto</string>
+    <string name="number_not_found">Numero non trovato</string>
+    <string name="none">Nessuna</string>
+    <string name="save_events_to_see_recommended_ones">Save events to see recommended ones</string>
 
 
 </resources>

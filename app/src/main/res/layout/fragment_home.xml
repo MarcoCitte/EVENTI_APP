@@ -161,52 +161,16 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15sp"
-                    android:layout_weight="1"
-                    android:padding="16sp"
-                    android:textColor="@color/colorTextPrimary"
-                    android:text="@string/favorite_events"
-                    android:textSize="25sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textViewAllEventsFE"
-                    android:textSize="15sp"
-                    android:layout_margin="16sp"
-                    android:textColor="@color/colorTextSecondary"
-                    android:text="@string/see_all_events" />
-
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewFE"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16sp" />
-
-            <ProgressBar
-                android:id="@+id/progress_barFE"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" />
+                android:id="@+id/textViewAddFavoriteEvents"
+                android:text="@string/save_events_to_see_recommended_ones"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:visibility="gone"
+                android:textColor="@color/colorTextSecondary" />
 
         </LinearLayout>
 

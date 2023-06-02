@@ -48,6 +48,22 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     }
 
     @Override
+    public void getFavoriteCategory() {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            String category = eventsDao.getFavoriteCategory();
+            eventsCallback.onFavoriteCategory(category);
+        });
+    }
+
+    @Override
+    public void getFavoriteCategoryEvents() {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> events = eventsDao.getFavoriteCategoryEvents();
+            eventsCallback.onFavoriteCategoryEvents(events);
+        });
+    }
+
+    @Override
     public void getCategoryEvents(String category) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
             List<Events> categoryEvents = eventsDao.getCategoryEvents(category);

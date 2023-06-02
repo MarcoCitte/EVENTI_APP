@@ -236,6 +236,16 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
+    public void onFavoriteCategory(String category) {
+
+    }
+
+    @Override
+    public void onFavoriteCategoryEvents(List<Events> events) {
+
+    }
+
+    @Override
     public void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents) {
 
     }

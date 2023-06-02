@@ -26,6 +26,12 @@ public interface EventsDao {
     @Query("SELECT * FROM events WHERE is_favorite = 1 ORDER BY startDate DESC")
     List<Events> getFavoriteEvents();
 
+    @Query("SELECT * FROM events WHERE category IN(SELECT category FROM events WHERE is_favorite = 1 GROUP BY category ORDER BY COUNT(category) DESC LIMIT 1) AND is_favorite=0")
+    List<Events> getFavoriteCategoryEvents();
+
+    @Query("SELECT category FROM events WHERE is_favorite = 1 GROUP BY category ORDER BY COUNT(category) DESC LIMIT 1")
+    String getFavoriteCategory();
+
     @Query("SELECT DISTINCT * FROM events WHERE category LIKE '%' || :category || '%' ORDER BY startDate ASC")
     List<Events> getCategoryEvents(String category);
 

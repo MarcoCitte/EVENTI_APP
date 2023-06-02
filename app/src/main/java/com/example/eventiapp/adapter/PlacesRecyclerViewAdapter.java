@@ -249,6 +249,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
+            setImageViewFavoritePlace(placeList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
@@ -327,6 +328,7 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
+            setImageViewFavoritePlace(placeList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
