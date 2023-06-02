@@ -30,6 +30,8 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     private final MutableLiveData<Result> userFavoriteEventsMutableLiveData;
     //private final MutableLiveData<Result> userPreferencesMutableLiveData;
 
+    private MutableLiveData<Result> resetPasswordMutableLiveData;
+
     public UserRepository(BaseUserAuthenticationRemoteDataSource userRemoteDataSource,
                           BaseUserDataRemoteDataSource userDataRemoteDataSource,
                           BaseEventsLocalDataSource newsLocalDataSource) {
@@ -42,6 +44,7 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
         this.userRemoteDataSource.setUserResponseCallback(this);
         this.userDataRemoteDataSource.setUserResponseCallback(this);
         this.eventsLocalDataSource.setEventsCallback(this);
+        this.resetPasswordMutableLiveData = new MutableLiveData<>();
     }
 
     @Override
@@ -98,7 +101,7 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     @Override
     public MutableLiveData<Result> resetPassword(String email) {
         userRemoteDataSource.resetPassword(email);
-        return userMutableLiveData;
+        return resetPasswordMutableLiveData;
     }
 
 
@@ -159,13 +162,13 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     @Override
     public void onSuccessFromResetPassword(String message) {
         Result.ResetPasswordSuccess result = new Result.ResetPasswordSuccess(message);
-        userMutableLiveData.postValue(result);
+        resetPasswordMutableLiveData.postValue(result);
     }
 
     @Override
     public void onFailureFromResetPassword(String message) {
         Result.Error result = new Result.Error(message);
-        userMutableLiveData.postValue(result);
+        resetPasswordMutableLiveData.postValue(result);
     }
 
     @Override

@@ -21,6 +21,8 @@ public class UserViewModel extends ViewModel {
     private boolean authenticationError;
     private boolean passwordResetEmailError;
 
+    private MutableLiveData<Result> resetPasswordMutableLiveData;
+
     public UserViewModel(IUserRepository userRepository) {
         this.userRepository = userRepository;
         authenticationError = false;
@@ -36,8 +38,8 @@ public class UserViewModel extends ViewModel {
     }
 
     public MutableLiveData<Result> getUserMutableLiveData(String email) {
-        userMutableLiveData = userRepository.resetPassword(email);
-        return userMutableLiveData;
+        resetPasswordMutableLiveData = userRepository.resetPassword(email);
+        return resetPasswordMutableLiveData;
     }
 
     public MutableLiveData<Result> getGoogleUserMutableLiveData(String token) {
