@@ -37,7 +37,7 @@ public class UserViewModel extends ViewModel {
         return userMutableLiveData;
     }
 
-    public MutableLiveData<Result> getUserMutableLiveData(String email) {
+    public MutableLiveData<Result> getResetPasswordMutableLiveData(String email) {
         resetPasswordMutableLiveData = userRepository.resetPassword(email);
         return resetPasswordMutableLiveData;
     }
@@ -94,6 +94,11 @@ public class UserViewModel extends ViewModel {
     public void resetPassword(String email) {
         userRepository.resetPassword(email);
     }
+
+    public void changePassword(String password) {
+        userRepository.changePassword(password);
+    }
+
 
     public boolean isAuthenticationError() {
         return authenticationError;

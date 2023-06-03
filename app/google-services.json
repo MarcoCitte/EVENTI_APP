@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "501943114241",
+    "firebase_url": "https://accessfb-562e9-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "accessfb-562e9",
     "storage_bucket": "accessfb-562e9.appspot.com"
   },
@@ -14,8 +15,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "501943114241-dv1pohnnhkn8a4g5jppfb422fpt0n4tr.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "501943114241-pvtotb6p651ugjvpbta83rgftdnq0j1a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eventiapp",
+            "certificate_hash": "557c3de14acb45fb7424777e420b3d07d19cd4bc"
+          }
         }
       ],
       "api_key": [
@@ -27,7 +32,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "501943114241-dv1pohnnhkn8a4g5jppfb422fpt0n4tr.apps.googleusercontent.com",
+              "client_id": "501943114241-r6aqrhm521tkaccva2qd8e7tt92cpgoj.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

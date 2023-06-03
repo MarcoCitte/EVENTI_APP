@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +72,7 @@ public class ResetPasswordFragment extends Fragment {
 
                 if(isEmailOk(email)){
                         if (!userViewModel.isPasswordResetEmailError()) {
-                            userViewModel.getUserMutableLiveData(email).observe(
+                            userViewModel.getResetPasswordMutableLiveData(email).observe(
                                             getViewLifecycleOwner(), result -> {
                                                 if (result.isSuccess()) {
                                                     String message = ((Result.ResetPasswordSuccess) result).getMessage();
@@ -79,6 +80,7 @@ public class ResetPasswordFragment extends Fragment {
                                                     Snackbar.make(requireActivity().findViewById(android.R.id.content),
                                                             message,
                                                             Snackbar.LENGTH_SHORT).show();
+                                                    Navigation.findNavController(view).navigate(ResetPasswordFragmentDirections.actionResetPasswordFragmentToLoginFragment());
                                                 } else {
                                                     userViewModel.setPasswordResetEmailError(true);
                                                     Snackbar.make(requireActivity().findViewById(android.R.id.content),

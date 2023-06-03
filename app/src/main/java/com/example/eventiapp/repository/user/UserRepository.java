@@ -31,6 +31,8 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     //private final MutableLiveData<Result> userPreferencesMutableLiveData;
 
     private MutableLiveData<Result> resetPasswordMutableLiveData;
+    private MutableLiveData<Result> changePasswordMutableLiveData;
+
 
     public UserRepository(BaseUserAuthenticationRemoteDataSource userRemoteDataSource,
                           BaseUserDataRemoteDataSource userDataRemoteDataSource,
@@ -45,6 +47,8 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
         this.userDataRemoteDataSource.setUserResponseCallback(this);
         this.eventsLocalDataSource.setEventsCallback(this);
         this.resetPasswordMutableLiveData = new MutableLiveData<>();
+        this.changePasswordMutableLiveData = new MutableLiveData<>();
+
     }
 
     @Override
@@ -103,6 +107,11 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
         userRemoteDataSource.resetPassword(email);
         return resetPasswordMutableLiveData;
     }
+
+    @Override
+    public MutableLiveData<Result> changePassword(String email) {
+        userRemoteDataSource.resetPassword(email);
+        return resetPasswordMutableLiveData;    }
 
 
     @Override

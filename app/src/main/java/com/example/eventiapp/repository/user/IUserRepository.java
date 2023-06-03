@@ -19,6 +19,7 @@ public interface IUserRepository {
     void signUp(String email, String password);
     void signIn(String email, String password);
     MutableLiveData<Result> resetPassword(String email);
+    MutableLiveData<Result> changePassword(String email);
     void signInWithGoogle(String token);
     //void saveUserPreferences(String favoriteCountry, Set<String> favoriteTopics, String idToken);
 }

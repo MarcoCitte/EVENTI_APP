@@ -112,7 +112,7 @@ public class LoginFragment extends Fragment {
             .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     // Your server's client ID, not your Android client ID.
-                    .setServerClientId("501943114241-r6aqrhm521tkaccva2qd8e7tt92cpgoj.apps.googleusercontent.com")  //da mettere in values.xml
+                    .setServerClientId("501943114241-lqnrh2kv72q5lobf4g6762bcdibkqnf5.apps.googleusercontent.com")  //da mettere in values.xml
                     // Only show accounts previously used to sign in.
                     .setFilterByAuthorizedAccounts(false)
                     .build())
@@ -253,7 +253,7 @@ public class LoginFragment extends Fragment {
                 public void onSuccess(BeginSignInResult result) {
                     Log.d(TAG, "onSuccess from oneTapClient.beginSignIn(BeginSignInRequest)");
                     IntentSenderRequest intentSenderRequest =
-                            new IntentSenderRequest.Builder(result.getPendingIntent()).build();
+                            new IntentSenderRequest.Builder(result.getPendingIntent().getIntentSender()).build();
                     activityResultLauncher.launch(intentSenderRequest);
                 }
             })
