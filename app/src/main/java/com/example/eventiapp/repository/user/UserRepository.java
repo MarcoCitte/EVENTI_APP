@@ -109,9 +109,9 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
-    public MutableLiveData<Result> changePassword(String email) {
-        userRemoteDataSource.resetPassword(email);
-        return resetPasswordMutableLiveData;    }
+    public MutableLiveData<Result> changePassword(String oldPassword, String newPassword) {
+        userRemoteDataSource.changePassword(oldPassword, newPassword);
+        return changePasswordMutableLiveData;    }
 
 
     @Override
@@ -178,6 +178,18 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     public void onFailureFromResetPassword(String message) {
         Result.Error result = new Result.Error(message);
         resetPasswordMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onSuccessFromChangePassword(String message) {
+        Result.ChangePasswordSuccess result = new Result.ChangePasswordSuccess(message);
+        changePasswordMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onFailureFromChangePassword(String message) {
+        Result.Error result = new Result.Error(message);
+        changePasswordMutableLiveData.postValue(result);
     }
 
     @Override

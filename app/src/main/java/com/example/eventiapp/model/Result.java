@@ -10,7 +10,7 @@ public abstract class Result {
     private Result() {}
 
     public boolean isSuccess() {
-        if (this instanceof EventsResponseSuccess || this instanceof UserResponseSuccess || this instanceof ResetPasswordSuccess || this instanceof PlacesResponseSuccess) {
+        if (this instanceof EventsResponseSuccess || this instanceof UserResponseSuccess || this instanceof ResetPasswordSuccess || this instanceof PlacesResponseSuccess || this instanceof ChangePasswordSuccess) {
             return true;
         } else {
             return false;
@@ -54,6 +54,16 @@ public abstract class Result {
     public static final class ResetPasswordSuccess extends Result {
         private final String message;
         public ResetPasswordSuccess(String message) {
+            this.message = message;
+        }
+        public String getMessage() {
+            return message;
+        }
+    }
+
+    public static final class ChangePasswordSuccess extends Result {
+        private final String message;
+        public ChangePasswordSuccess(String message) {
             this.message = message;
         }
         public String getMessage() {

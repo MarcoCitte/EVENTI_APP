@@ -20,13 +20,18 @@ public class UserViewModel extends ViewModel {
     //private MutableLiveData<Result> userPreferencesMutableLiveData;
     private boolean authenticationError;
     private boolean passwordResetEmailError;
+    private boolean passwordChangeError;
+
 
     private MutableLiveData<Result> resetPasswordMutableLiveData;
+    private MutableLiveData<Result> changePasswordMutableLiveData;
+
 
     public UserViewModel(IUserRepository userRepository) {
         this.userRepository = userRepository;
         authenticationError = false;
         passwordResetEmailError = false;
+        passwordChangeError = false;
     }
 
     public MutableLiveData<Result> getUserMutableLiveData(
@@ -95,8 +100,16 @@ public class UserViewModel extends ViewModel {
         userRepository.resetPassword(email);
     }
 
-    public void changePassword(String password) {
-        userRepository.changePassword(password);
+    public void changePassword(String oldPassword, String newPassword) {
+        userRepository.changePassword(oldPassword, newPassword);
+        Log.e("TAG", "ciao3:" + changePasswordMutableLiveData.getValue());
+
+    }
+    public MutableLiveData<Result> getChangePasswordMutableLiveData(String oldPassword, String newPassword) {
+        if(changePasswordMutableLiveData == null)
+            changePasswordMutableLiveData = userRepository.changePassword(oldPassword, newPassword);
+        Log.e("TAG", "ciao2:" + changePasswordMutableLiveData.getValue());
+        return changePasswordMutableLiveData;
     }
 
 
@@ -116,6 +129,14 @@ public class UserViewModel extends ViewModel {
         this.passwordResetEmailError = passwordResetEmailError;
     }
 
+    public boolean isPasswordChangeError() {
+        return passwordChangeError;
+    }
+
+    public void setPasswordChangeError(boolean passwordChangeError) {
+        this.passwordChangeError = passwordChangeError;
+    }
+
     private void getUserData(String email, String password, boolean isUserRegistered) {
         userMutableLiveData = userRepository.getUser(email, password, isUserRegistered);
     }
@@ -123,5 +144,7 @@ public class UserViewModel extends ViewModel {
     private void getUserData(String token) {
         userMutableLiveData = userRepository.getGoogleUser(token);
     }
+
+
 
 }

@@ -5,20 +5,26 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.databinding.FragmentAccountBinding;
 import com.example.eventiapp.databinding.FragmentChangePasswordBinding;
+import com.example.eventiapp.model.Result;
+import com.example.eventiapp.model.User;
 import com.example.eventiapp.repository.user.IUserRepository;
+import com.example.eventiapp.ui.welcome.ResetPasswordFragmentDirections;
 import com.example.eventiapp.ui.welcome.UserViewModel;
 import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.util.ServiceLocator;
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class ChangePasswordFragment extends Fragment {
@@ -59,30 +65,42 @@ public class ChangePasswordFragment extends Fragment {
         fragmentChangePasswordBinding.buttonConfirmNewPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String password = fragmentChangePasswordBinding.editTextTextPassword.getText().toString().trim();
-                String repeatedPassword = fragmentChangePasswordBinding.editTextTextPassword2.getText().toString().trim();
+                String oldPassword = fragmentChangePasswordBinding.editTextTextOldPassword.getText().toString().trim();
+                String newPassword = fragmentChangePasswordBinding.editTextTextNewPassword.getText().toString().trim();
+                String repeatedNewPassword = fragmentChangePasswordBinding.editTextTextNewPassword2.getText().toString().trim();
 
-                if(password.equals(repeatedPassword)){
-                    if (isPasswordOk(password)){
-                        userViewModel.changePassword(password);
+                if(newPassword.equals(repeatedNewPassword)){
+                    if (isPasswordOk(newPassword)){
+                        if(!userViewModel.isPasswordChangeError()){
+                            userViewModel.getChangePasswordMutableLiveData(oldPassword,newPassword).observe(getViewLifecycleOwner(), result -> {
+                                if (result.isSuccess()) {
+                                    String message = ((Result.ChangePasswordSuccess) result).getMessage();
+                                    userViewModel.setPasswordChangeError(false);
+                                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                                    Navigation.findNavController(view).navigate(ChangePasswordFragmentDirections.actionChangePasswordFragmentToAccountFragment());
+                                } else {
+                                    userViewModel.setPasswordChangeError(true);
+                                    Toast.makeText(getContext(), ((Result.Error) result).getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }else {
+                            userViewModel.changePassword(oldPassword, newPassword);
+                        }
+
                     }else {
-                        Toast.makeText(getContext(), "Passwords are not equal", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Weak password", Toast.LENGTH_SHORT).show();
                     }
                 }else {
                     Toast.makeText(getContext(), "Passwords are not equal", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
     }
 
     private boolean isPasswordOk(String password) {
-        // Check if the password length is correct
-        if (password.isEmpty()) {
-            Toast.makeText(getContext(), getString(R.string.error_password), Toast.LENGTH_SHORT).show();
-            return false;
-        } else {
-            //textInputLayoutPassword.setError(null);
+        //da fare: controllo che la password sia buona
             return true;
-        }
+
     }
 }

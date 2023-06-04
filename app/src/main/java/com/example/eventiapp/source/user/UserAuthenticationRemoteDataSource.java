@@ -12,10 +12,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.eventiapp.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthEmailException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -141,6 +144,33 @@ public class UserAuthenticationRemoteDataSource extends BaseUserAuthenticationRe
             }
 
         });
+    }
+
+    @Override
+    public void changePassword(String oldPassword, String newPassword) {
+        final FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    userResponseCallback.onSuccessFromChangePassword("Password changed successfully");
+                                } else {
+                                    userResponseCallback.onFailureFromChangePassword("Failed to change password");
+                                }
+                            }
+                        });
+                    } else {
+                        userResponseCallback.onFailureFromChangePassword("Invalid old password");
+                    }
+                }
+            });
+        }
     }
 
     private String getErrorMessage(Exception exception) {

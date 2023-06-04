@@ -167,6 +167,9 @@
         <action
             android:id="@+id/action_accountFragment_to_welcomeActivity"
             app:destination="@id/welcomeActivity" />
+        <action
+            android:id="@+id/action_accountFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
     </fragment>
     <fragment
         android:id="@+id/containerMyEventsAndPlaces"
@@ -203,5 +206,16 @@
         <action
             android:id="@+id/action_addPlaceFragment_to_containerMyEventsAndPlaces"
             app:destination="@id/containerMyEventsAndPlaces" />
+    </fragment>
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.eventiapp.ui.user.ChangePasswordFragment"
+        android:label="fragment_change_password"
+        tools:layout="@layout/fragment_change_password" >
+        <action
+            android:id="@+id/action_changePasswordFragment_to_accountFragment"
+            app:destination="@id/accountFragment"
+            app:popUpTo='@+id/my_nav'
+            app:popUpToInclusive="true"/>
     </fragment>
 </navigation>

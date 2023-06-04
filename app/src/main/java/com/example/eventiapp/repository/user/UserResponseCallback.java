@@ -16,4 +16,8 @@ public interface UserResponseCallback {
     void onSuccessLogout();
     void onSuccessFromResetPassword(String message);
     void onFailureFromResetPassword(String message);
+    void onSuccessFromChangePassword(String message);
+    void onFailureFromChangePassword(String message);
+
+
 }

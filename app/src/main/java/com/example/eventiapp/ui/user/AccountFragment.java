@@ -156,6 +156,7 @@ public class AccountFragment extends Fragment {
         fragmentAccountBinding.passwordTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Navigation.findNavController(view).navigate(R.id.action_accountFragment_to_changePasswordFragment);
 
             }
         });
