@@ -268,4 +268,13 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
             }
         });
     }
+
+    @Override
+    public void getUsersCreatedEvents() {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+
+            List<Events> usersCreatedEvents = eventsDao.getUsersCreatedEvents();
+            eventsCallback.onSuccessFromReadUserCreatedEventLocal(usersCreatedEvents);
+        });
+    }
 }

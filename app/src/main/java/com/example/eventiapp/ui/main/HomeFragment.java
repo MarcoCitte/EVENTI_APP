@@ -147,6 +147,8 @@ public class HomeFragment extends Fragment {
         eventsListForYou = new ArrayList<>();
         eventsListOrderByRank = new ArrayList<>();
         placesList = new ArrayList<>();
+
+
     }
 
     @Override
@@ -159,6 +161,14 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        eventsAndPlacesViewModel.getUserCreatedEvents(0).observe(getViewLifecycleOwner(), result -> {
+            if (result.isSuccess()) {
+                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                List<Events> fetchedEvents = eventsResponse.getEventsList();
+                printEventList(fetchedEvents);
+            }
+        });
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -216,7 +226,6 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFavoriteButtonPressed(int position) {
-                        Log.e("TAG", "deleteOK: " + eventsList.get(position).hashCode());
                         eventsList.get(position).setFavorite(!eventsList.get(position).isFavorite());
                         eventsAndPlacesViewModel.updateEvents(eventsList.get(position));
                     }
@@ -613,6 +622,11 @@ public class HomeFragment extends Fragment {
 
     }
 
+    public static void printEventList(List<Events> eventList) {
+        for (Events event : eventList) {
+            Log.d(TAG, "printEventList: " + event.getTitle());
+        }
+    }
     @Override
     public void onResume() {
         super.onResume();

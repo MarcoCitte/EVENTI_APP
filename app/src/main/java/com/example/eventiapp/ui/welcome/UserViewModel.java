@@ -102,13 +102,11 @@ public class UserViewModel extends ViewModel {
 
     public void changePassword(String oldPassword, String newPassword) {
         userRepository.changePassword(oldPassword, newPassword);
-        Log.e("TAG", "ciao3:" + changePasswordMutableLiveData.getValue());
 
     }
     public MutableLiveData<Result> getChangePasswordMutableLiveData(String oldPassword, String newPassword) {
         if(changePasswordMutableLiveData == null)
             changePasswordMutableLiveData = userRepository.changePassword(oldPassword, newPassword);
-        Log.e("TAG", "ciao2:" + changePasswordMutableLiveData.getValue());
         return changePasswordMutableLiveData;
     }
 

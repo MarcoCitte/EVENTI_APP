@@ -52,6 +52,9 @@ public class Events implements Parcelable {
     private boolean isFavorite;
     @ColumnInfo(name = "is_synchronized")
     private boolean isSynchronized;
+    @ColumnInfo(name = "is_user_created")
+    private boolean isUserCreated;
+
 
     public Events() {
     }
@@ -80,6 +83,8 @@ public class Events implements Parcelable {
         isPrivate = in.readByte() != 0;
         isFavorite = in.readByte() != 0;
         isSynchronized = in.readByte() != 0;
+        isUserCreated = in.readByte() != 0;
+
     }
 
 
@@ -95,7 +100,13 @@ public class Events implements Parcelable {
         }
     };
 
+    public boolean isUserCreated() {
+        return isUserCreated;
+    }
 
+    public void setUserCreated(boolean userCreated) {
+        isUserCreated = userCreated;
+    }
 
     public EventSource getEventSource() {
         return eventSource;

@@ -56,4 +56,7 @@ public abstract class BaseEventsLocalDataSource {
     public abstract void getCount();
 
     public abstract void deleteAll();
+
+    public abstract void getUsersCreatedEvents();
+
 }

@@ -111,7 +111,6 @@ public class FavoritePlacesDataSource extends BaseFavoritePlacesDataSource{
                 child(FIREBASE_FAVORITE_PLACES_COLLECTION).child(String.valueOf(place.hashCode())).
                 removeValue().addOnSuccessListener(aVoid -> {
                     //QUI
-                    Log.e("TAG", "deleteFE: " + place.hashCode());
                     place.setSynchronized(false);
                     placeCallback.onSuccessFromCloudWriting2(place);
                 }).addOnFailureListener(e -> {

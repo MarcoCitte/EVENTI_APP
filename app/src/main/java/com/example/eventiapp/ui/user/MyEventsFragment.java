@@ -59,6 +59,7 @@ public class MyEventsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         IRepositoryWithLiveData eventsRepositoryWithLiveData =
                 ServiceLocator.getInstance().getRepository(
                         requireActivity().getApplication()
@@ -74,6 +75,7 @@ public class MyEventsFragment extends Fragment {
         }
 
         eventsList = new ArrayList<>();
+
     }
 
     @Override

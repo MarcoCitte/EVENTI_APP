@@ -2,6 +2,9 @@ package com.example.eventiapp.source.events;
 
 import static com.example.eventiapp.util.Constants.API_KEY_ERROR;
 import static com.example.eventiapp.util.Constants.CONTENT_TYPE_VALUE;
+import static com.example.eventiapp.util.Constants.FIREBASE_REALTIME_DATABASE;
+import static com.example.eventiapp.util.Constants.FIREBASE_USERS_COLLECTION;
+import static com.example.eventiapp.util.Constants.FIREBASE_USERS_CREATED_EVENTS_COLLECTION;
 import static com.example.eventiapp.util.Constants.RETROFIT_ERROR;
 
 import android.util.Log;
@@ -14,6 +17,11 @@ import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.service.EventsApiService;
 import com.example.eventiapp.source.jsoup.JsoupDataSource;
 import com.example.eventiapp.util.ServiceLocator;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +31,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implements JsoupDataSource.OnPostExecuteListener {
+    private static final String TAG = EventsRemoteDataSource.class.getSimpleName();
 
     private final EventsApiService eventsApiService;
     private final String apiKey;
@@ -30,11 +39,16 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
     private Response<EventsApiResponse> eventsApiResponse;
     private Response<EventsApiResponse> eventsApiResponse2;
 
+    private final DatabaseReference databaseReference;
+
+
     private int count;
 
     public EventsRemoteDataSource(String apiKey) {
         this.eventsApiService = ServiceLocator.getInstance().getEventsApiService();
         this.apiKey = apiKey;
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(FIREBASE_REALTIME_DATABASE);
+        databaseReference = firebaseDatabase.getReference().getRef();
     }
 
     @Override
@@ -98,6 +112,47 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
         jsoupDataSource.setOnPostExecuteListener(this);
         jsoupDataSource.execute();
     }
+
+    @Override
+    public void insertEvents(Events events) {
+        databaseReference.child(FIREBASE_USERS_CREATED_EVENTS_COLLECTION).child(String.valueOf(events.hashCode())).
+                setValue(events).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //events.setSynchronized(true);
+                        Log.e(TAG, "insertEvents: " + events.getTitle());
+                        eventsCallback.onSuccessFromInsertUserCreatedEvent(events);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        eventsCallback.onFailureFromCloud(e);
+                    }
+                });
+    }
+
+    @Override
+    public void getUsersCreatedEvents() {
+        databaseReference.child(FIREBASE_USERS_CREATED_EVENTS_COLLECTION).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.d(TAG, "Error getting data", task.getException());
+            }
+            else {
+                Log.d(TAG, "Successful read: " + task.getResult().getValue());
+
+                List<Events> eventsList = new ArrayList<>();
+                for(DataSnapshot ds : task.getResult().getChildren()) {
+                    Events events = ds.getValue(Events.class);
+                    events.setSynchronized(true);
+                    eventsList.add(events);
+                }
+
+                eventsCallback.onSuccessFromReadUserCreatedEvent(eventsList);
+            }
+        });
+    }
+
 
     @Override
     public void onPostExecuted(List<Events> eventsList) {

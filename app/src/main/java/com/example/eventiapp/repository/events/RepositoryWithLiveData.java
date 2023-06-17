@@ -61,6 +61,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     private final MutableLiveData<Place> singlePlaceMutableLiveData;
     private final MutableLiveData<List<Place>> placesFromSearchLiveData;
+    private final MutableLiveData<Result> usersCreatedEventsMutableLiveData;
 
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
     private final BaseEventsLocalDataSource eventsLocalDataSource;
@@ -75,6 +76,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private int count;
 
     private LifecycleRegistry lifecycleRegistry;
+
+
 
 
     public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
@@ -122,6 +125,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         });
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
 
+        usersCreatedEventsMutableLiveData = new MutableLiveData<>();
+
     }
 
     @Override
@@ -146,7 +151,20 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void addEvent(Events events) {
+        eventsRemoteDataSource.insertEvents(events);
         eventsLocalDataSource.insertEvents(new ArrayList<>(Collections.singleton(events)));
+    }
+
+    @Override
+    public MutableLiveData<Result> getUsersCreatedEvents(long lastUpdate) {
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
+            eventsRemoteDataSource.getUsersCreatedEvents();
+        } else {
+            eventsLocalDataSource.getUsersCreatedEvents();
+        }
+        return usersCreatedEventsMutableLiveData;
     }
 
     @Override
@@ -623,7 +641,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             for (Events events : eventsList) {
                 events.setSynchronized(true);
             }
-            Log.e("TAG", "onsucce4");
             eventsLocalDataSource.insertEvents(eventsList);
             favoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
         }
@@ -634,7 +651,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         if (events != null && !events.isFavorite()) {
             events.setSynchronized(false);
         }
-        Log.e("TAG", "onsucc");
 
         eventsLocalDataSource.updateEvents(events);
         backupDataSource.getFavoriteEvents();
@@ -642,7 +658,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onFailureFromCloud(Exception exception) {
-
+        Log.e(TAG, "onFailureFromCloud: " + exception.getMessage());
     }
 
     @Override
@@ -653,6 +669,40 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public void onSuccessDeletion() {
         Log.d(TAG, "Events delete from DB");
+    }
+
+    @Override
+    public void onSuccessFromInsertUserCreatedEvent(Events events) {
+        /*
+        if (events != null && !events.isFavorite()) {
+            events.setSynchronized(false);
+        }
+         */
+
+        eventsLocalDataSource.updateEvents(events);
+        eventsRemoteDataSource.getUsersCreatedEvents();
+    }
+
+    @Override
+    public void onSuccessFromReadUserCreatedEvent(List<Events> eventsList) {
+        if (eventsList != null) {
+            /*
+            for (Events events : eventsList) {
+                events.setSynchronized(true);
+            }
+
+             */
+            eventsLocalDataSource.insertEvents(eventsList);
+            usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
+        }
+
+    }
+
+    @Override
+    public void onSuccessFromReadUserCreatedEventLocal(List<Events> eventsList) {
+        if (eventsList != null) {
+            usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
+        }
     }
 
 
@@ -755,7 +805,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             for (Place place : placesList) {
                 place.setSynchronized(true);
             }
-            Log.e("TAG", "onsucce4");
             placesLocalDataSource.insertPlaces(placesList);
             favoritePlacesMutableLiveData2.postValue(new Result.PlacesResponseSuccess(placesList));
         }
@@ -766,7 +815,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         if (place != null && !place.isFavorite()) {
             place.setSynchronized(false);
         }
-        Log.e("TAG", "onsucc");
 
         placesLocalDataSource.updatePlaces(place);
         backupDataSource2.getFavoritePlaces();

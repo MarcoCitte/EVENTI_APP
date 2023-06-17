@@ -34,9 +34,12 @@ import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.user.IUserRepository;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
 import com.example.eventiapp.ui.main.MyDialogEventsFragment;
+import com.example.eventiapp.ui.welcome.UserViewModel;
+import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
@@ -60,6 +63,8 @@ public class AddEventFragment extends Fragment {
 
     private FragmentAddEventBinding fragmentAddEventBinding;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
+    private UserViewModel userViewModel;
+
     private static final String TAG = AddEventFragment.class.getSimpleName();
     private MaterialDatePicker<Long> materialDatePicker;
     private MaterialTimePicker materialTimePicker;
@@ -99,6 +104,13 @@ public class AddEventFragment extends Fragment {
             Snackbar.make(requireActivity().findViewById(android.R.id.content),
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
+
+        IUserRepository userRepository = ServiceLocator.getInstance().
+                getUserRepository(requireActivity().getApplication());
+        userViewModel = new ViewModelProvider(
+                requireActivity(),
+                new UserViewModelFactory(userRepository)).get(UserViewModel.class);
+
         categories = requireContext().getResources().getStringArray(R.array.categories);
      }
 
@@ -300,6 +312,8 @@ public class AddEventFragment extends Fragment {
                 if (isOk) {
                     //AGGIUNGI EVENTO
                     Events event = new Events();
+                    event.setUserCreated(true);
+                    event.setEventSource(new EventSource(userViewModel.getLoggedUser().getName(), ""));
                     event.setTitle(title);
                     event.setDescription(description);
                     if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {

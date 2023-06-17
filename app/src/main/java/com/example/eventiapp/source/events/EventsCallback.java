@@ -14,6 +14,7 @@ public interface EventsCallback {
 
     void onSuccessFromLocal(EventsApiResponse eventsApiResponse);
 
+
     void onFailureFromLocal(Exception exception);
 
     void onEventsCategory(List<Events> events);
@@ -61,4 +62,11 @@ public interface EventsCallback {
     void onSuccessSynchronization();
 
     void onSuccessDeletion();
+
+    void onSuccessFromInsertUserCreatedEvent(Events events);
+    void onSuccessFromReadUserCreatedEvent(List<Events> eventsList);
+
+    void onSuccessFromReadUserCreatedEventLocal(List<Events> eventsList);
+
+
 }

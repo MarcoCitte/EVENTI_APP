@@ -15,6 +15,8 @@ public interface IRepositoryWithLiveData {
     void fetchEvents(String country, String location, String date, String categories, String sort, int limit);
 
     void addEvent(Events events);
+    MutableLiveData<Result> getUsersCreatedEvents(long lastUpdate);
+
 
     MutableLiveData<Result> getFavoriteEvents(boolean isFirstLoading);
 

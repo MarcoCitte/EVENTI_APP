@@ -35,7 +35,6 @@ public class FavoriteEventsDataSource extends BaseFavoriteEventsDataSource{
     @Override
     public void getFavoriteEvents() {
 
-        Log.e(TAG, "getFavoriteEvents: Token" + idToken);
 
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
                 child(FIREBASE_FAVORITE_EVENTS_COLLECTION).get().addOnCompleteListener(task -> {
@@ -114,7 +113,6 @@ public class FavoriteEventsDataSource extends BaseFavoriteEventsDataSource{
                 child(FIREBASE_FAVORITE_EVENTS_COLLECTION).child(String.valueOf(events.hashCode())).
                 removeValue().addOnSuccessListener(aVoid -> {
                     //QUI
-                    Log.e("TAG", "deleteFE: " + events.hashCode());
                     events.setSynchronized(false);
                     eventsCallback.onSuccessFromCloudWriting(events);
                 }).addOnFailureListener(e -> {

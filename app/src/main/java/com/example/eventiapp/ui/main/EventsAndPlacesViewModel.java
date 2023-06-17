@@ -41,6 +41,9 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<Place> singlePlaceLiveData; //POSTO SINGOLO
     private MutableLiveData<List<Place>> placesFromSearchLiveData; //POSTI PRESI DALLA SEARCH
 
+    private MutableLiveData<Result> usersCreatedEventsMutableLiveData;
+
+
     public EventsAndPlacesViewModel(IRepositoryWithLiveData iRepositoryWithLiveData) {
         this.iRepositoryWithLiveData = iRepositoryWithLiveData;
         this.page = 1;
@@ -50,6 +53,13 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public void addEvent(Events events) {
         iRepositoryWithLiveData.addEvent(events);
+    }
+
+    public MutableLiveData<Result>  getUserCreatedEvents(long lastUpdate) {
+        if (usersCreatedEventsMutableLiveData == null) {
+            usersCreatedEventsMutableLiveData = iRepositoryWithLiveData.getUsersCreatedEvents(lastUpdate);
+        }
+        return usersCreatedEventsMutableLiveData;
     }
 
     public MutableLiveData<Result> getEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
