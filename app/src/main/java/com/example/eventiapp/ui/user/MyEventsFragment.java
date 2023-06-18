@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,10 @@ public class MyEventsFragment extends Fragment {
     private FragmentMyEventsBinding fragmentMyEventsBinding;
 
     private List<Events> eventsList;
+    private List<Events> myEventsList;
+
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
+    private EventsRecyclerViewAdapter myEventsRecyclerViewAdapter;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
 
     private LinearLayoutManager layoutManagerMyEvents;
@@ -75,6 +79,7 @@ public class MyEventsFragment extends Fragment {
         }
 
         eventsList = new ArrayList<>();
+        myEventsList = new ArrayList<>();
 
     }
 
@@ -94,6 +99,8 @@ public class MyEventsFragment extends Fragment {
         layoutManagerFavoriteEvents=
                 new LinearLayoutManager(requireContext(),
                         LinearLayoutManager.VERTICAL, false);
+
+
 
         eventsRecyclerViewAdapter=new EventsRecyclerViewAdapter(eventsList,
                 requireActivity().getApplication(), 0,
@@ -134,8 +141,50 @@ public class MyEventsFragment extends Fragment {
                     }
                 });
 
+        myEventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(myEventsList,
+                requireActivity().getApplication(), 0,
+                new EventsRecyclerViewAdapter.OnItemClickListener() {
+                    @Override
+                    public void onEventsItemClick(Events events) {
+                        //VAI AI DETTAGLI DELL'EVENTO
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("event", events);
+                        Navigation.findNavController(requireView()
+                        ).navigate(R.id.action_containerMyEventsAndPlaces_to_eventFragment, bundle);
+                    }
+
+                    @Override
+                    public void onExportButtonPressed(Events events) {
+                        ShareUtils.addToCalendar(requireContext(), events);
+                    }
+
+                    @Override
+                    public void onShareButtonPressed(Events events) {
+                        ShareUtils.shareEvent(requireContext(),events);
+                    }
+
+                    @Override
+                    public void onFavoriteButtonPressed(int position) {
+                        myEventsList.get(position).setFavorite(false);
+                        eventsAndPlacesViewModel.removeFromFavorite(myEventsList.get(position));
+                    }
+
+                    @Override
+                    public void onModeEventButtonPressed(Events events) {
+
+                    }
+
+                    @Override
+                    public void onDeleteEventButtonPressed(Events events) {
+
+                    }
+                });
+
         fragmentMyEventsBinding.recyclerViewFavoriteEvents.setLayoutManager(layoutManagerFavoriteEvents);
         fragmentMyEventsBinding.recyclerViewFavoriteEvents.setAdapter(eventsRecyclerViewAdapter);
+
+        fragmentMyEventsBinding.recyclerViewMyEvents.setLayoutManager(layoutManagerMyEvents);
+        fragmentMyEventsBinding.recyclerViewMyEvents.setAdapter(myEventsRecyclerViewAdapter);
 
         fragmentMyEventsBinding.progressBarFavoriteEvents.setVisibility(View.VISIBLE);
 
@@ -168,6 +217,29 @@ public class MyEventsFragment extends Fragment {
                     }
                 });
 
+        eventsAndPlacesViewModel.
+                getMyEventsLiveData(isFirstLoading).
+                observe(getViewLifecycleOwner(), result -> {
+                    if (result != null) {
+                        Log.e(TAG, "getMyEventsLiveData: " + ((Result.EventsResponseSuccess)result).getData().getEventsList().size());
+                        if (result.isSuccess()) {
+                            myEventsList.clear();
+                            myEventsList.addAll(((Result.EventsResponseSuccess)result).getData().getEventsList());
+                            myEventsRecyclerViewAdapter.notifyDataSetChanged();
+                            if (isFirstLoading) {
+                                sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                                        SHARED_PREFERENCES_FIRST_LOADING, false);
+                            }
+                        } else {
+                            ErrorMessageUtil errorMessagesUtil =
+                                    new ErrorMessageUtil(requireActivity().getApplication());
+                            Snackbar.make(view, errorMessagesUtil.
+                                            getErrorMessage(((Result.Error)result).getMessage()),
+                                    Snackbar.LENGTH_SHORT).show();
+                        }
+                        fragmentMyEventsBinding.progressBarFavoriteEvents.setVisibility(View.GONE);
+                    }
+                });
 
          fragmentMyEventsBinding.createEventButton.setOnClickListener(new View.OnClickListener() {
              @Override

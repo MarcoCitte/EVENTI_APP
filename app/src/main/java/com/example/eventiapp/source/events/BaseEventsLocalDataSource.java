@@ -46,6 +46,7 @@ public abstract class BaseEventsLocalDataSource {
     public abstract void getEventsFromSearch(String input);
 
     public abstract void updateEvents(Events events);
+    public abstract void deleteMyEvents(Events events);
 
     public abstract void deleteFavoriteEvents();
 
@@ -59,4 +60,5 @@ public abstract class BaseEventsLocalDataSource {
 
     public abstract void getUsersCreatedEvents();
 
+    public abstract void getMyEvents();
 }

@@ -17,6 +17,7 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.source.events.BaseEventsLocalDataSource;
 import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
 import com.example.eventiapp.source.events.BaseFavoriteEventsDataSource;
+import com.example.eventiapp.source.events.BaseMyEventsDataSource;
 import com.example.eventiapp.source.places.BaseFavoritePlacesDataSource;
 import com.example.eventiapp.source.events.EventsCallback;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
@@ -39,6 +40,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final MutableLiveData<Result> allEventsMutableLiveData;
     private final MutableLiveData<Result> eventsFromSearchLiveData;
     private final MutableLiveData<Result> favoriteEventsMutableLiveData;
+    private MutableLiveData<Result> myEventsListLiveData; //EVENTI CREATI DALL'UTENTE CORRENTE
+
     private final MutableLiveData<Result> categoryEventsMutableLiveData;
     private final MutableLiveData<Result> eventsInADateMutableLiveData;
     private final MutableLiveData<Result> categoriesEventsMutableLiveData;
@@ -69,6 +72,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     private final BaseFavoriteEventsDataSource backupDataSource;
     private final BaseFavoritePlacesDataSource backupDataSource2;
+    private final BaseMyEventsDataSource backupDataSource3;
+
+
 
 
     private final PlaceDetailsSource placeDetailsSource;
@@ -81,10 +87,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
 
     public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
-                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource, BaseFavoriteEventsDataSource favoriteEventsDataSource, BaseFavoritePlacesDataSource favoritePlacesDataSource) {
+                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource, BaseFavoriteEventsDataSource favoriteEventsDataSource, BaseFavoritePlacesDataSource favoritePlacesDataSource, BaseMyEventsDataSource myEventsDataSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         eventsFromSearchLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
+        myEventsListLiveData = new MutableLiveData<>();
         categoryEventsMutableLiveData = new MutableLiveData<>();
         eventsInADateMutableLiveData = new MutableLiveData<>();
         eventsBetweenDatesMutableLiveData = new MutableLiveData<>();
@@ -115,6 +122,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
         this.backupDataSource2 = favoritePlacesDataSource;
         this.backupDataSource2.setPlacesCallback(this);
+
+        this.backupDataSource3 = myEventsDataSource;
+        this.backupDataSource3.setMyEventsCallback(this);
+
+
 
         lifecycleRegistry = new LifecycleRegistry(new LifecycleOwner() {
             @NonNull
@@ -280,6 +292,16 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         return favoritePlacesMutableLiveData2;
     }
 
+    @Override
+    public MutableLiveData<Result> getMyEvents(boolean isFirstLoading) {
+        if (isFirstLoading) {
+            Log.e(TAG, "getMyEvents: isFirstLoading");
+            backupDataSource3.getMyEvents();
+        } else {
+            Log.e(TAG, "getMyEvents: isNotFirstLoading");
+            eventsLocalDataSource.getMyEvents();
+        }
+        return myEventsListLiveData;    }
 
     @Override
     public MutableLiveData<Place> getSinglePlace(String id) {
@@ -340,6 +362,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             backupDataSource2.deleteFavoritePlace(place);
         }
     }
+
+
 
     @Override
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
@@ -560,6 +584,20 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
+    public void onEventsDeleteStatusChanged(Events events, List<Events> myEvents) {
+        Result allEventsResult = allEventsMutableLiveData.getValue();
+
+        if (allEventsResult != null && allEventsResult.isSuccess()) {
+            List<Events> oldAllEvents = ((Result.EventsResponseSuccess) allEventsResult).getData().getEventsList();
+            if (oldAllEvents.contains(events)) {
+                oldAllEvents.remove(events);
+                allEventsMutableLiveData.postValue(allEventsResult);
+            }
+        }
+        myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(myEvents)));
+    }
+
+    @Override
     public void onEventsFavoriteStatusChanged(List<Events> events) {
         List<Events> notSynchronizedEventsList = new ArrayList<>();
 
@@ -695,7 +733,40 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
     }
 
+    @Override
+    public void onSuccessFromRemoteCurrentUserEventsWriting(Events events) {
+        if (events != null && !events.isFavorite()) {
+            events.setSynchronized(false);
+        }
 
+        eventsLocalDataSource.deleteMyEvents(events);
+        backupDataSource.getFavoriteEvents();
+    }
+
+    @Override
+    public void onSuccessFromRemoteCurrentUserEventsReading(List<Events> eventsList) {
+        if (eventsList != null) {
+
+            System.out.println("lettura da remoto eventi creati dall'utente corrente:");
+            printEventList(eventsList);
+
+            eventsLocalDataSource.insertEvents(eventsList);
+            myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
+        }
+    }
+
+    @Override
+    public void onSuccessFromLocalCurrentUserEventsReading(List<Events> eventsList) {
+        System.out.println("lettura da locale eventi creati dall'utente corrente:");
+        printEventList(eventsList);
+        myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
+    }
+
+    public static void printEventList(List<Events> eventList) {
+        for (Events event : eventList) {
+            Log.d(TAG, "printEventList: " + event.getTitle());
+        }
+    }
     //PLACECALLBACK -------------------------------------------
 
     public void onSuccessFromLocalP(List<Place> placeList) {

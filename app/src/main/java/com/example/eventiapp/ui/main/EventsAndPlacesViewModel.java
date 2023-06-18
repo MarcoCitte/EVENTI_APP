@@ -1,5 +1,6 @@
 package com.example.eventiapp.ui.main;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -23,6 +24,8 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<Result> eventsListLiveData; //TUTTI GLI EVENTI
     private MutableLiveData<Result> eventsFromSearchLiveData; //EVENTI PRESI DALLA SEARCH
     private MutableLiveData<Result> favoriteEventsListLiveData; //EVENTI FAVORITI
+    private MutableLiveData<Result> myEventsListLiveData; //EVENTI CREATI DALL'UTENTE CORRENTE
+
     private MutableLiveData<Result> categoryEventsLiveData; //EVENTI APPARTENENTI AD UNA CATEGORIA SPECIFICA
     private MutableLiveData<Result> categoriesEventsLiveData; //EVENTI APPARTENENTI A PIU CATEGORIE
     private MutableLiveData<Result> eventsInADateLiveData; //EVENTI CHE SI TENGONO IN UNA DATA SPECIFICA
@@ -41,7 +44,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<Place> singlePlaceLiveData; //POSTO SINGOLO
     private MutableLiveData<List<Place>> placesFromSearchLiveData; //POSTI PRESI DALLA SEARCH
 
-    private MutableLiveData<Result> usersCreatedEventsMutableLiveData;
+    private MutableLiveData<Result> usersCreatedEventsMutableLiveData; //EVENTI CREATI DAGLI UTENTI
 
 
     public EventsAndPlacesViewModel(IRepositoryWithLiveData iRepositoryWithLiveData) {
@@ -276,5 +279,12 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public void removeFromFavorite(Place place) {
         iRepositoryWithLiveData.updatePlace(place);
+    }
+
+    public MutableLiveData<Result> getMyEventsLiveData(boolean isFirstLoading) {
+        if (myEventsListLiveData == null) {
+            myEventsListLiveData = iRepositoryWithLiveData.getMyEvents(firstLoading);
+        }
+        return myEventsListLiveData;
     }
 }

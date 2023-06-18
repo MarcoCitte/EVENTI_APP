@@ -1,6 +1,7 @@
 package com.example.eventiapp.source.events;
 
 
+import static com.example.eventiapp.util.Constants.EMAIL_ADDRESS;
 import static com.example.eventiapp.util.Constants.ENCRYPTED_DATA_FILE_NAME;
 import static com.example.eventiapp.util.Constants.ENCRYPTED_SHARED_PREFERENCES_FILE_NAME;
 import static com.example.eventiapp.util.Constants.LAST_UPDATE;
@@ -15,6 +16,8 @@ import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.util.DataEncryptionUtil;
 import com.example.eventiapp.util.SharedPreferencesUtil;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 public class EventsLocalDataSource extends BaseEventsLocalDataSource {
@@ -179,7 +182,15 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
             }
         });
     }
-
+    @Override
+    public void deleteMyEvents(Events events) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            if (events != null) {
+                eventsDao.delete(events);
+                eventsCallback.onEventsDeleteStatusChanged(events, eventsDao.getFavoriteEvents());
+            }
+        });
+    }
     @Override
     public void deleteFavoriteEvents() {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
@@ -276,6 +287,24 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
             List<Events> usersCreatedEvents = eventsDao.getUsersCreatedEvents();
             eventsCallback.onSuccessFromReadUserCreatedEventLocal(usersCreatedEvents);
+        });
+    }
+
+    @Override
+    public void getMyEvents() {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Events> myEvents = null;
+            try {
+                myEvents = eventsDao.getMyEvents(dataEncryptionUtil.
+                        readSecretDataWithEncryptedSharedPreferences(
+                                ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, EMAIL_ADDRESS
+                        ));
+            } catch (GeneralSecurityException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            eventsCallback.onSuccessFromLocalCurrentUserEventsReading(myEvents);
         });
     }
 }

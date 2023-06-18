@@ -26,7 +26,10 @@ public interface EventsDao {
     @Query("SELECT * FROM events WHERE is_favorite = 1 ORDER BY startDate DESC")
     List<Events> getFavoriteEvents();
 
-    @Query("SELECT * FROM events WHERE is_user_created = 1 ORDER BY startDate DESC")
+    @Query("SELECT * FROM events WHERE creator_email = :email ORDER BY startDate DESC")
+    List<Events> getMyEvents(String email);
+
+    @Query("SELECT * FROM events WHERE creator_email <> null ORDER BY startDate DESC")
     List<Events> getUsersCreatedEvents();
 
     @Query("SELECT * FROM events WHERE category IN(SELECT category FROM events WHERE is_favorite = 1 GROUP BY category ORDER BY COUNT(category) DESC LIMIT 1) AND is_favorite=0")

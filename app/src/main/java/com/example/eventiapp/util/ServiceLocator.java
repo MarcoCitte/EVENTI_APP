@@ -1,5 +1,6 @@
 package com.example.eventiapp.util;
 
+import static com.example.eventiapp.util.Constants.EMAIL_ADDRESS;
 import static com.example.eventiapp.util.Constants.ENCRYPTED_SHARED_PREFERENCES_FILE_NAME;
 import static com.example.eventiapp.util.Constants.ID_TOKEN;
 
@@ -14,7 +15,9 @@ import com.example.eventiapp.repository.events.RepositoryWithLiveData;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.service.EventsApiService;
 import com.example.eventiapp.source.events.BaseFavoriteEventsDataSource;
+import com.example.eventiapp.source.events.BaseMyEventsDataSource;
 import com.example.eventiapp.source.events.FavoriteEventsDataSource;
+import com.example.eventiapp.source.events.MyEventsDataSource;
 import com.example.eventiapp.source.places.BaseFavoritePlacesDataSource;
 import com.example.eventiapp.source.places.FavoritePlacesDataSource;
 import com.example.eventiapp.source.user.BaseUserAuthenticationRemoteDataSource;
@@ -77,6 +80,7 @@ public class ServiceLocator {
         PlaceDetailsSource placeDetailsSource;
         BaseFavoriteEventsDataSource favoriteEventsDataSource;
         BaseFavoritePlacesDataSource favoritePlacesDataSource;
+        BaseMyEventsDataSource myEventsDataSource;
         SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(application);
         DataEncryptionUtil dataEncryptionUtil = new DataEncryptionUtil(application);
 
@@ -109,7 +113,18 @@ public class ServiceLocator {
             return null;
         }
 
-        return new RepositoryWithLiveData(eventsRemoteDataSource, eventsLocalDataSource, placesLocalDataSource, placeDetailsSource, favoriteEventsDataSource, favoritePlacesDataSource);
+        try {
+            myEventsDataSource = new MyEventsDataSource(dataEncryptionUtil.
+                    readSecretDataWithEncryptedSharedPreferences(
+                            ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, EMAIL_ADDRESS
+                    ));
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new RepositoryWithLiveData(eventsRemoteDataSource, eventsLocalDataSource, placesLocalDataSource, placeDetailsSource, favoriteEventsDataSource, favoritePlacesDataSource, myEventsDataSource);
     }
 
     public IUserRepository getUserRepository(Application application) {

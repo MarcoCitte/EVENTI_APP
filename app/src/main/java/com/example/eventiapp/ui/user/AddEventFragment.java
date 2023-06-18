@@ -312,8 +312,7 @@ public class AddEventFragment extends Fragment {
                 if (isOk) {
                     //AGGIUNGI EVENTO
                     Events event = new Events();
-                    event.setUserCreated(true);
-                    event.setEventSource(new EventSource(userViewModel.getLoggedUser().getName(), ""));
+                    event.setCreatorEmail(userViewModel.getLoggedUser().getEmail());
                     event.setTitle(title);
                     event.setDescription(description);
                     if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {

@@ -220,6 +220,16 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
+    public void onSuccessFromRemoteCurrentUserEventsReading(List<Events> eventsList) {
+
+    }
+
+    @Override
+    public void onSuccessFromLocalCurrentUserEventsReading(List<Events> eventsList) {
+
+    }
+
+    @Override
     public void onSuccessSynchronization() {
         userFavoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(null));
     }
@@ -286,6 +296,16 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
 
     @Override
     public void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents) {
+
+    }
+
+    @Override
+    public void onSuccessFromRemoteCurrentUserEventsWriting(Events events) {
+
+    }
+
+    @Override
+    public void onEventsDeleteStatusChanged(Events events, List<Events> myEvents) {
 
     }
 

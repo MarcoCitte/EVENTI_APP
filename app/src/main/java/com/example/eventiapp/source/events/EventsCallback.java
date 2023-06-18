@@ -34,6 +34,8 @@ public interface EventsCallback {
     void onFavoriteCategoryEvents(List<Events> events);
 
     void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
+    public void onSuccessFromRemoteCurrentUserEventsWriting(Events events);
+    public void onEventsDeleteStatusChanged(Events events, List<Events> myEvents);
 
     void onEventsFavoriteStatusChanged(List<Events> events);
 
@@ -57,6 +59,7 @@ public interface EventsCallback {
 
     void onSuccessFromCloudWriting(Events events);
 
+
     void onFailureFromCloud(Exception exception);
 
     void onSuccessSynchronization();
@@ -67,6 +70,10 @@ public interface EventsCallback {
     void onSuccessFromReadUserCreatedEvent(List<Events> eventsList);
 
     void onSuccessFromReadUserCreatedEventLocal(List<Events> eventsList);
+
+    void onSuccessFromRemoteCurrentUserEventsReading(List<Events> eventsList);
+    void onSuccessFromLocalCurrentUserEventsReading(List<Events> eventsList);
+
 
 
 }

@@ -70,4 +70,6 @@ public interface IRepositoryWithLiveData {
     void deleteFavoriteEvents();
 
     void updatePlace(Place place);
+
+    MutableLiveData<Result> getMyEvents(boolean firstLoading);
 }
