@@ -63,7 +63,7 @@ public interface EventsCallback {
 
     void onSuccessDeletion();
 
-    void onSuccessFromInsertUserCreatedEvent(Events events);
+    void onSuccessFromInsertUserCreatedEvent();
     void onSuccessFromReadUserCreatedEvent(List<Events> eventsList);
 
     void onSuccessFromReadUserCreatedEventLocal(List<Events> eventsList);

@@ -205,7 +205,7 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
-    public void onSuccessFromInsertUserCreatedEvent(Events events) {
+    public void onSuccessFromInsertUserCreatedEvent() {
 
     }
 

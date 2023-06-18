@@ -159,7 +159,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public MutableLiveData<Result> getUsersCreatedEvents(long lastUpdate) {
         long currentTime = System.currentTimeMillis();
 
-        if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT) {
+        if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT_USERS_CREATED_EVENTS) {
             eventsRemoteDataSource.getUsersCreatedEvents();
         } else {
             eventsLocalDataSource.getUsersCreatedEvents();
@@ -672,37 +672,27 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
-    public void onSuccessFromInsertUserCreatedEvent(Events events) {
+    public void onSuccessFromInsertUserCreatedEvent() {
         /*
         if (events != null && !events.isFavorite()) {
             events.setSynchronized(false);
         }
          */
 
-        eventsLocalDataSource.updateEvents(events);
-        eventsRemoteDataSource.getUsersCreatedEvents();
+        //eventsRemoteDataSource.getUsersCreatedEvents();
+
+        Log.d(TAG, "Event inserted in Firebase");
     }
 
     @Override
     public void onSuccessFromReadUserCreatedEvent(List<Events> eventsList) {
-        if (eventsList != null) {
-            /*
-            for (Events events : eventsList) {
-                events.setSynchronized(true);
-            }
-
-             */
-            eventsLocalDataSource.insertEvents(eventsList);
-            usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
-        }
-
+        eventsLocalDataSource.insertEvents(eventsList);
+        usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
     }
 
     @Override
     public void onSuccessFromReadUserCreatedEventLocal(List<Events> eventsList) {
-        if (eventsList != null) {
-            usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
-        }
+        usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
     }
 
 

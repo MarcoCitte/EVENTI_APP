@@ -34,6 +34,8 @@ public class Constants {
 
     public static final String LAST_UPDATE = "last_update";
     public static final int FRESH_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
+    public static final int FRESH_TIMEOUT_USERS_CREATED_EVENTS = 5 * 60 * 1000; // 1 hour in milliseconds
+
     public static final int EVENTS_PAGE_SIZE_VALUE = 10;
 
     public static final String RETROFIT_ERROR = "retrofit_error";

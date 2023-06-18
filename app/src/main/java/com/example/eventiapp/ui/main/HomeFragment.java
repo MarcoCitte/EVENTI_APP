@@ -162,13 +162,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        eventsAndPlacesViewModel.getUserCreatedEvents(0).observe(getViewLifecycleOwner(), result -> {
-            if (result.isSuccess()) {
-                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
-                List<Events> fetchedEvents = eventsResponse.getEventsList();
-                printEventList(fetchedEvents);
-            }
-        });
+
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -385,6 +379,14 @@ public class HomeFragment extends Fragment {
 
         eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
             showPlaces(result); //POSTI
+        });
+
+        eventsAndPlacesViewModel.getUserCreatedEvents(0).observe(getViewLifecycleOwner(), result -> {
+            if (result.isSuccess()) {
+                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                List<Events> fetchedEvents = eventsResponse.getEventsList();
+                printEventList(fetchedEvents);
+            }
         });
 
         //SEE ALL EVENTS

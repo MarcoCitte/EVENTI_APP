@@ -120,8 +120,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
                     @Override
                     public void onSuccess(Void aVoid) {
                         //events.setSynchronized(true);
-                        Log.e(TAG, "insertEvents: " + events.getTitle());
-                        eventsCallback.onSuccessFromInsertUserCreatedEvent(events);
+                        eventsCallback.onSuccessFromInsertUserCreatedEvent();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -135,6 +134,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
     @Override
     public void getUsersCreatedEvents() {
         databaseReference.child(FIREBASE_USERS_CREATED_EVENTS_COLLECTION).get().addOnCompleteListener(task -> {
+            Log.e(TAG, "Dentro il remote");
             if (!task.isSuccessful()) {
                 Log.d(TAG, "Error getting data", task.getException());
             }

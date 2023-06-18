@@ -272,6 +272,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     @Override
     public void getUsersCreatedEvents() {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
+            Log.e("TAG", "Dentro il local");
 
             List<Events> usersCreatedEvents = eventsDao.getUsersCreatedEvents();
             eventsCallback.onSuccessFromReadUserCreatedEventLocal(usersCreatedEvents);
