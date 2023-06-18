@@ -283,7 +283,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public MutableLiveData<Result> getMyEventsLiveData(boolean isFirstLoading) {
         if (myEventsListLiveData == null) {
-            myEventsListLiveData = iRepositoryWithLiveData.getMyEvents(firstLoading);
+            myEventsListLiveData = iRepositoryWithLiveData.getMyEvents(isFirstLoading);
         }
         return myEventsListLiveData;
     }

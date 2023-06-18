@@ -48,8 +48,6 @@ public class MyEventsDataSource extends BaseMyEventsDataSource {
                                 events.setSynchronized(true);
                                 eventsList.add(events);
                             }
-                            events.setSynchronized(true);
-                            eventsList.add(events);
                         }
 
                         eventsCallback.onSuccessFromRemoteCurrentUserEventsReading(eventsList);
