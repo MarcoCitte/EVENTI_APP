@@ -303,12 +303,12 @@ public class Events implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Events events = (Events) o;
-        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && Objects.equals(eventSource, events.eventSource) && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(hours, events.hours) && Objects.equals(timezone, events.timezone) && Objects.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state);
+        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && Objects.equals(eventSource, events.eventSource) && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(hours, events.hours) && Objects.equals(timezone, events.timezone) && Objects.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state) && ((creatorEmail != null) ? creatorEmail.equals(events.creatorEmail) : true);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventSource, title, description, category, rank, localRank, attendance, duration, start, end, timezone, country, state, isPrivate);
+        return Objects.hash(eventSource, title, description, category, rank, localRank, attendance, duration, start, end, timezone, country, state, isPrivate, creatorEmail);
     }
 
     @NonNull

@@ -187,7 +187,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
             if (events != null) {
                 eventsDao.delete(events);
-                eventsCallback.onEventsDeleteStatusChanged(events, eventsDao.getFavoriteEvents());
+                eventsCallback.onSuccessFromLocalCurrentUserEventDeletion(events);
             }
         });
     }

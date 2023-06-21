@@ -12,8 +12,6 @@ import com.example.eventiapp.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.eventiapp.source.user.BaseUserDataRemoteDataSource;
 
 import java.util.List;
-import java.util.Set;
-
 
 
 /**
@@ -205,7 +203,7 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
-    public void onSuccessFromInsertUserCreatedEvent() {
+    public void onSuccessFromInsertUserCreatedEvent(Events events) {
 
     }
 
@@ -226,6 +224,11 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
 
     @Override
     public void onSuccessFromLocalCurrentUserEventsReading(List<Events> eventsList) {
+
+    }
+
+    @Override
+    public void onSuccessFromRemoteCurrentUserEventDeletion(Events events) {
 
     }
 
@@ -305,9 +308,11 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
-    public void onEventsDeleteStatusChanged(Events events, List<Events> myEvents) {
+    public void onSuccessFromLocalCurrentUserEventDeletion(Events events) {
 
     }
+
+
 
     @Override
     public void onEventsFavoriteStatusChanged(List<Events> events) {

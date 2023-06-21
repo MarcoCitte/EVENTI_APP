@@ -69,7 +69,7 @@ public class MyEventsDataSource extends BaseMyEventsDataSource {
                 removeValue().addOnSuccessListener(aVoid -> {
                     //QUI
                     events.setSynchronized(false);
-                    eventsCallback.onSuccessFromRemoteCurrentUserEventsWriting(events);
+                    eventsCallback.onSuccessFromRemoteCurrentUserEventDeletion(events);
                 }).addOnFailureListener(e -> {
                     eventsCallback.onFailureFromCloud(e);
                 });

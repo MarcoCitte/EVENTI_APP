@@ -72,4 +72,6 @@ public interface IRepositoryWithLiveData {
     void updatePlace(Place place);
 
     MutableLiveData<Result> getMyEvents(boolean firstLoading);
+
+    void deleteMyEvent(Events events);
 }

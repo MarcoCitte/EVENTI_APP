@@ -7,7 +7,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
@@ -24,14 +23,10 @@ import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
 import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
-import com.example.eventiapp.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCallback, PlaceCallback {
 
@@ -302,6 +297,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             eventsLocalDataSource.getMyEvents();
         }
         return myEventsListLiveData;    }
+
+
 
     @Override
     public MutableLiveData<Place> getSinglePlace(String id) {
@@ -583,19 +580,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         favoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(favoriteEvents)));
     }
 
-    @Override
-    public void onEventsDeleteStatusChanged(Events events, List<Events> myEvents) {
-        Result allEventsResult = allEventsMutableLiveData.getValue();
 
-        if (allEventsResult != null && allEventsResult.isSuccess()) {
-            List<Events> oldAllEvents = ((Result.EventsResponseSuccess) allEventsResult).getData().getEventsList();
-            if (oldAllEvents.contains(events)) {
-                oldAllEvents.remove(events);
-                allEventsMutableLiveData.postValue(allEventsResult);
-            }
-        }
-        myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(myEvents)));
-    }
 
     @Override
     public void onEventsFavoriteStatusChanged(List<Events> events) {
@@ -710,7 +695,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
-    public void onSuccessFromInsertUserCreatedEvent() {
+    public void onSuccessFromInsertUserCreatedEvent(Events events) {
         /*
         if (events != null && !events.isFavorite()) {
             events.setSynchronized(false);
@@ -719,7 +704,16 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
         //eventsRemoteDataSource.getUsersCreatedEvents();
 
-        Log.d(TAG, "Event inserted in Firebase");
+        Log.d(TAG, "Event inserted in Firebase:" + myEventsListLiveData.getValue());
+
+        Result myEventsResult = myEventsListLiveData.getValue();
+
+        if (myEventsResult != null && myEventsResult.isSuccess()) {
+            List<Events> oldMyEvents = ((Result.EventsResponseSuccess) myEventsResult).getData().getEventsList();
+            oldMyEvents.add(events);
+            Log.e(TAG, "MyEventsList size:" + oldMyEvents.size());
+            myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
+        }
     }
 
     @Override
@@ -760,6 +754,32 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         System.out.println("lettura da locale eventi creati dall'utente corrente:");
         printEventList(eventsList);
         myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
+    }
+
+    @Override
+    public void onSuccessFromLocalCurrentUserEventDeletion(Events events) {
+        Log.d(TAG, "onSuccessFromLocalCurrentUserEventDeletion: " + events.getTitle() + "eliminato da locale");
+    }
+    @Override
+    public void onSuccessFromRemoteCurrentUserEventDeletion(Events events) {
+        Log.d(TAG, "onSuccessFromRemoteCurrentUserEventDeletion: " + events.getTitle() + "eliminato da remoto");
+
+        Result myEventsResult = myEventsListLiveData.getValue();
+        Result allEventsResult = allEventsMutableLiveData.getValue();
+
+
+        if (myEventsResult != null && myEventsResult.isSuccess() && allEventsResult != null && allEventsResult.isSuccess()) {
+            List<Events> oldMyEvents = ((Result.EventsResponseSuccess) myEventsResult).getData().getEventsList();
+            List<Events> oldAllEvents = ((Result.EventsResponseSuccess) allEventsResult).getData().getEventsList();
+            oldMyEvents.remove(events);
+            oldAllEvents.remove(events);
+            Log.e(TAG, "MyEventsList size:" + oldMyEvents.size() + "AllEventsList size:" + oldAllEvents.size());
+            myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
+            allEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldAllEvents)));
+
+        }
+
+
     }
 
     public static void printEventList(List<Events> eventList) {
@@ -886,6 +906,10 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     }
 
-
+    @Override
+    public void deleteMyEvent(Events events) {
+        backupDataSource3.deleteMyEvents(events);
+        eventsLocalDataSource.deleteMyEvents(events);
+    }
     //-----------------------------------------------------------------
 }

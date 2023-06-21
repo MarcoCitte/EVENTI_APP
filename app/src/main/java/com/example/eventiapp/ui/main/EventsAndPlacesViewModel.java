@@ -287,4 +287,8 @@ public class EventsAndPlacesViewModel extends ViewModel {
         }
         return myEventsListLiveData;
     }
+
+    public void deleteMyEvent(Events events) {
+        iRepositoryWithLiveData.deleteMyEvent(events);
+    }
 }

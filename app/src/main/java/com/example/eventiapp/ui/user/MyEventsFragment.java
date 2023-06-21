@@ -142,7 +142,7 @@ public class MyEventsFragment extends Fragment {
                 });
 
         myEventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(myEventsList,
-                requireActivity().getApplication(), 0,
+                requireActivity().getApplication(), 5,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -176,7 +176,7 @@ public class MyEventsFragment extends Fragment {
 
                     @Override
                     public void onDeleteEventButtonPressed(Events events) {
-
+                        eventsAndPlacesViewModel.deleteMyEvent(events);
                     }
                 });
 

@@ -35,7 +35,7 @@ public interface EventsCallback {
 
     void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
     public void onSuccessFromRemoteCurrentUserEventsWriting(Events events);
-    public void onEventsDeleteStatusChanged(Events events, List<Events> myEvents);
+    public void onSuccessFromLocalCurrentUserEventDeletion(Events events);
 
     void onEventsFavoriteStatusChanged(List<Events> events);
 
@@ -66,7 +66,7 @@ public interface EventsCallback {
 
     void onSuccessDeletion();
 
-    void onSuccessFromInsertUserCreatedEvent();
+    void onSuccessFromInsertUserCreatedEvent(Events events);
     void onSuccessFromReadUserCreatedEvent(List<Events> eventsList);
 
     void onSuccessFromReadUserCreatedEventLocal(List<Events> eventsList);
@@ -75,5 +75,5 @@ public interface EventsCallback {
     void onSuccessFromLocalCurrentUserEventsReading(List<Events> eventsList);
 
 
-
+    void onSuccessFromRemoteCurrentUserEventDeletion(Events events);
 }

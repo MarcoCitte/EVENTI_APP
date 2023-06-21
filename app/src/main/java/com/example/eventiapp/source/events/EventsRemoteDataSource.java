@@ -120,7 +120,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
                     @Override
                     public void onSuccess(Void aVoid) {
                         //events.setSynchronized(true);
-                        eventsCallback.onSuccessFromInsertUserCreatedEvent();
+                        eventsCallback.onSuccessFromInsertUserCreatedEvent(events);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
