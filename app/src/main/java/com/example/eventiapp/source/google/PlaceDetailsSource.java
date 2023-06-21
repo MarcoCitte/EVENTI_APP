@@ -8,15 +8,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
 import com.example.eventiapp.R;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +46,12 @@ public class PlaceDetailsSource {
 
     public interface PlacePhotosListener {
         void onPlacePhotosListener(Bitmap bitmap);
+
+        void onError(String message);
+    }
+
+    public interface PlaceAutoCompleteListener {
+        void onPlaceAutoCompleteListener(Place place);
 
         void onError(String message);
     }
@@ -118,5 +130,23 @@ public class PlaceDetailsSource {
             }
         }
     }
+
+    public static void fetchAutoCompletePlaces(AutocompleteSupportFragment autocompleteSupportFragment, PlaceAutoCompleteListener listener) {
+        // Gestisci la selezione di un posto dall'autocompletamento
+        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onError(@NonNull Status status) {
+                listener.onError(status.getStatusMessage());
+            }
+
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                listener.onPlaceAutoCompleteListener(place);
+            }
+
+        });
+    }
+
+
 }
 

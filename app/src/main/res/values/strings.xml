@@ -167,5 +167,17 @@
     <string name="number_not_found">Number not found</string>
     <string name="none">None</string>
     <string name="save_events_to_see_recommended_ones">Save events to see recommended ones</string>
+    <string name="created_by_users">Created by users</string>
+    <string name="order_by">ORDER BY</string>
+    <string name="you_have_no_created_events">You have not created any events</string>
+    <string name="start_creating_custom_events_to_share_with_other_people">Start creating custom events to share with other people!</string>
+    <string name="there_are_no_events_you_like_yet">There are no events you like yet</string>
+    <string name="like_an_event">"Like" an event and find it later and help us select the events that are right for you</string>
+    <string name="you_have_no_created_places">You have not created any places</string>
+    <string name="start_creating_custom_places_to_share_with_other_people">Start creating custom places to share with other people!</string>
+    <string name="there_are_no_places_you_like_yet">There are no places you like yet</string>
+    <string name="like_a_place">"Like" a place and find it later</string>
+    <string name="select_place_source">Select Place Source:</string>
+    <string name="google_places">Google Places</string>
 
 </resources>

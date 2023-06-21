@@ -143,7 +143,19 @@
     <string name="event_added">Evento aggiunto</string>
     <string name="number_not_found">Numero non trovato</string>
     <string name="none">Nessuna</string>
-    <string name="save_events_to_see_recommended_ones">Save events to see recommended ones</string>
+    <string name="save_events_to_see_recommended_ones">Aggiungi ai preferiti degli eventi per vedere quelli consigliati</string>
+    <string name="created_by_users">Creati dagli utenti</string>
+    <string name="order_by">ORDINA PER</string>
+    <string name="you_have_no_created_events">Non hai creato nessun evento</string>
+    <string name="start_creating_custom_events_to_share_with_other_people">Inizia a creare eventi personalizzati per condividerli con le persone!</string>
+    <string name="there_are_no_events_you_like_yet">Non ci sono ancora eventi che ti piacciono</string>
+    <string name="like_an_event">Metti "mi piace" a un evento e ritrovalo più tardi e aiutaci a selezionare gli eventi che fanno per te</string>
+    <string name="you_have_no_created_places">Non hai creato nessun evento</string>
+    <string name="start_creating_custom_places_to_share_with_other_people">Inizia a creare punti di interesse personalizzati per condividerli con le persone!</string>
+    <string name="there_are_no_places_you_like_yet">Non ci sono ancora posti che ti piacciono</string>
+    <string name="like_a_place">Metti "mi piace" a un punto di interesse e ritrovalo più tardi</string>
+    <string name="select_place_source">Select Place Source:</string>
+    <string name="google_places">Google Places</string>
 
 
 </resources>

@@ -14,7 +14,6 @@ public interface EventsCallback {
 
     void onSuccessFromLocal(EventsApiResponse eventsApiResponse);
 
-
     void onFailureFromLocal(Exception exception);
 
     void onEventsCategory(List<Events> events);
@@ -53,7 +52,7 @@ public interface EventsCallback {
 
     void onCategoryEventsBetweenDates(List<Events> events);
 
-    void onEventsFromSearch(List<Events>events);
+    void onEventsFromSearch(List<Events> events);
 
     void onSuccessFromCloudReading(List<Events> eventsList);
 
@@ -72,6 +71,7 @@ public interface EventsCallback {
     void onSuccessFromReadUserCreatedEventLocal(List<Events> eventsList);
 
     void onSuccessFromRemoteCurrentUserEventsReading(List<Events> eventsList);
+
     void onSuccessFromLocalCurrentUserEventsReading(List<Events> eventsList);
 
 

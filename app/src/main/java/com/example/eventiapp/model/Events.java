@@ -316,25 +316,7 @@ public class Events implements Parcelable {
     public String toString() {
         return "Events{" +
                 "id_db=" + id_db +
-                ", eventSource=" + eventSource +
                 ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", category='" + category + '\'' +
-                ", rank=" + rank +
-                ", localRank=" + localRank +
-                ", attendance=" + attendance +
-                ", places=" + places +
-                ", duration=" + duration +
-                ", start='" + start + '\'' +
-                ", end='" + end + '\'' +
-                ", hours=" + hours.toString() +
-                ", timezone='" + timezone + '\'' +
-                ", coordinates=" + coordinates.toString() +
-                ", country='" + country + '\'' +
-                ", state='" + state + '\'' +
-                ", isPrivate=" + isPrivate +
-                ", isFavorite=" + isFavorite +
-                ", isSynchronized=" + isSynchronized +
                 '}';
     }
 

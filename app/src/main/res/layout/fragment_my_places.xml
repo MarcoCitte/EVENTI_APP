@@ -50,6 +50,27 @@
                     android:visibility="visible"
                     android:background="@color/colorTextPrimary" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewNoMyPlaces"
+                    android:layout_width="match_parent"
+                    android:layout_height="60sp"
+                    android:layout_marginTop="5sp"
+                    android:text="@string/you_have_no_created_places"
+                    android:textSize="20sp"
+                    android:padding="16sp"
+                    android:visibility="gone"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewNoMyPlaces1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_creating_custom_places_to_share_with_other_people"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:layout_marginStart="15sp"
+                    />
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewMyPlaces"
@@ -98,6 +119,29 @@
                     android:layout_height="1sp"
                     android:visibility="visible"
                     android:background="@color/colorTextPrimary" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewNoFavoritePlaces"
+                    android:layout_width="match_parent"
+                    android:layout_height="60sp"
+                    android:layout_marginTop="5sp"
+                    android:text="@string/there_are_no_places_you_like_yet"
+                    android:textSize="20sp"
+                    android:padding="16sp"
+                    android:visibility="gone"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewNoFavoritePlaces1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/like_a_place"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:layout_marginStart="15sp"
+                    />
+
 
 
                 <androidx.recyclerview.widget.RecyclerView

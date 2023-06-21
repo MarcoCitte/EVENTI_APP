@@ -21,6 +21,7 @@ import com.example.eventiapp.adapter.PlacesRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentMyEventsBinding;
 import com.example.eventiapp.databinding.FragmentMyPlacesBinding;
 import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
@@ -141,12 +142,20 @@ public class MyPlacesFragment extends Fragment {
                 observe(getViewLifecycleOwner(), result -> {
                     if (result != null) {
                         if (result.isSuccess()) {
-                            placeList.clear();
-                            placeList.addAll(((Result.PlacesResponseSuccess) result).getData());
-                            placesRecyclerViewAdapter.notifyDataSetChanged();
-                            if (isFirstLoading) {
-                                sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                                        SHARED_PREFERENCES_FIRST_LOADING, false);
+                            List<Place> fetchedPlaces = ((Result.PlacesResponseSuccess) result).getData();
+                            if (!fetchedPlaces.isEmpty()) {
+                                placeList.clear();
+                                placeList.addAll(fetchedPlaces);
+                                placesRecyclerViewAdapter.notifyDataSetChanged();
+                                if (isFirstLoading) {
+                                    sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                                            SHARED_PREFERENCES_FIRST_LOADING, false);
+                                }
+                            }else{
+                                placeList.clear();
+                                placesRecyclerViewAdapter.notifyDataSetChanged();
+                                fragmentMyPlacesBinding.textViewNoFavoritePlaces.setVisibility(View.VISIBLE);
+                                fragmentMyPlacesBinding.textViewNoFavoritePlaces1.setVisibility(View.VISIBLE);
                             }
                         } else {
                             ErrorMessageUtil errorMessagesUtil =

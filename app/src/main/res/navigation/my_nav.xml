@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_homeFragment_to_containerEventsPlacesCalendar"
             app:destination="@id/containerEventsPlacesCalendar" />
+        <action
+            android:id="@+id/action_homeFragment_to_userEventsFragment"
+            app:destination="@id/userEventsFragment" />
     </fragment>
     <fragment
         android:id="@+id/myEventsFragment"
@@ -101,6 +104,9 @@
         <argument
             android:name="event"
             app:argType="com.example.eventiapp.model.Events" />
+        <action
+            android:id="@+id/action_eventFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/placeFragment"
@@ -217,5 +223,14 @@
             app:destination="@id/accountFragment"
             app:popUpTo='@+id/my_nav'
             app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/userEventsFragment"
+        android:name="com.example.eventiapp.ui.main.UserEventsFragment"
+        android:label="fragment_user_events"
+        tools:layout="@layout/fragment_user_events" >
+        <action
+            android:id="@+id/action_userEventsFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
     </fragment>
 </navigation>

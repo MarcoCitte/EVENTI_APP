@@ -56,7 +56,7 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
         Call<EventsApiResponse> eventsResponseCall = eventsApiService.getEvents(country, location, date, categories, sort, limit,
                 apiKey, CONTENT_TYPE_VALUE);
 
-        getEventsFromJsoup(); //RICHIAMA POI onSuccessFromRemoteJsoup
+        getEventsFromJsoup();
 
         eventsResponseCall.enqueue(new Callback<EventsApiResponse>() {
             @Override

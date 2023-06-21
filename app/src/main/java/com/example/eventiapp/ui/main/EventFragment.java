@@ -208,6 +208,17 @@ public class EventFragment extends Fragment {
                         fragmentEventBinding.sourceTV.setVisibility(View.GONE);
                     }
 
+                    //CATEGORY
+
+                    fragmentEventBinding.eventCategory.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Bundle bundle=new Bundle();
+                            bundle.putString("category",fragmentEventBinding.eventCategory.getText().toString());
+                            Navigation.findNavController(requireView()).navigate(R.id.action_eventFragment_to_categoryFragment, bundle);
+                        }
+                    });
+
                     if (events.getDescription() != null && !Objects.equals(events.getDescription(), "")) {
                         fragmentEventBinding.eventDescription.setText(events.getDescription());
                     } else {
@@ -599,6 +610,17 @@ public class EventFragment extends Fragment {
 
         fragmentEventBinding.eventTitle.setText(events.getTitle());
         fragmentEventBinding.eventCategory.setText(events.getCategory());
+
+        //CATEGORY
+
+        fragmentEventBinding.eventCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle=new Bundle();
+                bundle.putString("category",fragmentEventBinding.eventCategory.getText().toString());
+                Navigation.findNavController(requireView()).navigate(R.id.action_eventFragment_to_categoryFragment, bundle);
+            }
+        });
 
         if (events.getEventSource() != null) {
             fragmentEventBinding.sourceTV.setText(events.getEventSource().getUrl());

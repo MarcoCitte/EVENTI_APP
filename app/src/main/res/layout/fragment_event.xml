@@ -57,7 +57,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -73,13 +73,14 @@
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
-                <com.google.android.material.textview.MaterialTextView
+                <com.google.android.material.chip.Chip
                     android:id="@+id/event_category"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:lineSpacingExtra="-20sp"
+                    app:chipBackgroundColor="@color/colorBackgroundSecondary"
                     android:paddingBottom="8dp"
-                    android:text="Categoria dell' evento"
+                    android:text="Categoria dell'evento"
                     android:textAllCaps="true"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp" />

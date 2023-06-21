@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/textViewMyEvents"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -52,6 +52,26 @@
                     android:visibility="visible"
                     android:background="@color/colorTextPrimary" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewNoMyEvents"
+                    android:layout_width="match_parent"
+                    android:layout_height="60sp"
+                    android:layout_marginTop="5sp"
+                    android:text="@string/you_have_no_created_events"
+                    android:textSize="20sp"
+                    android:padding="16sp"
+                    android:visibility="gone"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewNoMyEvents1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_creating_custom_events_to_share_with_other_people"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:layout_marginStart="15sp"
+                    />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewMyEvents"
@@ -80,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/textViewFavoriteEvents"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -100,6 +120,27 @@
                     android:layout_height="1sp"
                     android:visibility="visible"
                     android:background="@color/colorTextPrimary" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewNoFavoriteEvents"
+                    android:layout_width="match_parent"
+                    android:layout_height="60sp"
+                    android:layout_marginTop="5sp"
+                    android:text="@string/there_are_no_events_you_like_yet"
+                    android:textSize="20sp"
+                    android:padding="16sp"
+                    android:visibility="gone"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewNoFavoriteEvents1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/like_an_event"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    android:layout_marginStart="15sp"
+                    />
 
 
                 <androidx.recyclerview.widget.RecyclerView

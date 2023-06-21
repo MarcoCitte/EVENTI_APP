@@ -20,6 +20,7 @@ import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentMyEventsBinding;
 import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
@@ -96,13 +97,12 @@ public class MyEventsFragment extends Fragment {
         layoutManagerMyEvents =
                 new LinearLayoutManager(requireContext(),
                         LinearLayoutManager.VERTICAL, false);
-        layoutManagerFavoriteEvents=
+        layoutManagerFavoriteEvents =
                 new LinearLayoutManager(requireContext(),
                         LinearLayoutManager.VERTICAL, false);
 
 
-
-        eventsRecyclerViewAdapter=new EventsRecyclerViewAdapter(eventsList,
+        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
                 requireActivity().getApplication(), 0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
@@ -121,7 +121,7 @@ public class MyEventsFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-                       ShareUtils.shareEvent(requireContext(),events);
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
                     @Override
@@ -160,7 +160,7 @@ public class MyEventsFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Events events) {
-                        ShareUtils.shareEvent(requireContext(),events);
+                        ShareUtils.shareEvent(requireContext(), events);
                     }
 
                     @Override
@@ -199,18 +199,27 @@ public class MyEventsFragment extends Fragment {
                 observe(getViewLifecycleOwner(), result -> {
                     if (result != null) {
                         if (result.isSuccess()) {
-                            eventsList.clear();
-                            eventsList.addAll(((Result.EventsResponseSuccess)result).getData().getEventsList());
-                            eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            if (isFirstLoading) {
-                                sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                                        SHARED_PREFERENCES_FIRST_LOADING, false);
+                            EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                            List<Events> fetchedEvents = eventsResponse.getEventsList();
+                            if (!fetchedEvents.isEmpty()) {
+                                eventsList.clear();
+                                eventsList.addAll(fetchedEvents);
+                                eventsRecyclerViewAdapter.notifyDataSetChanged();
+                                if (isFirstLoading) {
+                                    sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                                            SHARED_PREFERENCES_FIRST_LOADING, false);
+                                }
+                            } else {
+                                eventsList.clear();
+                                eventsRecyclerViewAdapter.notifyDataSetChanged();
+                                fragmentMyEventsBinding.textViewNoFavoriteEvents.setVisibility(View.VISIBLE);
+                                fragmentMyEventsBinding.textViewNoFavoriteEvents1.setVisibility(View.VISIBLE);
                             }
                         } else {
                             ErrorMessageUtil errorMessagesUtil =
                                     new ErrorMessageUtil(requireActivity().getApplication());
                             Snackbar.make(view, errorMessagesUtil.
-                                            getErrorMessage(((Result.Error)result).getMessage()),
+                                            getErrorMessage(((Result.Error) result).getMessage()),
                                     Snackbar.LENGTH_SHORT).show();
                         }
                         fragmentMyEventsBinding.progressBarFavoriteEvents.setVisibility(View.GONE);
@@ -221,33 +230,40 @@ public class MyEventsFragment extends Fragment {
                 getMyEventsLiveData(isFirstLoading).
                 observe(getViewLifecycleOwner(), result -> {
                     if (result != null) {
-                        Log.e(TAG, "getMyEventsLiveData: " + ((Result.EventsResponseSuccess)result).getData().getEventsList().size());
                         if (result.isSuccess()) {
-                            myEventsList.clear();
-                            myEventsList.addAll(((Result.EventsResponseSuccess)result).getData().getEventsList());
-                            myEventsRecyclerViewAdapter.notifyDataSetChanged();
-                            if (isFirstLoading) {
-                                sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                                        SHARED_PREFERENCES_FIRST_LOADING, false);
+                            EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
+                            List<Events> fetchedEvents = eventsResponse.getEventsList();
+                            if (!fetchedEvents.isEmpty()) {
+                                myEventsList.clear();
+                                myEventsList.addAll(fetchedEvents);
+                                myEventsRecyclerViewAdapter.notifyDataSetChanged();
+                                if (isFirstLoading) {
+                                    sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                                            SHARED_PREFERENCES_FIRST_LOADING, false);
+                                }
+                            } else {
+                                myEventsList.clear();
+                                myEventsRecyclerViewAdapter.notifyDataSetChanged();
+                                fragmentMyEventsBinding.textViewNoMyEvents.setVisibility(View.VISIBLE);
+                                fragmentMyEventsBinding.textViewNoMyEvents1.setVisibility(View.VISIBLE);
                             }
                         } else {
                             ErrorMessageUtil errorMessagesUtil =
                                     new ErrorMessageUtil(requireActivity().getApplication());
                             Snackbar.make(view, errorMessagesUtil.
-                                            getErrorMessage(((Result.Error)result).getMessage()),
+                                            getErrorMessage(((Result.Error) result).getMessage()),
                                     Snackbar.LENGTH_SHORT).show();
                         }
                         fragmentMyEventsBinding.progressBarFavoriteEvents.setVisibility(View.GONE);
                     }
                 });
 
-         fragmentMyEventsBinding.createEventButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_addEventFragment);
-             }
-         });
-
+        fragmentMyEventsBinding.createEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_addEventFragment);
+            }
+        });
 
 
     }
