@@ -173,6 +173,18 @@ public class UserAuthenticationRemoteDataSource extends BaseUserAuthenticationRe
         }
     }
 
+    @Override
+    public void getLoggedUserProvider() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser.getProviderData().size() > 0) {
+            String provider = firebaseUser.getProviderData().get(firebaseUser.getProviderData().size() - 1).getProviderId();
+            userResponseCallback.onSuccessFromProvider(provider);
+        }else{
+            userResponseCallback.onFailureProvider("Error getting user provider.");
+
+        }
+    }
+
     private String getErrorMessage(Exception exception) {
 
         if (exception instanceof FirebaseAuthWeakPasswordException) {

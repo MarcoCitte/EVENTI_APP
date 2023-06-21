@@ -1,5 +1,7 @@
 package com.example.eventiapp.repository.user;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.eventiapp.model.Events;
@@ -31,6 +33,8 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     private MutableLiveData<Result> resetPasswordMutableLiveData;
     private MutableLiveData<Result> changePasswordMutableLiveData;
 
+    private MutableLiveData<String> userProvider;
+
 
     public UserRepository(BaseUserAuthenticationRemoteDataSource userRemoteDataSource,
                           BaseUserDataRemoteDataSource userDataRemoteDataSource,
@@ -46,7 +50,7 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
         this.eventsLocalDataSource.setEventsCallback(this);
         this.resetPasswordMutableLiveData = new MutableLiveData<>();
         this.changePasswordMutableLiveData = new MutableLiveData<>();
-
+        this.userProvider = new MutableLiveData<>();
     }
 
     @Override
@@ -116,6 +120,12 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     public void signInWithGoogle(String token) {
         userRemoteDataSource.signInWithGoogle(token);
     }
+
+    @Override
+    public MutableLiveData<String> getLoggedUserProvider() {
+        userRemoteDataSource.getLoggedUserProvider();
+        return userProvider;
+    }
 /*
     @Override
     public void saveUserPreferences(String favoriteCountry, Set<String> favoriteTopics, String idToken) {
@@ -144,8 +154,8 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
-    public void onSuccessFromRemoteDatabase(List<Events> newsList) {
-        eventsLocalDataSource.insertEvents(newsList);
+    public void onSuccessFromRemoteDatabase(List<Events> eventsList) {
+        eventsLocalDataSource.insertEvents(eventsList);
     }
 /*
     @Override
@@ -188,6 +198,16 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     public void onFailureFromChangePassword(String message) {
         Result.Error result = new Result.Error(message);
         changePasswordMutableLiveData.postValue(result);
+    }
+
+    @Override
+    public void onSuccessFromProvider(String provider) {
+        userProvider.setValue(provider);
+    }
+
+    @Override
+    public void onFailureProvider(String s) {
+        userProvider.postValue(s);
     }
 
     @Override

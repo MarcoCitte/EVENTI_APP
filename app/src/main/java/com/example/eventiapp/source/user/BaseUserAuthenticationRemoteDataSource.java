@@ -22,4 +22,5 @@ public abstract class BaseUserAuthenticationRemoteDataSource {
     public abstract void resetPassword(String email);
     public abstract void changePassword(String oldPassword, String newPassword);
 
+    public abstract void getLoggedUserProvider();
 }

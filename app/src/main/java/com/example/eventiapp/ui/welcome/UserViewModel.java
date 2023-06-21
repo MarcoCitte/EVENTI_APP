@@ -18,6 +18,8 @@ public class UserViewModel extends ViewModel {
     private MutableLiveData<Result> userMutableLiveData;
     private MutableLiveData<Result> userFavoriteEventsMutableLiveData;
     //private MutableLiveData<Result> userPreferencesMutableLiveData;
+
+    private MutableLiveData<String> userProvider;
     private boolean authenticationError;
     private boolean passwordResetEmailError;
     private boolean passwordChangeError;
@@ -143,6 +145,11 @@ public class UserViewModel extends ViewModel {
         userMutableLiveData = userRepository.getGoogleUser(token);
     }
 
+
+    public MutableLiveData<String> getLoggedUserProvider() {
+        userProvider = userRepository.getLoggedUserProvider();
+        return userProvider;
+    }
 
 
 }

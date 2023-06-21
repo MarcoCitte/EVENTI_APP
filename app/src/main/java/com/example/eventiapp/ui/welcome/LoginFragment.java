@@ -112,7 +112,7 @@ public class LoginFragment extends Fragment {
             .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     // Your server's client ID, not your Android client ID.
-                    .setServerClientId("501943114241-lqnrh2kv72q5lobf4g6762bcdibkqnf5.apps.googleusercontent.com")  //da mettere in values.xml
+                    .setServerClientId("501943114241-0f1u8m29dcef2gd5ncs8mhka74ovsubm.apps.googleusercontent.com")  //da mettere in values.xml
                     // Only show accounts previously used to sign in.
                     .setFilterByAuthorizedAccounts(false)
                     .build())

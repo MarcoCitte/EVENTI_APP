@@ -20,4 +20,7 @@ public interface UserResponseCallback {
     void onFailureFromChangePassword(String message);
 
 
+    void onSuccessFromProvider(String provider);
+
+    void onFailureProvider(String s);
 }

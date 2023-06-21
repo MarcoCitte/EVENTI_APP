@@ -14,40 +14,21 @@
         android:orientation="vertical">
 
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/profile_image"
-            android:layout_width="150sp"
-            android:layout_height="150sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20sp"
-            android:background="@drawable/circleshape"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_baseline_person_24" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/username_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16sp"
-            android:text="Username"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="18sp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/email_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8sp"
+            android:layout_marginTop="100sp"
             android:text="mailexample@gmail.com"
             android:textColor="@color/colorTextSecondary"
-            android:textSize="14sp" />
+            android:textSize="26sp" />
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="5sp"
+            android:layout_marginTop="40sp"
             android:layout_height="80sp"
             android:orientation="horizontal">
 
@@ -128,14 +109,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/usernameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10sp"
-                android:text="@string/change_username"
-                android:textColor="@color/colorTextSecondary"
-                android:textSize="16sp" />
+
 
             <View
                 android:layout_width="match_parent"

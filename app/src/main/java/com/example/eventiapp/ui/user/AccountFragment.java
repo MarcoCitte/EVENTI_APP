@@ -1,5 +1,7 @@
 package com.example.eventiapp.ui.user;
 
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
+
 import android.app.Application;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
 import com.example.eventiapp.ui.welcome.UserViewModel;
 import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.util.Constants;
+import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.example.eventiapp.util.SharedPreferencesUtil;
@@ -85,7 +88,12 @@ public class AccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        eventsAndPlacesViewModel.getFavoriteEventsLiveData(false).observe(getViewLifecycleOwner(), result -> {
+        boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING);
+
+        fragmentAccountBinding.emailText.setText("Bentornato, " + userViewModel.getLoggedUser().getEmail());
+
+        eventsAndPlacesViewModel.getFavoriteEventsLiveData(isFirstLoading).observe(getViewLifecycleOwner(), result -> {
             if(result!=null){
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
@@ -94,6 +102,8 @@ public class AccountFragment extends Fragment {
                 fragmentAccountBinding.numberEventsTextView.setText("0");
             }
         });
+
+
 
         //FAVORITE CATEGORY
         eventsAndPlacesViewModel.getFavoriteCategory().observe(getViewLifecycleOwner(), result ->{
@@ -104,9 +114,18 @@ public class AccountFragment extends Fragment {
             }
         });
 
+        if (userViewModel.getLoggedUserProvider().getValue().equals("google.com"))
+            fragmentAccountBinding.passwordTextView.setVisibility(View.GONE);
+        fragmentAccountBinding.passwordTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(view).navigate(R.id.action_accountFragment_to_changePasswordFragment);
+
+            }
+        });
+
+
         //LOGOUT
-
-
         fragmentAccountBinding.logoutB.setOnClickListener(v -> {
             userViewModel.logout().observe(getViewLifecycleOwner(), result -> {
                 if (result.isSuccess()) {
@@ -153,12 +172,7 @@ public class AccountFragment extends Fragment {
             }
         });
 
-        fragmentAccountBinding.passwordTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(view).navigate(R.id.action_accountFragment_to_changePasswordFragment);
 
-            }
-        });
+
     }
 }
