@@ -3,6 +3,7 @@ package com.example.eventiapp.ui.main;
 import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 import static com.example.eventiapp.util.Constants.EVENTS_VIEW_TYPE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,10 +38,13 @@ import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.example.eventiapp.util.StringUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -58,6 +62,10 @@ public class CategoryFragment extends Fragment {
     private int totalItemCount; // Total number of events
     private int lastVisibleItem; // The position of the last visible event item
     private int visibleItemCount; // Number or total visible event items
+
+    private String sortingParameter;
+    private int lastSelectedSortingParameter;
+    private String[] listItemsSort;
 
     // Based on this value, the process of loading more events is anticipated or postponed
     private final int threshold = 1;
@@ -89,6 +97,7 @@ public class CategoryFragment extends Fragment {
                     R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
         }
         eventsList = new ArrayList<>();
+        listItemsSort = requireContext().getResources().getStringArray(R.array.sorting_parameters);
 
     }
 
@@ -99,6 +108,7 @@ public class CategoryFragment extends Fragment {
         return fragmentCategoryBinding.getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -123,7 +133,7 @@ public class CategoryFragment extends Fragment {
                         LinearLayoutManager.VERTICAL, false);
 
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(eventsList,
-                requireActivity().getApplication(),0,
+                requireActivity().getApplication(), 0,
                 new EventsRecyclerViewAdapter.OnItemClickListener() {
                     @Override
                     public void onEventsItemClick(Events events) {
@@ -161,9 +171,21 @@ public class CategoryFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
 
+        fragmentCategoryBinding.categoryTextView.setText(StringUtils.capitalizeFirstLetter(category) + " " + getString(R.string.events_min));
+
+
+        fragmentCategoryBinding.sortingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSorting();
+            }
+        });
+
         String lastUpdate = "0";
 
         fragmentCategoryBinding.progressBar.setVisibility(View.VISIBLE);
+
+
 
         eventsAndPlacesViewModel.getCategoryEventsLiveData(category).observe(getViewLifecycleOwner(), result -> {
 
@@ -176,7 +198,6 @@ public class CategoryFragment extends Fragment {
 
                 if (!eventsAndPlacesViewModel.isLoading()) {
                     if (eventsAndPlacesViewModel.isFirstLoading()) {
-                        eventsAndPlacesViewModel.setTotalResults(((EventsApiResponse) eventsResponse).getCount());
                         eventsAndPlacesViewModel.setFirstLoading(false);
                         this.eventsList.addAll(fetchedEvents);
                         eventsRecyclerViewAdapter.notifyItemRangeInserted(0,
@@ -206,6 +227,7 @@ public class CategoryFragment extends Fragment {
                     }
                     eventsRecyclerViewAdapter.notifyItemRangeInserted(initialSize, eventsList.size());
                 }
+                fragmentCategoryBinding.numberOfEvents.setText(String.valueOf(" " + eventsList.size()));
             } else {
                 Log.i("FALLITO", "FALLITO");
 
@@ -289,6 +311,46 @@ public class CategoryFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         fragmentCategoryBinding = null;
+    }
+
+
+    public void showSorting() {
+        new MaterialAlertDialogBuilder(requireContext()).setTitle("ORDER BY")
+                .setSingleChoiceItems(listItemsSort, lastSelectedSortingParameter, (dialog, i) -> {
+                    sortingParameter = listItemsSort[i];
+                    lastSelectedSortingParameter = i;
+                    if (!eventsList.isEmpty()) {
+                        sortEvents(sortingParameter, eventsList);
+                    }
+                }).setNegativeButton(R.string.cancel_text, (dialogInterface, i) -> {
+                }).show();
+    }
+
+
+    public void sortEvents(String sortingParameter, List<Events> eventsList) {
+        switch (sortingParameter) {
+            case "Earliest date":
+            case "Più recente":
+                Collections.sort(eventsList, new Events.SortByMostRecent());
+                break;
+            case "Latest date":
+            case "Meno recente":
+                Collections.sort(eventsList, new Events.SortByLeastRecent());
+                break;
+            case "Rank":
+            case "Più attesi":
+                Collections.sort(eventsList, new Events.SortByRank());
+                break;
+            case "Alphabet (A-Z)":
+            case "Alfabetico (A-Z)":
+                Collections.sort(eventsList, new Events.SortByAlphabetAZ());
+                break;
+            case "Alphabet (Z-A)":
+            case "Alfabetico (Z-A)":
+                Collections.sort(eventsList, new Events.SortByAlphabetZA());
+                break;
+        }
+        eventsRecyclerViewAdapter.notifyDataSetChanged();
     }
 
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10sp"
     tools:context=".ui.main.HomeFragment">
 
     <LinearLayout
@@ -15,7 +16,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="130sp"
-            android:padding="16sp"
+            android:padding="15sp"
             android:textColor="@color/colorAccent"
             android:text="@string/explore_bicocca_events"
             android:lineSpacingExtra="-45sp"

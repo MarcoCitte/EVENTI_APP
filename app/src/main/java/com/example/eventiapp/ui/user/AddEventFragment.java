@@ -251,16 +251,16 @@ public class AddEventFragment extends Fragment {
                     //MOSTRA I POSTI CREATI DALL'UTENTE
                     fragmentAddEventBinding.layoutPersonalPlaces.setVisibility(View.VISIBLE);
                     fragmentAddEventBinding.layoutGooglePlaces.setVisibility(View.GONE);
-                    googlePlace=false;
+                    googlePlace = false;
                 } else {
                     //MOSTRA QUELLI DI GOOGLE PLACES
                     fragmentAddEventBinding.layoutPersonalPlaces.setVisibility(View.GONE);
                     fragmentAddEventBinding.layoutGooglePlaces.setVisibility(View.VISIBLE);
-                    googlePlace=true;
+                    googlePlace = true;
 
                     AutocompleteSupportFragment autocompleteFragment = AutocompleteSupportFragment.newInstance();
                     autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS);
-                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
 
                     // Aggiungi il fragment all'activity
                     requireActivity().getSupportFragmentManager().beginTransaction()
@@ -285,143 +285,136 @@ public class AddEventFragment extends Fragment {
         });
 
 
-
-    //ALL DAY CHECKBOX
-        fragmentAddEventBinding.allDayCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-
-    {
-        @Override
-        public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
-        if (isChecked) {
-            fragmentAddEventBinding.editTextStartTime.setVisibility(View.GONE);
-            fragmentAddEventBinding.editTextEndDate.setVisibility(View.GONE);
-            fragmentAddEventBinding.editTextEndTime.setVisibility(View.GONE);
-            fragmentAddEventBinding.endTextView.setVisibility(View.GONE);
-        } else {
-            fragmentAddEventBinding.editTextStartTime.setVisibility(View.VISIBLE);
-            fragmentAddEventBinding.editTextEndDate.setVisibility(View.VISIBLE);
-            fragmentAddEventBinding.editTextEndTime.setVisibility(View.VISIBLE);
-            fragmentAddEventBinding.endTextView.setVisibility(View.VISIBLE);
-        }
-    }
-    });
-
-    //ADD BUTTON
-        fragmentAddEventBinding.buttonAdd.setOnClickListener(new View.OnClickListener()
-
-    {
-        @Override
-        public void onClick (View v){
-        title = String.valueOf(fragmentAddEventBinding.editTextTitle.getText());
-        description = String.valueOf(fragmentAddEventBinding.editTextDescription.getText());
-        startDate = String.valueOf(fragmentAddEventBinding.editTextStartDate.getText());
-        endDate = String.valueOf(fragmentAddEventBinding.editTextEndDate.getText());
-        startTime = String.valueOf(fragmentAddEventBinding.editTextStartTime.getText());
-        endTime = String.valueOf(fragmentAddEventBinding.editTextEndTime.getText());
-
-        boolean isOk = true;
-        if (title == null || title.isEmpty()) {
-            fragmentAddEventBinding.editTextTitle.setError(getString(R.string.field_mandatory));
-            isOk = false;
-        }
-        if (description == null || description.isEmpty()) {
-            fragmentAddEventBinding.editTextDescription.setError(getString(R.string.field_mandatory));
-            isOk = false;
-        }
-        if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {
-            if (startDate == null || startDate.isEmpty()) {
-                fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
-                isOk = false;
-            }
-        } else {
-            if (startDate == null || startDate.isEmpty()) {
-                fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
-                isOk = false;
-            }
-            if (endDate == null || endDate.isEmpty()) {
-                fragmentAddEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
-                isOk = false;
-            }
-            if (startTime == null || startTime.isEmpty()) {
-                fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
-                isOk = false;
-            }
-            if (endTime == null || endTime.isEmpty()) {
-                fragmentAddEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
-                isOk = false;
-            }
-        }
-
-        if (address == null || address.isEmpty()) {
-            if(googlePlace) {
-                fragmentAddEventBinding.placeTextView.setError(getString(R.string.field_mandatory));
-            }else{
-                fragmentAddEventBinding.placeTextView1.setError(getString(R.string.field_mandatory));
-            }
-            isOk = false;
-        }
-
-        if (fragmentAddEventBinding.checkBoxPrivate.isChecked()) {
-            isPrivate = true;
-        } else {
-            isPrivate = false;
-        }
-
-        if (isOk) {
-            //AGGIUNGI EVENTO
-            Events event = new Events();
-            event.setCreatorEmail(userViewModel.getLoggedUser().getEmail());
-            event.setTitle(title);
-            event.setDescription(description);
-            if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {
-                event.setStart(startDate);
-            } else {
-                event.setStart(startDate + startTime);
-                event.setEnd(endDate + endTime);
-            }
-            event.setTimezone("Europe/Rome");
-            if (imageUri != null) {
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
-                    event.setEventSource(new EventSource(null, String.valueOf(bitmap)));
-                } catch (IOException e) {
-                    e.printStackTrace();
+        //ALL DAY CHECKBOX
+        fragmentAddEventBinding.allDayCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    fragmentAddEventBinding.editTextStartTime.setVisibility(View.GONE);
+                    fragmentAddEventBinding.editTextEndDate.setVisibility(View.GONE);
+                    fragmentAddEventBinding.editTextEndTime.setVisibility(View.GONE);
+                    fragmentAddEventBinding.endTextView.setVisibility(View.GONE);
+                } else {
+                    fragmentAddEventBinding.editTextStartTime.setVisibility(View.VISIBLE);
+                    fragmentAddEventBinding.editTextEndDate.setVisibility(View.VISIBLE);
+                    fragmentAddEventBinding.editTextEndTime.setVisibility(View.VISIBLE);
+                    fragmentAddEventBinding.endTextView.setVisibility(View.VISIBLE);
                 }
             }
+        });
 
-            //SALVATAGGIO CATEGORIA IN INGLESE
-            Resources res = getResources();
-            Configuration conf = res.getConfiguration();
-            conf.locale = Locale.ENGLISH;
-            res.updateConfiguration(conf, null);
-            String[] categoriesEnglish = res.getStringArray(R.array.categories);
-            int selectedCategoryIndex = fragmentAddEventBinding.categoriesSpinner.getSelectedItemPosition();
-            String category = categoriesEnglish[selectedCategoryIndex];
-            event.setCategory(category.toLowerCase(Locale.ROOT));
+        //ADD BUTTON
+        fragmentAddEventBinding.buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                title = String.valueOf(fragmentAddEventBinding.editTextTitle.getText());
+                description = String.valueOf(fragmentAddEventBinding.editTextDescription.getText());
+                startDate = String.valueOf(fragmentAddEventBinding.editTextStartDate.getText());
+                endDate = String.valueOf(fragmentAddEventBinding.editTextEndDate.getText());
+                startTime = String.valueOf(fragmentAddEventBinding.editTextStartTime.getText());
+                endTime = String.valueOf(fragmentAddEventBinding.editTextEndTime.getText());
 
-            List<Place> placeList = new ArrayList<>();
-            Place place = new Place(idPlace, namePlace, "venue", address);
-            placeList.add(place);
-            event.setPlaces(placeList);
-            event.setPrivate(isPrivate);
-            eventsAndPlacesViewModel.addEvent(event);
-            Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
-            Snackbar.make(requireActivity().findViewById(android.R.id.content),
-                    getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();
+                boolean isOk = true;
+                if (title == null || title.isEmpty()) {
+                    fragmentAddEventBinding.editTextTitle.setError(getString(R.string.field_mandatory));
+                    isOk = false;
+                }
+                if (description == null || description.isEmpty()) {
+                    fragmentAddEventBinding.editTextDescription.setError(getString(R.string.field_mandatory));
+                    isOk = false;
+                }
+                if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {
+                    if (startDate == null || startDate.isEmpty()) {
+                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
+                        isOk = false;
+                    }
+                } else {
+                    if (startDate == null || startDate.isEmpty()) {
+                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
+                        isOk = false;
+                    }
+                    if (endDate == null || endDate.isEmpty()) {
+                        fragmentAddEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
+                        isOk = false;
+                    }
+                    if (startTime == null || startTime.isEmpty()) {
+                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
+                        isOk = false;
+                    }
+                    if (endTime == null || endTime.isEmpty()) {
+                        fragmentAddEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
+                        isOk = false;
+                    }
+                }
 
-        }
+                if (address == null || address.isEmpty()) {
+                    if (googlePlace) {
+                        fragmentAddEventBinding.placeTextView.setError(getString(R.string.field_mandatory));
+                    } else {
+                        fragmentAddEventBinding.placeTextView1.setError(getString(R.string.field_mandatory));
+                    }
+                    isOk = false;
+                }
+
+                if (fragmentAddEventBinding.checkBoxPrivate.isChecked()) {
+                    isPrivate = true;
+                } else {
+                    isPrivate = false;
+                }
+
+                if (isOk) {
+                    //AGGIUNGI EVENTO
+                    Events event = new Events();
+                    event.setCreatorEmail(userViewModel.getLoggedUser().getEmail());
+                    event.setTitle(title);
+                    event.setDescription(description);
+                    if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {
+                        event.setStart(startDate);
+                    } else {
+                        event.setStart(startDate + "userH" + startTime);
+                        event.setEnd(endDate + "userH" + endTime);
+                    }
+                    event.setTimezone("Europe/Rome");
+                    if (imageUri != null) {
+                        try {
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
+                            event.setEventSource(new EventSource(null, String.valueOf(bitmap)));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    //SALVATAGGIO CATEGORIA IN INGLESE
+                    Resources res = getResources();
+                    Configuration conf = res.getConfiguration();
+                    conf.locale = Locale.ENGLISH;
+                    res.updateConfiguration(conf, null);
+                    String[] categoriesEnglish = res.getStringArray(R.array.categories);
+                    int selectedCategoryIndex = fragmentAddEventBinding.categoriesSpinner.getSelectedItemPosition();
+                    String category = categoriesEnglish[selectedCategoryIndex];
+                    event.setCategory(category.toLowerCase(Locale.ROOT));
+
+                    List<Place> placeList = new ArrayList<>();
+                    Place place = new Place(idPlace, namePlace, "venue", address);
+                    placeList.add(place);
+                    event.setPlaces(placeList);
+                    event.setPrivate(isPrivate);
+                    eventsAndPlacesViewModel.addEvent(event);
+                    Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
+                    Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                            getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+        fragmentAddEventBinding.buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
+            }
+        });
     }
-    });
-
-        fragmentAddEventBinding.buttonCancel.setOnClickListener(new View.OnClickListener()
-
-    {
-        @Override
-        public void onClick (View v){
-        Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
-    }
-    });
-}
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

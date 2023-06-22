@@ -125,6 +125,7 @@
     <string name="send_email">Send Email</string>
     <string name="savings">SAVINGS</string>
     <string name="events">Events</string>
+    <string name="events_min">events</string>
     <string name="present_events">Present events:</string>
     <string name="similar_events">Similar events</string>
     <string name="distance">Distance</string>
@@ -179,5 +180,7 @@
     <string name="like_a_place">"Like" a place and find it later</string>
     <string name="select_place_source">Select Place Source:</string>
     <string name="google_places">Google Places</string>
+    <string name="mailexample_gmail_com">mailexample@gmail.com</string>
+    <string name="category">Category</string>
 
 </resources>

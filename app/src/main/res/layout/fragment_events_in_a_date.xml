@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10sp"
     tools:context=".ui.main.EventsInADateFragment">
 
     <com.google.android.material.textview.MaterialTextView
@@ -11,47 +12,60 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2sp"
-        android:textSize="20sp"
+        android:padding="15sp"
         android:text="@string/date"
         android:textColor="@color/colorTextPrimary"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/numberOfEvents0"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30sp"
-        android:text="@string/number_of_events"
-        android:textColor="@color/colorTextPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        android:padding="15sp"
+        tools:ignore="MissingConstraints">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/numberOfEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorTextPrimary"
-        android:text="0"
-        app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
-        app:layout_constraintTop_toTopOf="@id/numberOfEvents0"/>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/numberOfEvents0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30sp"
+            android:text="@string/number_of_events"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/numberOfEvents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30sp"
+            android:text="0"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
+            app:layout_constraintTop_toTopOf="@id/numberOfEvents0"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/chipsLinearLayout"
-        android:orientation="horizontal"
-        android:layout_marginTop="80sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="80sp"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/sortingButton"
         android:layout_width="55sp"
         android:layout_height="50sp"
-        android:layout_marginTop="2sp"
-        app:icon="@drawable/ic_baseline_sort_24"
+        android:layout_marginTop="15sp"
+        android:layout_marginEnd="15sp"
         android:elevation="4sp"
+        app:icon="@drawable/ic_baseline_sort_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,10 +74,10 @@
         android:id="@+id/recyclerview_events"
         android:layout_width="match_parent"
         android:layout_height="0sp"
-        app:layout_constraintTop_toBottomOf="@id/chipsLinearLayout"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/chipsLinearLayout" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

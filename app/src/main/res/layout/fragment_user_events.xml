@@ -4,25 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10sp"
+    android:layout_marginTop="25sp"
     tools:context=".ui.main.UserEventsFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16sp"
+        android:padding="15sp"
         android:text="@string/created_by_users"
-        android:textSize="32sp"
-        android:textColor="@color/colorTextPrimary"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/numberOfEvents0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16sp"
         android:text="@string/number_of_events"
+        android:layout_marginTop="-25sp"
+        android:layout_marginStart="15sp"
         android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toStartOf="@id/title"
         app:layout_constraintTop_toBottomOf="@id/title" />
@@ -31,31 +35,35 @@
         android:id="@+id/numberOfEvents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorTextPrimary"
         android:text="0"
+        android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
-        app:layout_constraintTop_toTopOf="@id/numberOfEvents0" />
+        app:layout_constraintTop_toTopOf="@id/numberOfEvents0"
+        tools:ignore="HardcodedText" />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/sortingButton"
         android:layout_width="55sp"
         android:layout_height="50sp"
-        app:icon="@drawable/ic_baseline_sort_24"
         android:elevation="4sp"
+        android:layout_marginEnd="10sp"
+        app:icon="@drawable/ic_baseline_sort_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/numberOfEvents"
-        app:layout_constraintTop_toTopOf="@id/numberOfEvents" />
+        android:layout_marginTop="60sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_events"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="50sp"
+        android:layout_marginTop="10sp"
         android:elevation="5sp"
-        app:layout_constraintTop_toBottomOf="@id/numberOfEvents0"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/numberOfEvents0"
         app:layout_constraintVertical_bias="1.0" />
 
     <ProgressBar
@@ -64,9 +72,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

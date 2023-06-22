@@ -5,16 +5,72 @@
     android:id="@+id/categoryFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10sp"
+    android:layout_marginTop="25sp"
     tools:context=".ui.main.CategoryFragment">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/categoryTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/category"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="30sp"
+        android:padding="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15sp"
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/numberOfEvents0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40sp"
+            android:text="@string/number_of_events"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/numberOfEvents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40sp"
+            android:text="0"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
+            app:layout_constraintTop_toTopOf="@id/numberOfEvents0"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sortingButton"
+        android:layout_width="55sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="15sp"
+        android:layout_marginEnd="15sp"
+        android:elevation="4sp"
+        app:icon="@drawable/ic_baseline_sort_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_events"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/categoryTextView"
+        app:layout_constraintTop_toBottomOf="@id/categoryTextView" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

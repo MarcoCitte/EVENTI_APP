@@ -62,7 +62,6 @@ public class ResetPasswordFragment extends Fragment {
 
         textInputLayoutEmail = view.findViewById(R.id.email_et);
         buttonSendEmail = view.findViewById(R.id.email_b);
-        resultTV = view.findViewById(R.id.result_tv);
 
         buttonSendEmail.setOnClickListener(new View.OnClickListener() {
             @Override

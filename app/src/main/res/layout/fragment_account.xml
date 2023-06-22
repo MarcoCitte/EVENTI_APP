@@ -4,6 +4,7 @@
     android:id="@+id/accountFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10sp"
     android:orientation="vertical"
     tools:context=".ui.user.AccountFragment">
 
@@ -14,14 +15,13 @@
         android:orientation="vertical">
 
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/email_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="100sp"
-            android:text="mailexample@gmail.com"
+            android:layout_marginTop="50sp"
+            android:text="@string/mailexample_gmail_com"
             android:textColor="@color/colorTextSecondary"
             android:textSize="26sp" />
 
@@ -110,13 +110,6 @@
                 android:textStyle="bold" />
 
 
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1sp"
-                android:background="@color/colorTextSecondary" />
-
-
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/passwordTextView"
                 android:layout_width="wrap_content"
@@ -139,7 +132,7 @@
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/languageTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0sp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="10sp"
@@ -206,10 +199,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10sp"
-                android:layout_marginTop="20sp"
+                android:layout_marginTop="100sp"
                 android:layout_marginRight="10sp"
                 android:background="@color/colorButton"
-                android:text="LOGOUT"
+                android:text="@string/logout"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 

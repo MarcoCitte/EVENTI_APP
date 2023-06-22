@@ -52,8 +52,7 @@ import java.util.List;
 
 public class EventsInADateFragment extends Fragment {
 
-    public EventsInADateFragment() {
-    }
+    public EventsInADateFragment() {}
 
     private static final String TAG = EventsInADateFragment.class.getSimpleName();
 

@@ -8,6 +8,7 @@ import static com.example.eventiapp.util.Constants.MAX_ITEMS;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,9 +165,11 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewTitle.setText(events.getTitle());
             //EVENTS UCI ED EVENTS PIRELLI HANGAR NON HANNO FINE DATA
             SimpleDateFormat outputFormat;
-            if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            if (events.getEventSource() == null && events.getCreatorEmail()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            } else {
+            } else if(events.getCreatorEmail()!=null && events.getStart().contains("userH")){
+                outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");  //EVENTI CREATI DAGLI UTENTI CHE HANNO ANCHE UN ORARIO
+            }else {
                 outputFormat = new SimpleDateFormat("dd MMM yyyy");
             }
             if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
@@ -177,7 +180,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 String formattedDate = outputFormat.format(Objects.requireNonNull(date1)) + " - " + outputFormat.format(Objects.requireNonNull(date2));
                 textViewDate.setText(formattedDate);
                 textViewDate.setTextSize(13);
-            } else if (events.getStart() != null) {
+            } else if (events.getStart() != null && !events.getStart().isEmpty()) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
                 String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
@@ -267,9 +270,11 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewCategory.setText(events.getCategory());
 
             SimpleDateFormat outputFormat;
-            if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            if (events.getEventSource() == null && events.getCreatorEmail()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            } else {
+            } else if(events.getCreatorEmail()!=null && events.getStart().contains("userH")){
+                outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");  //EVENTI CREATI DAGLI UTENTI CHE HANNO ANCHE UN ORARIO
+            }else {
                 outputFormat = new SimpleDateFormat("dd MMM yyyy");
             }
             if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
@@ -280,7 +285,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 String formattedDate = outputFormat.format(Objects.requireNonNull(date1)) + " - " + outputFormat.format(Objects.requireNonNull(date2));
                 textViewDate.setText(formattedDate);
                 textViewDate.setTextSize(13);
-            } else if (events.getStart() != null) {
+            } else if (events.getStart() != null && !events.getStart().isEmpty()) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
                 String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
@@ -374,12 +379,14 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewTitle.setText(events.getTitle());
             textViewCategory.setText(events.getCategory());
             SimpleDateFormat outputFormat;
-            if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            if (events.getEventSource() == null && events.getCreatorEmail()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            } else {
+            } else if(events.getCreatorEmail()!=null && events.getStart().contains("userH")){
+                outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");  //EVENTI CREATI DAGLI UTENTI CHE HANNO ANCHE UN ORARIO
+            }else {
                 outputFormat = new SimpleDateFormat("dd MMM yyyy");
             }
-            if (events.getStart() != null) {
+            if (events.getStart() != null && !events.getStart().isEmpty()) {
                 String date = events.getStart();
                 Date date1 = DateUtils.parseDateToShow(date, "EN");
                 String formattedDate = outputFormat.format(Objects.requireNonNull(date1));

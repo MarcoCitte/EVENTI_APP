@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="10sp"
     android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -80,7 +81,7 @@
                     android:lineSpacingExtra="-20sp"
                     app:chipBackgroundColor="@color/colorBackgroundSecondary"
                     android:paddingBottom="8dp"
-                    android:text="Categoria dell'evento"
+                    android:text="@string/category"
                     android:textAllCaps="true"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp" />
@@ -89,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30sp"
-                    android:layout_marginTop="10sp"
+                    android:layout_marginTop="15sp"
                     android:orientation="horizontal">
 
                     <com.google.android.material.imageview.ShapeableImageView
@@ -293,8 +294,9 @@
             android:maxLines="3"
             android:lineSpacingExtra="-20sp"
             android:textSize="20sp"
+            android:textAlignment="center"
             android:textColor="@color/colorTextPrimary"
-            android:text="Address"
+            android:text="@string/address"
             tools:ignore="HardcodedText" />
 
         <LinearLayout
@@ -322,7 +324,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1sp"
                 android:visibility="gone"
-                android:background="@color/colorTextPrimary" />
+                android:background="@color/colorTextPrimary"
+                tools:ignore="SmallSp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_events"

@@ -63,6 +63,7 @@
     <string name="number_of_places">Numero di punti di interesse:</string>
     <string name="send_email">Invia mail</string>
     <string name="events">Eventi</string>
+    <string name="events_min">eventi</string>
     <string name="present_events">Eventi presenti:</string>
     <string name="similar_events">Eventi simili</string>
     <string name="distance">Distanza</string>
@@ -156,6 +157,8 @@
     <string name="like_a_place">Metti "mi piace" a un punto di interesse e ritrovalo più tardi</string>
     <string name="select_place_source">Select Place Source:</string>
     <string name="google_places">Google Places</string>
+    <string name="mailexample_gmail_com">mailexample@gmail.com</string>
+    <string name="category">Category</string>
 
 
 </resources>

@@ -191,8 +191,6 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
     @Override
     public void onItemClick(int position, String dayText, int isThereEvent) {
         if (isThereEvent == 0 && !dayText.equals("")) {
-            String message = "Selected Date " + dayText + " " + monthYearFromDate(selectedDate);
-            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
             Bundle bundle = new Bundle();
             String dateString = dayText + " " + monthYearFromDate(selectedDate);
             Date date = DateUtils.parseDate(dateString, LanguageUtil.getLanguage());

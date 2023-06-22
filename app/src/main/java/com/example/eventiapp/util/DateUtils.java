@@ -28,6 +28,7 @@ public class DateUtils {
             "dd-MM-yyyy - HH.mm",
             "dd-MM-yyyy - HH:mm",
             "dd-MM-yyyy - HH.mm.ss",
+            "yyyy-MM-dd'userH'HH:mm",
             "EEE d MMMM yyyy, 'DALLE ORE' HH",
             "EEE dd MMMM yyyy, 'DALLE ORE' HH",
             "EEE MMM dd HH:mm:ss zzzz yyyy"
