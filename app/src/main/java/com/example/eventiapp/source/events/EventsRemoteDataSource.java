@@ -147,7 +147,6 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
                     events.setSynchronized(true);
                     eventsList.add(events);
                 }
-
                 eventsCallback.onSuccessFromReadUserCreatedEvent(eventsList);
             }
         });

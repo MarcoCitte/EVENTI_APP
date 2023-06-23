@@ -350,7 +350,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private final TextView textViewAttendance;
         private final TextView textViewNumberAttendance;
         private final ImageView imageViewEvent;
-        private final ImageView imageViewFavoriteEvent;
         private final ImageView imageViewModeEvent;
         private final ImageView imageViewDeleteEvent;
 
@@ -363,12 +362,10 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewAttendance = itemView.findViewById(R.id.attendanceTextView);
             textViewNumberAttendance = itemView.findViewById(R.id.numberAttendanceTextView);
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
-            imageViewFavoriteEvent = itemView.findViewById(R.id.imageViewFavorite);
             imageViewModeEvent = itemView.findViewById(R.id.imageViewMode);
             imageViewDeleteEvent = itemView.findViewById(R.id.imageViewDelete);
             ImageView imageViewShareEvent = itemView.findViewById(R.id.imageViewShare);
             itemView.setOnClickListener(this);
-            imageViewFavoriteEvent.setOnClickListener(this);
             imageViewShareEvent.setOnClickListener(this);
             imageViewModeEvent.setOnClickListener(this);
             imageViewDeleteEvent.setOnClickListener(this);
@@ -411,15 +408,11 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 imageViewEvent.setVisibility(View.GONE);
             }
-            setImageViewFavoriteEvent(eventsList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.imageViewFavorite) {
-                setImageViewFavoriteEvent(!eventsList.get(getAdapterPosition()).isFavorite());
-                onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
-            } else if (v.getId() == R.id.imageViewShare) {
+            if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(eventsList.get(getAdapterPosition()));
             } else if (v.getId() == R.id.imageViewMode) {
                 onItemClickListener.onModeEventButtonPressed(eventsList.get(getAdapterPosition()));
@@ -430,17 +423,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             }
         }
 
-        private void setImageViewFavoriteEvent(boolean isFavorite) {
-            if (isFavorite) {
-                imageViewFavoriteEvent.setImageDrawable(
-                        AppCompatResources.getDrawable(application,
-                                R.drawable.ic_baseline_favorite_24));
-            } else {
-                imageViewFavoriteEvent.setImageDrawable(
-                        AppCompatResources.getDrawable(application,
-                                R.drawable.ic_baseline_favorite_border_24));
-            }
-        }
     }
 
 

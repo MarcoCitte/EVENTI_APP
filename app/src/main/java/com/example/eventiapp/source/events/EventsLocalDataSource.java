@@ -6,6 +6,7 @@ import static com.example.eventiapp.util.Constants.ENCRYPTED_DATA_FILE_NAME;
 import static com.example.eventiapp.util.Constants.ENCRYPTED_SHARED_PREFERENCES_FILE_NAME;
 import static com.example.eventiapp.util.Constants.LAST_UPDATE;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME_USER_EVENTS;
 
 import android.util.Log;
 
@@ -19,6 +20,7 @@ import com.example.eventiapp.util.SharedPreferencesUtil;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+
 
 public class EventsLocalDataSource extends BaseEventsLocalDataSource {
 
@@ -182,6 +184,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
             }
         });
     }
+
     @Override
     public void deleteMyEvents(Events events) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
@@ -191,6 +194,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
             }
         });
     }
+
     @Override
     public void deleteFavoriteEvents() {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
@@ -250,6 +254,9 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
                     eventsList.get(i).setId_db(insertedEventsIds.get(i));
                 }
 
+                sharedPreferences.writeStringData(SHARED_PREFERENCES_FILE_NAME_USER_EVENTS,
+                        LAST_UPDATE, String.valueOf(System.currentTimeMillis()));
+
                 EventsApiResponse eventsApiResponse = new EventsApiResponse();
                 eventsApiResponse.setEventsList(eventsList);
                 eventsCallback.onSuccessSynchronization();
@@ -274,6 +281,7 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
             Log.i("ELEMENTI CANCELLATI:", String.valueOf(eventsCounter));
             if (eventsCounter == deletedEvents) {
                 sharedPreferences.deleteAll(SHARED_PREFERENCES_FILE_NAME);
+                sharedPreferences.deleteAll(SHARED_PREFERENCES_FILE_NAME_USER_EVENTS);
                 dataEncryptionUtil.deleteAll(ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, ENCRYPTED_DATA_FILE_NAME);
                 eventsCallback.onSuccessDeletion();
             }

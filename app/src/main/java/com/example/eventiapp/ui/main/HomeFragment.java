@@ -4,6 +4,7 @@ import static com.example.eventiapp.util.Constants.EVENTS_PAGE_SIZE_VALUE;
 import static com.example.eventiapp.util.Constants.LAST_UPDATE;
 import static com.example.eventiapp.util.Constants.REQUEST_CODE;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME_USER_EVENTS;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_LANGUAGE;
 
@@ -115,6 +116,7 @@ public class HomeFragment extends Fragment {
     String categories = "conferences,expos,concerts,festivals,performing-arts,sports,community";
     int limit = 5000;
     String lastUpdate = "0";
+    String lastUpdateUserEvents = "0";
 
 
     public HomeFragment() {
@@ -428,7 +430,13 @@ public class HomeFragment extends Fragment {
             showCategoryEvents(result);  //SCELTI PER L'UTENTE IN BASE ALLE SUE PREFERENZE
         });
 
-        eventsAndPlacesViewModel.getUserCreatedEvents(Long.parseLong(lastUpdate)).observe(getViewLifecycleOwner(), result -> {
+        if (sharedPreferencesUtil.readStringData(
+                SHARED_PREFERENCES_FILE_NAME_USER_EVENTS, LAST_UPDATE) != null) {
+            lastUpdateUserEvents = sharedPreferencesUtil.readStringData(
+                    SHARED_PREFERENCES_FILE_NAME_USER_EVENTS, LAST_UPDATE);
+        }
+
+        eventsAndPlacesViewModel.getUserCreatedEvents(Long.parseLong(lastUpdateUserEvents)).observe(getViewLifecycleOwner(), result -> {
             showUserEvents(result); //EVENTI CREATI DAGLI UTENTI
         });
 
@@ -436,13 +444,6 @@ public class HomeFragment extends Fragment {
             showPlaces(result); //POSTI
         });
 
-        eventsAndPlacesViewModel.getUserCreatedEvents(0).observe(getViewLifecycleOwner(), result -> {
-            if (result.isSuccess()) {
-                EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
-                List<Events> fetchedEvents = eventsResponse.getEventsList();
-                printEventList(fetchedEvents);
-            }
-        });
 
         //SEE ALL EVENTS
 
@@ -752,11 +753,6 @@ public class HomeFragment extends Fragment {
 
     }
 
-    public static void printEventList(List<Events> eventList) {
-        for (Events event : eventList) {
-            Log.d(TAG, "printEventList: " + event.getTitle());
-        }
-    }
 
     @Override
     public void onResume() {
@@ -766,6 +762,9 @@ public class HomeFragment extends Fragment {
         });
         eventsAndPlacesViewModel.getFavoriteCategoryEventsLiveData().observe(getViewLifecycleOwner(), result -> {
             showCategoryEvents(result);  //SCELTI PER L'UTENTE IN BASE ALLE SUE PREFERENZE
+        });
+        eventsAndPlacesViewModel.getUserCreatedEvents(Long.parseLong(lastUpdateUserEvents)).observe(getViewLifecycleOwner(), result -> {
+            showUserEvents(result); //EVENTI CREATI DAGLI UTENTI
         });
         eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
             showPlaces(result); //POSTI

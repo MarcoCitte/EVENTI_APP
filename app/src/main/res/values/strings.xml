@@ -182,5 +182,6 @@
     <string name="google_places">Google Places</string>
     <string name="mailexample_gmail_com">mailexample@gmail.com</string>
     <string name="category">Category</string>
+    <string name="edit">Edit</string>
 
 </resources>

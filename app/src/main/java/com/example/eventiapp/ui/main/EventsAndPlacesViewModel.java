@@ -58,6 +58,8 @@ public class EventsAndPlacesViewModel extends ViewModel {
         iRepositoryWithLiveData.addEvent(events);
     }
 
+    public void addPlace(Place place){iRepositoryWithLiveData.addPlace(place);}
+
     public MutableLiveData<Result>  getUserCreatedEvents(long lastUpdate) {
         if (usersCreatedEventsMutableLiveData == null) {
             usersCreatedEventsMutableLiveData = iRepositoryWithLiveData.getUsersCreatedEvents(lastUpdate);

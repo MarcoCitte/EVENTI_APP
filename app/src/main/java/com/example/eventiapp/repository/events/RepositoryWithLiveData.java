@@ -70,15 +70,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final BaseMyEventsDataSource backupDataSource3;
 
 
-
-
     private final PlaceDetailsSource placeDetailsSource;
     private List<String> dates;
     private int count;
 
     private LifecycleRegistry lifecycleRegistry;
-
-
 
 
     public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
@@ -122,7 +118,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         this.backupDataSource3.setMyEventsCallback(this);
 
 
-
         lifecycleRegistry = new LifecycleRegistry(new LifecycleOwner() {
             @NonNull
             @Override
@@ -160,6 +155,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void addEvent(Events events) {
         eventsRemoteDataSource.insertEvents(events);
         eventsLocalDataSource.insertEvents(new ArrayList<>(Collections.singleton(events)));
+    }
+
+    @Override
+    public void addPlace(Place place) {
+        placesLocalDataSource.insertPlaces(new ArrayList<>(Collections.singleton(place)));
     }
 
     @Override
@@ -296,8 +296,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             Log.e(TAG, "getMyEvents: isNotFirstLoading");
             eventsLocalDataSource.getMyEvents();
         }
-        return myEventsListLiveData;    }
-
+        return myEventsListLiveData;
+    }
 
 
     @Override
@@ -359,7 +359,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             backupDataSource2.deleteFavoritePlace(place);
         }
     }
-
 
 
     @Override
@@ -581,7 +580,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
 
-
     @Override
     public void onEventsFavoriteStatusChanged(List<Events> events) {
         List<Events> notSynchronizedEventsList = new ArrayList<>();
@@ -760,6 +758,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onSuccessFromLocalCurrentUserEventDeletion(Events events) {
         Log.d(TAG, "onSuccessFromLocalCurrentUserEventDeletion: " + events.getTitle() + "eliminato da locale");
     }
+
     @Override
     public void onSuccessFromRemoteCurrentUserEventDeletion(Events events) {
         Log.d(TAG, "onSuccessFromRemoteCurrentUserEventDeletion: " + events.getTitle() + "eliminato da remoto");

@@ -7,30 +7,29 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentAddEventBinding;
-import com.example.eventiapp.databinding.FragmentAllEventsBinding;
+import com.example.eventiapp.databinding.FragmentEditEventBinding;
 import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
@@ -39,11 +38,9 @@ import com.example.eventiapp.repository.user.IUserRepository;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
-import com.example.eventiapp.ui.main.MyDialogEventsFragment;
 import com.example.eventiapp.ui.welcome.UserViewModel;
 import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.util.DateUtils;
-import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -57,15 +54,14 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 
-public class AddEventFragment extends Fragment {
+public class EditEventFragment extends Fragment {
 
-    private FragmentAddEventBinding fragmentAddEventBinding;
+    private FragmentEditEventBinding fragmentEditEventBinding;
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     private UserViewModel userViewModel;
 
@@ -89,11 +85,11 @@ public class AddEventFragment extends Fragment {
     private boolean googlePlace;
 
 
-    public AddEventFragment() {
+    public EditEventFragment() {
     }
 
-    public static AddEventFragment newInstance() {
-        return new AddEventFragment();
+    public static EditEventFragment newInstance() {
+        return new EditEventFragment();
     }
 
     @Override
@@ -125,13 +121,17 @@ public class AddEventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        fragmentAddEventBinding = FragmentAddEventBinding.inflate(inflater, container, false);
-        return fragmentAddEventBinding.getRoot();
+        fragmentEditEventBinding = FragmentEditEventBinding.inflate(inflater, container, false);
+        return fragmentEditEventBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //BUNDLE
+        assert getArguments() != null;
+        Events events = getArguments().getParcelable("event");
 
         MaterialDatePicker.Builder<Long> builderStartDate = MaterialDatePicker.Builder.datePicker();
         builderStartDate.setTitleText("Select a start date");
@@ -153,7 +153,11 @@ public class AddEventFragment extends Fragment {
 
         //IMAGEVIEW
 
-        fragmentAddEventBinding.eventImage.setOnClickListener(new View.OnClickListener() {
+        if (events.getEventSource()!=null && events.getEventSource().getUrlPhoto() != null) {
+            fragmentEditEventBinding.eventImage.setImageURI(Uri.parse(events.getEventSource().getUrlPhoto()));
+        }
+
+        fragmentEditEventBinding.eventImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -161,13 +165,55 @@ public class AddEventFragment extends Fragment {
             }
         });
 
+        //TITLE
+        if(events.getTitle()!=null){
+            fragmentEditEventBinding.editTextTitle.setText(events.getTitle());
+        }
+
+        //DESCRIPTION
+        if(events.getDescription()!=null){
+            fragmentEditEventBinding.editTextDescription.setText(events.getDescription());
+        }
 
         //SPINNER CATEGORIES
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        fragmentAddEventBinding.categoriesSpinner.setAdapter(adapter);
+        fragmentEditEventBinding.categoriesSpinner.setAdapter(adapter);
 
-        fragmentAddEventBinding.editTextStartDate.setOnClickListener(new View.OnClickListener() {
+        if (events.getCategory() != null) {
+            Resources res = getResources();
+            Configuration conf = res.getConfiguration();
+            conf.locale = Locale.ENGLISH;
+            res.updateConfiguration(conf, null);
+            String[] categoriesEnglish = res.getStringArray(R.array.categories);
+            for (int i = 0; i < categoriesEnglish.length; i++) {
+                if (categoriesEnglish[i].equalsIgnoreCase(events.getCategory())) {
+                    fragmentEditEventBinding.categoriesSpinner.setSelection(i);
+                    break;
+                }
+            }
+        }
+
+        //DATE AND TIME
+        String delimiter = "userH";
+        if (events.getStart().contains(delimiter)) {
+            fragmentEditEventBinding.allDayCheckBox.setChecked(false);
+            int indexStart = events.getStart().indexOf(delimiter);
+            fragmentEditEventBinding.editTextStartDate.setText(events.getStart().substring(0, indexStart));
+            fragmentEditEventBinding.editTextStartTime.setText(events.getStart().substring(indexStart + 5));
+            int indexEnd = events.getEnd().indexOf(delimiter);
+            fragmentEditEventBinding.editTextEndDate.setText(events.getEnd().substring(0, indexEnd));
+            fragmentEditEventBinding.editTextEndTime.setText(events.getEnd().substring(indexEnd + 5));
+        } else {
+            fragmentEditEventBinding.editTextStartDate.setText(events.getStart());
+            fragmentEditEventBinding.allDayCheckBox.setChecked(true);
+            fragmentEditEventBinding.editTextStartTime.setVisibility(View.GONE);
+            fragmentEditEventBinding.editTextEndDate.setVisibility(View.GONE);
+            fragmentEditEventBinding.editTextEndTime.setVisibility(View.GONE);
+            fragmentEditEventBinding.endTextView.setVisibility(View.GONE);
+        }
+
+        fragmentEditEventBinding.editTextStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 materialDatePicker = builderStartDate.build();
@@ -179,14 +225,14 @@ public class AddEventFragment extends Fragment {
                         Date start = new Date(selection);
                         start = DateUtils.parseDate(String.valueOf(start), "EN");
                         if (start != null) {
-                            fragmentAddEventBinding.editTextStartDate.setText(" " + formatter.format(start));
+                            fragmentEditEventBinding.editTextStartDate.setText(" " + formatter.format(start));
                         }
                     }
                 });
             }
         });
 
-        fragmentAddEventBinding.editTextEndDate.setOnClickListener(new View.OnClickListener() {
+        fragmentEditEventBinding.editTextEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 materialDatePicker = builderEndDate.build();
@@ -198,14 +244,14 @@ public class AddEventFragment extends Fragment {
                         Date end = new Date(selection);
                         end = DateUtils.parseDate(String.valueOf(end), "EN");
                         if (end != null) {
-                            fragmentAddEventBinding.editTextEndDate.setText(" " + formatter.format(end));
+                            fragmentEditEventBinding.editTextEndDate.setText(" " + formatter.format(end));
                         }
                     }
                 });
             }
         });
 
-        fragmentAddEventBinding.editTextStartTime.setOnClickListener(new View.OnClickListener() {
+        fragmentEditEventBinding.editTextStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 materialTimePicker = builderStartTime.build();
@@ -216,14 +262,14 @@ public class AddEventFragment extends Fragment {
                         int hour = materialTimePicker.getHour();
                         int minute = materialTimePicker.getMinute();
                         startTime = hour + ":" + minute;
-                        fragmentAddEventBinding.editTextStartTime.setText(startTime);
+                        fragmentEditEventBinding.editTextStartTime.setText(startTime);
                     }
                 });
             }
         });
 
 
-        fragmentAddEventBinding.editTextEndTime.setOnClickListener(new View.OnClickListener() {
+        fragmentEditEventBinding.editTextEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 materialTimePicker = builderEndTime.build();
@@ -234,7 +280,7 @@ public class AddEventFragment extends Fragment {
                         int hour = materialTimePicker.getHour();
                         int minute = materialTimePicker.getMinute();
                         endTime = hour + ":" + minute;
-                        fragmentAddEventBinding.editTextEndTime.setText(endTime);
+                        fragmentEditEventBinding.editTextEndTime.setText(endTime);
                     }
                 });
             }
@@ -243,23 +289,31 @@ public class AddEventFragment extends Fragment {
 
         //PLACE
 
-        fragmentAddEventBinding.placeSourceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        if (!events.getPlaces().isEmpty()) {
+            if (events.getPlaces().get(0).getId() != null) { //? DIFFERENZIARE POSTI PRESI DA GOOGLE O PRESI DA QUELLI CREATI DALL'UTENTE
+
+            } else {
+
+            }
+        }
+
+        fragmentEditEventBinding.placeSourceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.personalPlacesRadioButton) {
                     //MOSTRA I POSTI CREATI DALL'UTENTE
-                    fragmentAddEventBinding.layoutPersonalPlaces.setVisibility(View.VISIBLE);
-                    fragmentAddEventBinding.layoutGooglePlaces.setVisibility(View.GONE);
+                    fragmentEditEventBinding.layoutPersonalPlaces.setVisibility(View.VISIBLE);
+                    fragmentEditEventBinding.layoutGooglePlaces.setVisibility(View.GONE);
                     googlePlace = false;
                 } else {
                     //MOSTRA QUELLI DI GOOGLE PLACES
-                    fragmentAddEventBinding.layoutPersonalPlaces.setVisibility(View.GONE);
-                    fragmentAddEventBinding.layoutGooglePlaces.setVisibility(View.VISIBLE);
+                    fragmentEditEventBinding.layoutPersonalPlaces.setVisibility(View.GONE);
+                    fragmentEditEventBinding.layoutGooglePlaces.setVisibility(View.VISIBLE);
                     googlePlace = true;
 
                     AutocompleteSupportFragment autocompleteFragment = AutocompleteSupportFragment.newInstance();
                     autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS);
-                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.LAT_LNG,com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
 
                     // Aggiungi il fragment all'activity
                     requireActivity().getSupportFragmentManager().beginTransaction()
@@ -288,89 +342,92 @@ public class AddEventFragment extends Fragment {
 
 
         //ALL DAY CHECKBOX
-        fragmentAddEventBinding.allDayCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        fragmentEditEventBinding.allDayCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    fragmentAddEventBinding.editTextStartTime.setVisibility(View.GONE);
-                    fragmentAddEventBinding.editTextEndDate.setVisibility(View.GONE);
-                    fragmentAddEventBinding.editTextEndTime.setVisibility(View.GONE);
-                    fragmentAddEventBinding.endTextView.setVisibility(View.GONE);
+                    fragmentEditEventBinding.editTextStartTime.setVisibility(View.GONE);
+                    fragmentEditEventBinding.editTextEndDate.setVisibility(View.GONE);
+                    fragmentEditEventBinding.editTextEndTime.setVisibility(View.GONE);
+                    fragmentEditEventBinding.endTextView.setVisibility(View.GONE);
                 } else {
-                    fragmentAddEventBinding.editTextStartTime.setVisibility(View.VISIBLE);
-                    fragmentAddEventBinding.editTextEndDate.setVisibility(View.VISIBLE);
-                    fragmentAddEventBinding.editTextEndTime.setVisibility(View.VISIBLE);
-                    fragmentAddEventBinding.endTextView.setVisibility(View.VISIBLE);
+                    fragmentEditEventBinding.editTextStartTime.setVisibility(View.VISIBLE);
+                    fragmentEditEventBinding.editTextEndDate.setVisibility(View.VISIBLE);
+                    fragmentEditEventBinding.editTextEndTime.setVisibility(View.VISIBLE);
+                    fragmentEditEventBinding.endTextView.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        //ADD BUTTON
-        fragmentAddEventBinding.buttonAdd.setOnClickListener(new View.OnClickListener() {
+        //PRIVATE
+        fragmentEditEventBinding.checkBoxPrivate.setChecked(events.isPrivate());
+
+        //EDIT BUTTON
+        fragmentEditEventBinding.buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                title = String.valueOf(fragmentAddEventBinding.editTextTitle.getText());
-                description = String.valueOf(fragmentAddEventBinding.editTextDescription.getText());
-                startDate = String.valueOf(fragmentAddEventBinding.editTextStartDate.getText());
-                endDate = String.valueOf(fragmentAddEventBinding.editTextEndDate.getText());
-                startTime = String.valueOf(fragmentAddEventBinding.editTextStartTime.getText());
-                endTime = String.valueOf(fragmentAddEventBinding.editTextEndTime.getText());
+                title = String.valueOf(fragmentEditEventBinding.editTextTitle.getText());
+                description = String.valueOf(fragmentEditEventBinding.editTextDescription.getText());
+                startDate = String.valueOf(fragmentEditEventBinding.editTextStartDate.getText());
+                endDate = String.valueOf(fragmentEditEventBinding.editTextEndDate.getText());
+                startTime = String.valueOf(fragmentEditEventBinding.editTextStartTime.getText());
+                endTime = String.valueOf(fragmentEditEventBinding.editTextEndTime.getText());
 
                 boolean isOk = true;
                 if (title == null || title.isEmpty()) {
-                    fragmentAddEventBinding.editTextTitle.setError(getString(R.string.field_mandatory));
+                    fragmentEditEventBinding.editTextTitle.setError(getString(R.string.field_mandatory));
                     isOk = false;
                 }
                 if (description == null || description.isEmpty()) {
-                    fragmentAddEventBinding.editTextDescription.setError(getString(R.string.field_mandatory));
+                    fragmentEditEventBinding.editTextDescription.setError(getString(R.string.field_mandatory));
                     isOk = false;
                 }
-                if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {
+                if (fragmentEditEventBinding.allDayCheckBox.isChecked()) {
                     if (startDate == null || startDate.isEmpty()) {
-                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
+                        fragmentEditEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                 } else {
                     if (startDate == null || startDate.isEmpty()) {
-                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
+                        fragmentEditEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                     if (endDate == null || endDate.isEmpty()) {
-                        fragmentAddEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
+                        fragmentEditEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                     if (startTime == null || startTime.isEmpty()) {
-                        fragmentAddEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
+                        fragmentEditEventBinding.editTextStartTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                     if (endTime == null || endTime.isEmpty()) {
-                        fragmentAddEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
+                        fragmentEditEventBinding.editTextEndTime.setError(getString(R.string.field_mandatory));
                         isOk = false;
                     }
                 }
 
                 if (address == null || address.isEmpty()) {
                     if (googlePlace) {
-                        fragmentAddEventBinding.placeTextView.setError(getString(R.string.field_mandatory));
+                        fragmentEditEventBinding.placeTextView.setError(getString(R.string.field_mandatory));
                     } else {
-                        fragmentAddEventBinding.placeTextView1.setError(getString(R.string.field_mandatory));
+                        fragmentEditEventBinding.placeTextView1.setError(getString(R.string.field_mandatory));
                     }
                     isOk = false;
                 }
 
-                if (fragmentAddEventBinding.checkBoxPrivate.isChecked()) {
+                if (fragmentEditEventBinding.checkBoxPrivate.isChecked()) {
                     isPrivate = true;
                 } else {
                     isPrivate = false;
                 }
 
                 if (isOk) {
-                    //AGGIUNGI EVENTO
+                    //MODIFICA EVENTO
                     Events event = new Events();
                     event.setCreatorEmail(userViewModel.getLoggedUser().getEmail());
                     event.setTitle(title);
                     event.setDescription(description);
-                    if (fragmentAddEventBinding.allDayCheckBox.isChecked()) {
+                    if (fragmentEditEventBinding.allDayCheckBox.isChecked()) {
                         event.setStart(startDate.trim());
                     } else {
                         event.setStart(startDate.trim() + "userH" + startTime);
@@ -393,7 +450,7 @@ public class AddEventFragment extends Fragment {
                     conf.locale = Locale.ENGLISH;
                     res.updateConfiguration(conf, null);
                     String[] categoriesEnglish = res.getStringArray(R.array.categories);
-                    int selectedCategoryIndex = fragmentAddEventBinding.categoriesSpinner.getSelectedItemPosition();
+                    int selectedCategoryIndex = fragmentEditEventBinding.categoriesSpinner.getSelectedItemPosition();
                     String category = categoriesEnglish[selectedCategoryIndex];
                     event.setCategory(category.toLowerCase(Locale.ROOT));
 
@@ -403,7 +460,7 @@ public class AddEventFragment extends Fragment {
                     event.setPlaces(placeList);
                     event.setPrivate(isPrivate);
                     eventsAndPlacesViewModel.addEvent(event);
-                    Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
+                    Navigation.findNavController(requireView()).navigate(R.id.action_editEventFragment_to_containerMyEventsAndPlaces);
                     Snackbar.make(requireActivity().findViewById(android.R.id.content),
                             getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();
 
@@ -411,10 +468,10 @@ public class AddEventFragment extends Fragment {
             }
         });
 
-        fragmentAddEventBinding.buttonCancel.setOnClickListener(new View.OnClickListener() {
+        fragmentEditEventBinding.buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
+                Navigation.findNavController(requireView()).navigate(R.id.action_editEventFragment_to_containerMyEventsAndPlaces);
             }
         });
     }
@@ -427,7 +484,7 @@ public class AddEventFragment extends Fragment {
                 Uri selectedImageUri = data.getData();
                 if (selectedImageUri != null) {
                     imageUri = selectedImageUri;
-                    fragmentAddEventBinding.eventImage.setImageURI(imageUri);
+                    fragmentEditEventBinding.eventImage.setImageURI(imageUri);
                 }
             }
         }

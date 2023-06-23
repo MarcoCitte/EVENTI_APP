@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.EventsRecyclerViewAdapter;
@@ -30,6 +31,7 @@ import com.example.eventiapp.util.ErrorMessageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.example.eventiapp.util.ShareUtils;
 import com.example.eventiapp.util.SharedPreferencesUtil;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -50,7 +52,6 @@ public class MyEventsFragment extends Fragment {
 
     private LinearLayoutManager layoutManagerMyEvents;
     private LinearLayoutManager layoutManagerFavoriteEvents;
-
 
     public MyEventsFragment() {
         // Required empty public constructor
@@ -171,7 +172,9 @@ public class MyEventsFragment extends Fragment {
 
                     @Override
                     public void onModeEventButtonPressed(Events events) {
-
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("event", events);
+                        Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_editEventFragment, bundle);
                     }
 
                     @Override
@@ -264,7 +267,6 @@ public class MyEventsFragment extends Fragment {
                 Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_addEventFragment);
             }
         });
-
 
     }
 

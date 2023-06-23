@@ -34,7 +34,7 @@ public class Constants {
 
     public static final String LAST_UPDATE = "last_update";
     public static final int FRESH_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
-    public static final int FRESH_TIMEOUT_USERS_CREATED_EVENTS = 5 * 60 * 1000; // 1 hour in milliseconds
+    public static final int FRESH_TIMEOUT_USERS_CREATED_EVENTS = 5 * 60 * 1000; //5 minuti
 
     public static final int EVENTS_PAGE_SIZE_VALUE = 10;
 
@@ -68,6 +68,7 @@ public class Constants {
 
     //SHARED PREFERENCES
     public static final String SHARED_PREFERENCES_FILE_NAME = "preferences";
+    public static final String SHARED_PREFERENCES_FILE_NAME_USER_EVENTS="preferences_user_events";
     public static final String SHARED_PREFERENCES_FIRST_LOADING = "first_loading";
     public static final String SHARED_PREFERENCES_LANGUAGE = "IT";
 

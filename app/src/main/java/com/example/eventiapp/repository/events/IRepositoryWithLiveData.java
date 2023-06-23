@@ -16,6 +16,8 @@ public interface IRepositoryWithLiveData {
 
     void addEvent(Events events);
 
+    void addPlace(Place place);
+
     MutableLiveData<Result> getUsersCreatedEvents(long lastUpdate);
 
     MutableLiveData<Result> getFavoriteEvents(boolean isFirstLoading);
