@@ -355,7 +355,7 @@ public class AddEventFragment extends Fragment {
                     } else {
                         fragmentAddEventBinding.placeTextView1.setError(getString(R.string.field_mandatory));
                     }
-                    isOk = false;
+                    isOk = true;
                 }
 
                 if (fragmentAddEventBinding.checkBoxPrivate.isChecked()) {
@@ -398,7 +398,7 @@ public class AddEventFragment extends Fragment {
                     event.setCategory(category.toLowerCase(Locale.ROOT));
 
                     List<Place> placeList = new ArrayList<>();
-                    Place place = new Place(idPlace, namePlace, "venue", address);
+                    Place place = new Place("idPlace", "namePlace", "venue", "address");
                     placeList.add(place);
                     event.setPlaces(placeList);
                     event.setPrivate(isPrivate);

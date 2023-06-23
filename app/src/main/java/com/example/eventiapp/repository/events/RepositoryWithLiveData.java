@@ -167,6 +167,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT_USERS_CREATED_EVENTS) {
+            Log.e(TAG, "getUsersCreatedEvents: prendo da remoto");
             eventsRemoteDataSource.getUsersCreatedEvents();
         } else {
             eventsLocalDataSource.getUsersCreatedEvents();
@@ -704,19 +705,12 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
         Log.d(TAG, "Event inserted in Firebase:" + myEventsListLiveData.getValue());
 
-        Result myEventsResult = myEventsListLiveData.getValue();
 
-        if (myEventsResult != null && myEventsResult.isSuccess()) {
-            List<Events> oldMyEvents = ((Result.EventsResponseSuccess) myEventsResult).getData().getEventsList();
-            oldMyEvents.add(events);
-            Log.e(TAG, "MyEventsList size:" + oldMyEvents.size());
-            myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
-        }
     }
 
     @Override
     public void onSuccessFromReadUserCreatedEvent(List<Events> eventsList) {
-        eventsLocalDataSource.insertEvents(eventsList);
+        //eventsLocalDataSource.insertEvents(eventsList);
         usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
     }
 
@@ -762,21 +756,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public void onSuccessFromRemoteCurrentUserEventDeletion(Events events) {
         Log.d(TAG, "onSuccessFromRemoteCurrentUserEventDeletion: " + events.getTitle() + "eliminato da remoto");
-
-        Result myEventsResult = myEventsListLiveData.getValue();
-        Result allEventsResult = allEventsMutableLiveData.getValue();
-
-
-        if (myEventsResult != null && myEventsResult.isSuccess() && allEventsResult != null && allEventsResult.isSuccess()) {
-            List<Events> oldMyEvents = ((Result.EventsResponseSuccess) myEventsResult).getData().getEventsList();
-            List<Events> oldAllEvents = ((Result.EventsResponseSuccess) allEventsResult).getData().getEventsList();
-            oldMyEvents.remove(events);
-            oldAllEvents.remove(events);
-            Log.e(TAG, "MyEventsList size:" + oldMyEvents.size() + "AllEventsList size:" + oldAllEvents.size());
-            myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
-            allEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldAllEvents)));
-
-        }
 
 
     }

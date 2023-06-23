@@ -1,14 +1,18 @@
 package com.example.eventiapp.ui.main;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.eventiapp.model.Events;
+import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventsAndPlacesViewModel extends ViewModel {
@@ -56,6 +60,38 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public void addEvent(Events events) {
         iRepositoryWithLiveData.addEvent(events);
+
+
+
+        Result userCreatedEventsResult = usersCreatedEventsMutableLiveData.getValue();
+
+        if (userCreatedEventsResult != null && userCreatedEventsResult.isSuccess()) {
+            List<Events> oldUserCreatedEvents = ((Result.EventsResponseSuccess) userCreatedEventsResult).getData().getEventsList();
+            oldUserCreatedEvents.add(events);
+            Log.e(TAG, "userCreatedEvents size: " + oldUserCreatedEvents.size());
+            usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldUserCreatedEvents)));
+        }else{
+            List<Events> oldUserCreatedEvents = new ArrayList<>();
+            oldUserCreatedEvents.add(events);
+            usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldUserCreatedEvents)));
+
+        }
+
+        Result myEventsResult = myEventsListLiveData.getValue();
+
+        if (myEventsResult != null && myEventsResult.isSuccess()) {
+            List<Events> oldMyEvents = ((Result.EventsResponseSuccess) myEventsResult).getData().getEventsList();
+            oldMyEvents.add(events);
+            Log.e(TAG, "MyEventsList size:" + oldMyEvents.size());
+            myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
+        }else{
+            List<Events> oldMyEvents = new ArrayList<>();
+            oldMyEvents.add(events);
+            myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
+
+        }
+
+
     }
 
     public void addPlace(Place place){iRepositoryWithLiveData.addPlace(place);}
@@ -292,5 +328,40 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     public void deleteMyEvent(Events events) {
         iRepositoryWithLiveData.deleteMyEvent(events);
+
+        Result myEventsResult = myEventsListLiveData.getValue();
+        Result allEventsResult = eventsListLiveData.getValue();
+        Result userCreatedEventsResult = usersCreatedEventsMutableLiveData.getValue();
+
+
+        if (myEventsResult != null && myEventsResult.isSuccess()) {
+            List<Events> oldMyEvents = ((Result.EventsResponseSuccess) myEventsResult).getData().getEventsList();
+            if(oldMyEvents.contains(events)){
+                oldMyEvents.remove(events);
+                Log.e(TAG, "MyEventsList size:" + oldMyEvents.size());
+                myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
+            }
+
+        }
+
+        if (allEventsResult != null && allEventsResult.isSuccess()) {
+            List<Events> oldAllEvents = ((Result.EventsResponseSuccess) allEventsResult).getData().getEventsList();
+            if(oldAllEvents.contains(events)){
+                oldAllEvents.remove(events);
+                Log.e(TAG, "AllEventsList size:" + oldAllEvents.size());
+                eventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldAllEvents)));
+            }
+
+        }
+
+        if (userCreatedEventsResult != null) {
+            List<Events> oldUserCreatedEvents = ((Result.EventsResponseSuccess) userCreatedEventsResult).getData().getEventsList();
+            if(oldUserCreatedEvents.contains(events)){
+                oldUserCreatedEvents.remove(events);
+                Log.e(TAG, "userCreatedEventsList size:" + oldUserCreatedEvents.size());
+                usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldUserCreatedEvents)));
+            }
+
+        }
     }
 }
