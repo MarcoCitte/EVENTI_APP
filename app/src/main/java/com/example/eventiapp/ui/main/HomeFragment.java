@@ -430,11 +430,16 @@ public class HomeFragment extends Fragment {
             showCategoryEvents(result);  //SCELTI PER L'UTENTE IN BASE ALLE SUE PREFERENZE
         });
 
+/*
         if (sharedPreferencesUtil.readStringData(
                 SHARED_PREFERENCES_FILE_NAME_USER_EVENTS, LAST_UPDATE) != null) {
             lastUpdateUserEvents = sharedPreferencesUtil.readStringData(
                     SHARED_PREFERENCES_FILE_NAME_USER_EVENTS, LAST_UPDATE);
         }
+
+ */
+
+
 
         eventsAndPlacesViewModel.getUserCreatedEvents(Long.parseLong(lastUpdateUserEvents)).observe(getViewLifecycleOwner(), result -> {
             showUserEvents(result); //EVENTI CREATI DAGLI UTENTI
