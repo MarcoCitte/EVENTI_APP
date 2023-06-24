@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -87,6 +88,8 @@ public class EventFragment extends Fragment {
     MapView mMapView;
     private GoogleMap googleMap;
 
+    private Events events;
+
     public EventFragment() {
         // Required empty public constructor
     }
@@ -146,7 +149,7 @@ public class EventFragment extends Fragment {
 
 
         assert getArguments() != null;
-        Events events = getArguments().getParcelable("event");
+        events = getArguments().getParcelable("event");
         setImageViewFavoriteEvent(events.isFavorite());
 
         fragmentEventBinding.imageViewShare.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +171,8 @@ public class EventFragment extends Fragment {
             public void onClick(View v) {
                 setImageViewFavoriteEvent(!events.isFavorite());
                 events.setFavorite(!events.isFavorite());
-                eventsAndPlacesViewModel.updateEvents(events);            }
+                eventsAndPlacesViewModel.updateEvents(events);
+            }
         });
 
 
@@ -213,8 +217,8 @@ public class EventFragment extends Fragment {
                     fragmentEventBinding.eventCategory.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Bundle bundle=new Bundle();
-                            bundle.putString("category",fragmentEventBinding.eventCategory.getText().toString());
+                            Bundle bundle = new Bundle();
+                            bundle.putString("category", fragmentEventBinding.eventCategory.getText().toString());
                             Navigation.findNavController(requireView()).navigate(R.id.action_eventFragment_to_categoryFragment, bundle);
                         }
                     });
@@ -274,6 +278,64 @@ public class EventFragment extends Fragment {
                         showAllHoursMovie(events.getHours());
                     }
 
+                    //AZIONI
+                    if (!fragmentEventBinding.eventPlace.getText().equals("Unknown")) {
+                        LatLng latLng;
+                        if (result.getCoordinates().get(0) > result.getCoordinates().get(1)) {
+                            latLng = new LatLng(result.getCoordinates().get(0), result.getCoordinates().get(1));
+                        } else {
+                            latLng = new LatLng(result.getCoordinates().get(1), result.getCoordinates().get(0));
+                        }
+
+                        fragmentEventBinding.carImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //NAVIGAZIONE
+                                String uri = String.format(Locale.ENGLISH, "google.navigation:mode=d&q=%f,%f", latLng.latitude, latLng.longitude);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                intent.setPackage("com.google.android.apps.maps");
+                                startActivity(intent);
+                            }
+                        });
+
+                        fragmentEventBinding.walkImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //NAVIGAZIONE A PIEDI
+                                String uri = String.format(Locale.ENGLISH, "google.navigation:mode=w&q=%f,%f", latLng.latitude, latLng.longitude);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                intent.setPackage("com.google.android.apps.maps");
+                                startActivity(intent);
+                            }
+                        });
+
+                        fragmentEventBinding.mapsImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //APRI SU GOOGLE MAPS
+                                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latLng.latitude, latLng.longitude);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                startActivity(intent);
+                            }
+                        });
+
+                        fragmentEventBinding.callImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String number = result.getPhoneNumber();
+                                if (number != null) {
+                                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+                                    startActivity(intent);
+                                } else {
+                                    fragmentEventBinding.callImageView.setVisibility(View.GONE);
+                                }
+                            }
+                        });
+                    } else {
+                        fragmentEventBinding.cardView.setVisibility(View.GONE);
+                    }
+
+
                     //EVENTI SIMILI ---------------------------------------------------------------------
 
                     sameCategoryEvents(events);
@@ -295,10 +357,12 @@ public class EventFragment extends Fragment {
                     }
 
                 } else {  //NON ESISTE IL PLACE DELL'EVENTO NEL DATABASE
+                    fragmentEventBinding.cardView.setVisibility(View.GONE);
                     showEventWithNoPlace(events);
                 }
             });
         } else { //L'evento non ha il nome del place in cui si tiene
+            fragmentEventBinding.cardView.setVisibility(View.GONE);
             showEventWithNoPlace(events);
         }
 
@@ -327,6 +391,7 @@ public class EventFragment extends Fragment {
 
     }
 
+    @SuppressLint("SimpleDateFormat")
     private void showAllEventsDate(List<String> dates) {
         LinearLayout linearLayout = fragmentEventBinding.otherDatesLayout;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -337,13 +402,22 @@ public class EventFragment extends Fragment {
         TextView textView = fragmentEventBinding.otherDatesTextView;
         textView.setVisibility(View.VISIBLE);
 
+        SimpleDateFormat outputFormat;
+        if (events.getEventSource() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+        } else {
+            outputFormat = new SimpleDateFormat("dd MMM yyyy");
+        }
+
         for (String date : dates) {
             MaterialButton button = new MaterialButton(requireContext());
             button.setLayoutParams(params);
             button.setTextSize(16);
             button.setPadding(15, 15, 15, 15);
             button.setCornerRadius(30);
-            button.setText(date);
+            Date date1 = DateUtils.parseDateToShow(date, "EN");
+            String formattedDate = outputFormat.format(Objects.requireNonNull(date1));
+            button.setText(formattedDate);
             button.setOnClickListener(v -> {
                 //VA ALLO STESSO EVENTO MA CON DATA DIVERSA
             });
@@ -616,8 +690,8 @@ public class EventFragment extends Fragment {
         fragmentEventBinding.eventCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("category",fragmentEventBinding.eventCategory.getText().toString());
+                Bundle bundle = new Bundle();
+                bundle.putString("category", fragmentEventBinding.eventCategory.getText().toString());
                 Navigation.findNavController(requireView()).navigate(R.id.action_eventFragment_to_categoryFragment, bundle);
             }
         });
@@ -690,6 +764,7 @@ public class EventFragment extends Fragment {
             showAllHoursMovie(events.getHours());
         }
 
+
         //EVENTI SIMILI ---------------------------------------------------------------------
 
         sameCategoryEvents(events);
@@ -718,7 +793,6 @@ public class EventFragment extends Fragment {
                             R.drawable.ic_baseline_favorite_border_24));
         }
     }
-
 
 
 }

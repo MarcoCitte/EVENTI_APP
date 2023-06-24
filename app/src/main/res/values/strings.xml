@@ -183,5 +183,7 @@
     <string name="mailexample_gmail_com">mailexample@gmail.com</string>
     <string name="category">Category</string>
     <string name="edit">Edit</string>
+    <string name="phone_number">Phone number</string>
+    <string name="phone_number_optional">Phone number (optional)</string>
 
 </resources>

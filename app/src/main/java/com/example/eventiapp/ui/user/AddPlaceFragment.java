@@ -5,11 +5,10 @@ import static com.example.eventiapp.util.Constants.BICOCCA_LATLNG;
 import static com.example.eventiapp.util.Constants.REQUEST_CODE_PICK_IMAGE;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+
+import com.example.eventiapp.databinding.FragmentAddPlaceBinding;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,14 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.databinding.FragmentAddPlaceBinding;
-import com.example.eventiapp.model.EventSource;
-import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -38,10 +33,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class AddPlaceFragment extends Fragment {
 
@@ -55,6 +48,7 @@ public class AddPlaceFragment extends Fragment {
     private String city;
     private String cap;
     private String nation;
+    private String phoneNumber;
     private LatLng latLng;
 
 
@@ -88,6 +82,8 @@ public class AddPlaceFragment extends Fragment {
             mapView.getMapAsync(callback);
         }
 
+        latLng = BICOCCA_LATLNG; //DEFAULT BICOCCA
+
 
         //IMAGEVIEW
 
@@ -109,6 +105,7 @@ public class AddPlaceFragment extends Fragment {
                 city = String.valueOf(fragmentAddPlaceBinding.editTextCity.getText());
                 cap = String.valueOf(fragmentAddPlaceBinding.editTextCap.getText());
                 nation = String.valueOf(fragmentAddPlaceBinding.editTextNation.getText());
+                phoneNumber = String.valueOf(fragmentAddPlaceBinding.editTextPhoneNumber.getText()); //FACOLTATIVO
 
                 boolean isOk = true;
                 if (name == null || name.isEmpty()) {
@@ -140,10 +137,11 @@ public class AddPlaceFragment extends Fragment {
                     place.setId(name + address + latLng.toString()); //?
                     place.setName(name);
                     place.setAddress(address + ", " + city + ", " + cap + ", " + nation);
-                    List<Double> coordinates=new ArrayList<>();
+                    List<Double> coordinates = new ArrayList<>();
                     coordinates.add(latLng.latitude);
                     coordinates.add(latLng.latitude);
                     place.setCoordinates(coordinates);
+                    place.setPhoneNumber(phoneNumber);
 
                     Navigation.findNavController(requireView()).navigate(R.id.action_addPlaceFragment_to_containerMyEventsAndPlaces);
                     Snackbar.make(requireActivity().findViewById(android.R.id.content),

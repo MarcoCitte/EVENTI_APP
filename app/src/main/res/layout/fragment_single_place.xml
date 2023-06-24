@@ -112,6 +112,187 @@
                 android:layout_height="300dp"
                 android:layout_marginTop="16dp" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/place_address2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10sp"
+                android:lineSpacingExtra="-20sp"
+                android:maxLines="3"
+                android:text="@string/address"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="20sp"
+                tools:ignore="HardcodedText" />
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="0sp"
+                app:cardBackgroundColor="@color/colorBackground"
+                app:cardCornerRadius="20sp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="100sp"
+                            android:layout_marginLeft="-10sp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="60sp"
+                                android:layout_height="60sp"
+                                android:layout_gravity="center"
+                                android:layout_margin="10sp"
+                                android:background="@drawable/circleshape"
+                                android:gravity="center"
+                                android:padding="10sp">
+
+                                <ImageView
+                                    android:id="@+id/carImageView"
+                                    android:layout_width="35sp"
+                                    android:layout_height="35sp"
+                                    android:src="@drawable/ic_baseline_directions_car_24" />
+
+                            </RelativeLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="Drive"
+                                android:textColor="@color/colorTextSecondary" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="100sp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+
+                            <RelativeLayout
+                                android:layout_width="60sp"
+                                android:layout_height="60sp"
+                                android:layout_gravity="center"
+                                android:layout_margin="10sp"
+                                android:background="@drawable/circleshape"
+                                android:gravity="center"
+                                android:padding="10sp">
+
+                                <ImageView
+                                    android:id="@+id/walkImageView"
+                                    android:layout_width="35sp"
+                                    android:layout_height="35sp"
+                                    android:src="@drawable/ic_baseline_directions_walk_24" />
+
+                            </RelativeLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:lineSpacingExtra="-15sp"
+                                android:text="Walk"
+                                android:textColor="@color/colorTextSecondary" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="100sp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="60sp"
+                                android:layout_height="60sp"
+                                android:layout_gravity="center"
+                                android:layout_margin="10sp"
+                                android:background="@drawable/circleshape"
+                                android:gravity="center"
+                                android:padding="10sp">
+
+                                <ImageView
+                                    android:id="@+id/mapsImageView"
+                                    android:layout_width="35sp"
+                                    android:layout_height="35sp"
+                                    android:src="@drawable/ic_maps" />
+
+                            </RelativeLayout>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:lineSpacingExtra="-15sp"
+                                android:text="Open in \nGoogle Maps"
+                                android:textColor="@color/colorTextSecondary" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="100sp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="60sp"
+                                android:layout_height="60sp"
+                                android:layout_gravity="center"
+                                android:layout_margin="10sp"
+                                android:background="@drawable/circleshape"
+                                android:gravity="center"
+                                android:padding="10sp">
+
+                                <ImageView
+                                    android:id="@+id/callImageView"
+                                    android:layout_width="35sp"
+                                    android:layout_height="35sp"
+                                    android:src="@drawable/ic_baseline_call_24" />
+
+                            </RelativeLayout>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="Call"
+                                android:textColor="@color/colorTextSecondary" />
+
+                        </LinearLayout>
+
+
+
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
 
             <LinearLayout
                 android:layout_width="wrap_content"

@@ -448,8 +448,9 @@ public class MapsFragment extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     //NAVIGAZIONE
-                                    String uri = String.format(Locale.ENGLISH, "google.navigation:q=%f,%f", position.latitude, position.longitude);
+                                    String uri = String.format(Locale.ENGLISH, "google.navigation:mode=d&q=%f,%f", position.latitude, position.longitude);
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                    intent.setPackage("com.google.android.apps.maps");
                                     startActivity(intent);
                                 }
                             });

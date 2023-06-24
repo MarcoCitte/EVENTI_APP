@@ -259,6 +259,63 @@ public class PlaceFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(eventsRecyclerViewAdapter);
 
+        //ADDRESS 2
+        fragmentSinglePlaceBinding.placeAddress2.setText(place.getAddress());
+
+        //AZIONI
+        LatLng latLng;
+        if (place.getCoordinates().get(0) > place.getCoordinates().get(1)) {
+            latLng = new LatLng(place.getCoordinates().get(0), place.getCoordinates().get(1));
+        } else {
+            latLng = new LatLng(place.getCoordinates().get(1), place.getCoordinates().get(0));
+        }
+
+        fragmentSinglePlaceBinding.carImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //NAVIGAZIONE
+                String uri = String.format(Locale.ENGLISH, "google.navigation:mode=d&q=%f,%f", latLng.latitude, latLng.longitude);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
+            }
+        });
+
+        fragmentSinglePlaceBinding.walkImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //NAVIGAZIONE A PIEDI
+                String uri = String.format(Locale.ENGLISH, "google.navigation:mode=w&q=%f,%f", latLng.latitude, latLng.longitude);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
+            }
+        });
+
+        fragmentSinglePlaceBinding.mapsImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //APRI SU GOOGLE MAPS
+                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latLng.latitude, latLng.longitude);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(intent);
+            }
+        });
+
+        fragmentSinglePlaceBinding.callImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String number = place.getPhoneNumber();
+                if (number != null) {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+                    startActivity(intent);
+                } else {
+                    fragmentSinglePlaceBinding.callImageView.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
         String lastUpdate = "0";
         String id = place.getId();
         fragmentSinglePlaceBinding.progressBar.setVisibility(View.VISIBLE);

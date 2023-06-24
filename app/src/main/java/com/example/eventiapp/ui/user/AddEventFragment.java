@@ -30,7 +30,6 @@ import android.widget.RadioGroup;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentAddEventBinding;
-import com.example.eventiapp.databinding.FragmentAllEventsBinding;
 import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;

@@ -155,11 +155,13 @@
     <string name="start_creating_custom_places_to_share_with_other_people">Inizia a creare punti di interesse personalizzati per condividerli con le persone!</string>
     <string name="there_are_no_places_you_like_yet">Non ci sono ancora posti che ti piacciono</string>
     <string name="like_a_place">Metti "mi piace" a un punto di interesse e ritrovalo più tardi</string>
-    <string name="select_place_source">Select Place Source:</string>
-    <string name="google_places">Google Places</string>
+    <string name="select_place_source">Seleziona il tipo di posto:</string>
+    <string name="google_places">Posti di Google</string>
     <string name="mailexample_gmail_com">mailexample@gmail.com</string>
-    <string name="category">Category</string>
-    <string name="edit">Edit</string>
+    <string name="category">Categoria</string>
+    <string name="edit">Modifica</string>
+    <string name="phone_number">Numero di telefono</string>
+    <string name="phone_number_optional">Numero di telefono (opzionale)</string>
 
 
 </resources>
