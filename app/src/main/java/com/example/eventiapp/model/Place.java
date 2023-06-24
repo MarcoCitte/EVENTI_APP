@@ -39,7 +39,8 @@ public class Place implements Serializable, Parcelable {
     private boolean isFavorite;
     @ColumnInfo(name = "is_synchronized")
     private boolean isSynchronized;
-
+    @ColumnInfo(name = "creator_email")
+    private String creatorEmail;
 
     @Ignore
     public Place() {
@@ -103,6 +104,14 @@ public class Place implements Serializable, Parcelable {
             return new Place[size];
         }
     };
+
+    public String getCreatorEmail() {
+        return creatorEmail;
+    }
+
+    public void setCreatorEmail(String creatorEmail) {
+        this.creatorEmail = creatorEmail;
+    }
 
     @NonNull
     public String getId() {

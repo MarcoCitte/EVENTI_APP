@@ -20,7 +20,9 @@ import com.example.eventiapp.source.events.BaseMyEventsDataSource;
 import com.example.eventiapp.source.places.BaseFavoritePlacesDataSource;
 import com.example.eventiapp.source.events.EventsCallback;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
+import com.example.eventiapp.source.places.BaseMyPlacesDataSource;
 import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
+import com.example.eventiapp.source.places.BasePlacesRemoteDataSource;
 import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
 
@@ -36,6 +38,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final MutableLiveData<Result> eventsFromSearchLiveData;
     private final MutableLiveData<Result> favoriteEventsMutableLiveData;
     private MutableLiveData<Result> myEventsListLiveData; //EVENTI CREATI DALL'UTENTE CORRENTE
+    private MutableLiveData<List<Place>> myPlacesListLiveData; //POSTI CREATI DALL'UTENTE CORRENTE
 
     private final MutableLiveData<Result> categoryEventsMutableLiveData;
     private final MutableLiveData<Result> eventsInADateMutableLiveData;
@@ -62,12 +65,15 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final MutableLiveData<Result> usersCreatedEventsMutableLiveData;
 
     private final BaseEventsRemoteDataSource eventsRemoteDataSource;
+    private final BasePlacesRemoteDataSource placesRemoteDataSource;
+
     private final BaseEventsLocalDataSource eventsLocalDataSource;
     private final BasePlacesLocalDataSource placesLocalDataSource;
 
     private final BaseFavoriteEventsDataSource backupDataSource;
     private final BaseFavoritePlacesDataSource backupDataSource2;
     private final BaseMyEventsDataSource backupDataSource3;
+    private final BaseMyPlacesDataSource backupDataSource4;
 
 
     private final PlaceDetailsSource placeDetailsSource;
@@ -75,14 +81,16 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private int count;
 
     private LifecycleRegistry lifecycleRegistry;
+    private MutableLiveData<List<Place>> usersCreatedPlacesMutableLiveData;
 
 
-    public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
-                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource, BaseFavoriteEventsDataSource favoriteEventsDataSource, BaseFavoritePlacesDataSource favoritePlacesDataSource, BaseMyEventsDataSource myEventsDataSource) {
+    public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BasePlacesRemoteDataSource placesRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
+                                  BasePlacesLocalDataSource placesLocalDataSource, PlaceDetailsSource placeDetailsSource, BaseFavoriteEventsDataSource favoriteEventsDataSource, BaseFavoritePlacesDataSource favoritePlacesDataSource, BaseMyEventsDataSource myEventsDataSource, BaseMyPlacesDataSource myPlacesDataSource) {
         allEventsMutableLiveData = new MutableLiveData<>();
         eventsFromSearchLiveData = new MutableLiveData<>();
         favoriteEventsMutableLiveData = new MutableLiveData<>();
         myEventsListLiveData = new MutableLiveData<>();
+        myPlacesListLiveData = new MutableLiveData<>();
         categoryEventsMutableLiveData = new MutableLiveData<>();
         eventsInADateMutableLiveData = new MutableLiveData<>();
         eventsBetweenDatesMutableLiveData = new MutableLiveData<>();
@@ -103,6 +111,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         favoriteCategoryEventsMutableLiveData = new MutableLiveData<>();
         this.eventsRemoteDataSource = eventsRemoteDataSource;
         this.eventsRemoteDataSource.setEventsCallback(this);
+        this.placesRemoteDataSource = placesRemoteDataSource;
+        this.placesRemoteDataSource.setEventsCallback(this);
         this.eventsLocalDataSource = eventsLocalDataSource;
         this.eventsLocalDataSource.setEventsCallback(this);
         this.placesLocalDataSource = placesLocalDataSource;
@@ -117,6 +127,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         this.backupDataSource3 = myEventsDataSource;
         this.backupDataSource3.setMyEventsCallback(this);
 
+        this.backupDataSource4 = myPlacesDataSource;
+        this.backupDataSource4.setMyPlacesCallback(this);
 
         lifecycleRegistry = new LifecycleRegistry(new LifecycleOwner() {
             @NonNull
@@ -128,7 +140,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
 
         usersCreatedEventsMutableLiveData = new MutableLiveData<>();
-
+        usersCreatedPlacesMutableLiveData = new MutableLiveData<>();
     }
 
     @Override
@@ -159,6 +171,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void addPlace(Place place) {
+        placesRemoteDataSource.insertPlace(place);
         placesLocalDataSource.insertPlaces(new ArrayList<>(Collections.singleton(place)));
     }
 
@@ -274,6 +287,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public MutableLiveData<List<Place>> fetchPlaces() {
+        placesRemoteDataSource.getUsersCreatedPlaces();
         placesLocalDataSource.getPlaces();
         return allPlacesMutableLiveData;
     }
@@ -885,9 +899,79 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
+    public void onSuccessFromInsertUserCreatedPlace(Place place) {
+
+    }
+
+    @Override
+    public void onSuccessFromReadUserCreatedPlaces(List<Place> placesList) {
+        //eventsLocalDataSource.insertEvents(eventsList);
+        usersCreatedPlacesMutableLiveData.postValue(placesList);
+    }
+
+    @Override
+    public void onSuccessFromReadUserCreatedPlaceLocal(List<Place> usersCreatedPlaces) {
+        usersCreatedPlacesMutableLiveData.postValue(usersCreatedPlaces);
+
+    }
+
+    @Override
+    public void onSuccessFromRemoteCurrentUserPlacesReading(List<Place> placesList) {
+        if (placesList != null) {
+
+            System.out.println("lettura da remoto eventi creati dall'utente corrente:");
+            //printEventList(placesList);
+
+            placesLocalDataSource.insertPlaces(placesList);
+            myPlacesListLiveData.postValue(placesList);
+        }
+    }
+
+    @Override
+    public void onSuccessFromLocalCurrentUserPlacesReading(List<Place> myPlaces) {
+        myPlacesListLiveData.postValue(myPlaces);
+
+    }
+
+    @Override
+    public void onSuccessFromLocalCurrentUserPlaceDeletion(Place place) {
+
+    }
+
+    @Override
     public void deleteMyEvent(Events events) {
         backupDataSource3.deleteMyEvents(events);
         eventsLocalDataSource.deleteMyEvents(events);
+    }
+
+    @Override
+    public MutableLiveData<List<Place>> getUsersCreatedPlaces(long lastUpdate) {
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastUpdate > Constants.FRESH_TIMEOUT_USERS_CREATED_EVENTS) {
+            Log.e(TAG, "getUsersCreatedEvents: prendo da remoto");
+            placesRemoteDataSource.getUsersCreatedPlaces();
+        } else {
+            placesLocalDataSource.getUsersCreatedPlaces();
+        }
+        return usersCreatedPlacesMutableLiveData;    }
+
+    @Override
+    public MutableLiveData<List<Place>> getMyPlaces(boolean isFirstLoading) {
+        if (isFirstLoading) {
+            Log.e(TAG, "getMyPlaces: isFirstLoading");
+            backupDataSource4.getMyPlaces();
+        } else {
+            Log.e(TAG, "getMyPlaces: isNotFirstLoading");
+            placesLocalDataSource.getMyPlaces();
+        }
+        return myPlacesListLiveData;
+    }
+
+    @Override
+    public void deleteMyPlace(Place place) {
+        backupDataSource4.deleteMyPlace(place);
+        placesLocalDataSource.deleteMyPlace(place);
     }
     //-----------------------------------------------------------------
 }

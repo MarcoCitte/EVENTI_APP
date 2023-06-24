@@ -6,6 +6,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 
 import java.util.List;
@@ -54,4 +56,9 @@ public interface PlaceDao {
 
     @Query("DELETE FROM place WHERE is_favorite=0")
     void deleteNotFavoritePlaces();
+    @Query("SELECT * FROM place WHERE creator_email <> null")
+    List<Place> getUsersCreatedPlaces();
+
+    @Query("SELECT * FROM place WHERE creator_email = :email")
+    List<Place> getMyPlaces(String email);
 }

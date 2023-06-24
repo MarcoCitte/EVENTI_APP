@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -31,6 +32,7 @@ import com.example.eventiapp.adapter.PlacesRecyclerViewAdapter;
 import com.example.eventiapp.databinding.FragmentPlacesBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
+import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ErrorMessageUtil;
@@ -182,6 +184,59 @@ public class AllPlacesFragment extends Fragment {
 
 
         eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
+
+            if (result != null) {
+                Log.i("SUCCESSO", "SUCCESSO");
+
+                List<Place> fetchedPlaces = new ArrayList<>(result);
+
+                if (!eventsAndPlacesViewModel.isLoading()) {
+                    if (eventsAndPlacesViewModel.isFirstLoading()) {
+                        eventsAndPlacesViewModel.setTotalResults(fetchedPlaces.size());
+                        eventsAndPlacesViewModel.setFirstLoading(false);
+                        this.placesList.addAll(fetchedPlaces);
+                        placesRecyclerViewAdapter.notifyItemRangeInserted(0,
+                                this.placesList.size());
+                    } else {
+                        // Updates related to the favorite status of the places
+                        placesRecyclerViewAdapter.notifyItemRangeRemoved(0, this.placesList.size());
+                        this.placesList.clear();
+                        this.placesList.addAll(fetchedPlaces);
+                        placesRecyclerViewAdapter.notifyItemChanged(0, fetchedPlaces.size());
+                    }
+                    fragmentPlacesBinding.progressBar.setVisibility(View.GONE);
+                } else {
+                    eventsAndPlacesViewModel.setLoading(false);
+                    eventsAndPlacesViewModel.setCurrentResults(placesList.size());
+
+                    int initialSize = placesList.size();
+
+                    for (int i = 0; i < placesList.size(); i++) {
+                        if (placesList.get(i) == null) {
+                            placesList.remove(placesList.get(i));
+                        }
+                    }
+                    int startIndex = (eventsAndPlacesViewModel.getPage() * EVENTS_PAGE_SIZE_VALUE) -
+                            EVENTS_PAGE_SIZE_VALUE;
+                    for (int i = startIndex; i < fetchedPlaces.size(); i++) {
+                        placesList.add(fetchedPlaces.get(i));
+                    }
+                    placesRecyclerViewAdapter.notifyItemRangeInserted(initialSize, placesList.size());
+                }
+                fragmentPlacesBinding.numberOfEvents.setText(String.valueOf(placesList.size()));
+            } else {
+                Log.i("FALLITO", "FALLITO");
+
+                ErrorMessageUtil errorMessagesUtil =
+                        new ErrorMessageUtil(requireActivity().getApplication());
+                Snackbar.make(view, errorMessagesUtil.
+                                getErrorMessage("ERRORE"),
+                        Snackbar.LENGTH_SHORT).show();
+                fragmentPlacesBinding.progressBar.setVisibility(View.GONE);
+            }
+        });
+
+        eventsAndPlacesViewModel.getUserCreatedPlaces(0).observe(getViewLifecycleOwner(), result -> {
 
             if (result != null) {
                 Log.i("SUCCESSO", "SUCCESSO");

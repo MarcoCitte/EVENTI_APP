@@ -1,5 +1,6 @@
 package com.example.eventiapp.source.places;
 
+import static com.example.eventiapp.util.Constants.EMAIL_ADDRESS;
 import static com.example.eventiapp.util.Constants.ENCRYPTED_DATA_FILE_NAME;
 import static com.example.eventiapp.util.Constants.ENCRYPTED_SHARED_PREFERENCES_FILE_NAME;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
@@ -8,10 +9,13 @@ import android.util.Log;
 
 import com.example.eventiapp.database.PlaceDao;
 import com.example.eventiapp.database.RoomDatabase;
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.util.DataEncryptionUtil;
 import com.example.eventiapp.util.SharedPreferencesUtil;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,6 +138,44 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
                 sharedPreferences.deleteAll(SHARED_PREFERENCES_FILE_NAME);
                 dataEncryptionUtil.deleteAll(ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, ENCRYPTED_DATA_FILE_NAME);
                 placeCallback.onSuccessDeletionP();
+            }
+        });
+    }
+
+    @Override
+    public void getUsersCreatedPlaces() {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            Log.e("TAG", "Dentro il local");
+
+            List<Place> usersCreatedPlaces = placeDao.getUsersCreatedPlaces();
+            placeCallback.onSuccessFromReadUserCreatedPlaceLocal(usersCreatedPlaces);
+        });
+    }
+
+    @Override
+    public void getMyPlaces() {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            List<Place> myPlaces = null;
+            try {
+                myPlaces = placeDao.getMyPlaces(dataEncryptionUtil.
+                        readSecretDataWithEncryptedSharedPreferences(
+                                ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, EMAIL_ADDRESS
+                        ));
+            } catch (GeneralSecurityException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            placeCallback.onSuccessFromLocalCurrentUserPlacesReading(myPlaces);
+        });
+    }
+
+    @Override
+    public void deleteMyPlace(Place place) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            if (place != null) {
+                placeDao.delete(place);
+                placeCallback.onSuccessFromLocalCurrentUserPlaceDeletion(place);
             }
         });
     }

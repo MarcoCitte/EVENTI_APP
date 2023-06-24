@@ -10,7 +10,10 @@ import static com.example.eventiapp.util.Constants.INVALID_CREDENTIALS_ERROR;
 import static com.example.eventiapp.util.Constants.INVALID_USER_ERROR;
 import static com.example.eventiapp.util.Constants.PASSWORD;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
-import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYPLACES;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -377,8 +380,19 @@ public class LoginFragment extends Fragment {
             }
 
             SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(getActivity().getApplication());
+
+
             sharedPreferencesUtil.writeBooleanData(SHARED_PREFERENCES_FILE_NAME,
-                    SHARED_PREFERENCES_FIRST_LOADING, true);
+                    SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS, true);
+
+            sharedPreferencesUtil.writeBooleanData(SHARED_PREFERENCES_FILE_NAME,
+                    SHARED_PREFERENCES_FIRST_LOADING_MYPLACES, true);
+
+            sharedPreferencesUtil.writeBooleanData(SHARED_PREFERENCES_FILE_NAME,
+                    SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS, true);
+
+            sharedPreferencesUtil.writeBooleanData(SHARED_PREFERENCES_FILE_NAME,
+                    SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES, true);
 
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();

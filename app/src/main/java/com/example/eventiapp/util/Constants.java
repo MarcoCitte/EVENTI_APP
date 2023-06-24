@@ -48,6 +48,7 @@ public class Constants {
     public static final String FIREBASE_FAVORITE_PLACES_COLLECTION = "favorite_places";
 
     public static final String FIREBASE_USERS_CREATED_EVENTS_COLLECTION = "users_created_events";
+    public static final String FIREBASE_USERS_CREATED_PLACES_COLLECTION = "users_created_places";
 
 
 
@@ -69,7 +70,11 @@ public class Constants {
     //SHARED PREFERENCES
     public static final String SHARED_PREFERENCES_FILE_NAME = "preferences";
     public static final String SHARED_PREFERENCES_FILE_NAME_USER_EVENTS="preferences_user_events";
-    public static final String SHARED_PREFERENCES_FIRST_LOADING = "first_loading";
+    public static final String SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS = "first_loading_myevents";
+    public static final String SHARED_PREFERENCES_FIRST_LOADING_MYPLACES = "first_loading_myplaces";
+    public static final String SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS = "first_loading_favoriteevents";
+    public static final String SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES = "first_loading_favoriteplaces";
+
     public static final String SHARED_PREFERENCES_LANGUAGE = "IT";
 
     // Constants for EncryptedSharedPreferences

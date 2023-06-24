@@ -29,4 +29,10 @@ public abstract class BasePlacesLocalDataSource {
     public abstract void insertPlaces(List<Place> placeList);
 
     public abstract void deleteAll();
+
+    public abstract void getUsersCreatedPlaces();
+
+    public abstract void getMyPlaces();
+
+    public abstract void deleteMyPlace(Place place);
 }

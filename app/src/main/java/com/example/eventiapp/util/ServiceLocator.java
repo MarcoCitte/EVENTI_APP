@@ -19,7 +19,11 @@ import com.example.eventiapp.source.events.BaseMyEventsDataSource;
 import com.example.eventiapp.source.events.FavoriteEventsDataSource;
 import com.example.eventiapp.source.events.MyEventsDataSource;
 import com.example.eventiapp.source.places.BaseFavoritePlacesDataSource;
+import com.example.eventiapp.source.places.BaseMyPlacesDataSource;
+import com.example.eventiapp.source.places.BasePlacesRemoteDataSource;
 import com.example.eventiapp.source.places.FavoritePlacesDataSource;
+import com.example.eventiapp.source.places.MyPlacesDataSource;
+import com.example.eventiapp.source.places.PlacesRemoteDataSource;
 import com.example.eventiapp.source.user.BaseUserAuthenticationRemoteDataSource;
 import com.example.eventiapp.source.user.BaseUserDataRemoteDataSource;
 import com.example.eventiapp.source.user.UserAuthenticationRemoteDataSource;
@@ -75,12 +79,15 @@ public class ServiceLocator {
 
     public IRepositoryWithLiveData getRepository(Application application) {
         BaseEventsRemoteDataSource eventsRemoteDataSource;
+        BasePlacesRemoteDataSource placesRemoteDataSource;
+
         BaseEventsLocalDataSource eventsLocalDataSource;
         BasePlacesLocalDataSource placesLocalDataSource;
         PlaceDetailsSource placeDetailsSource;
         BaseFavoriteEventsDataSource favoriteEventsDataSource;
         BaseFavoritePlacesDataSource favoritePlacesDataSource;
         BaseMyEventsDataSource myEventsDataSource;
+        BaseMyPlacesDataSource myPlacesDataSource;
         SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(application);
         DataEncryptionUtil dataEncryptionUtil = new DataEncryptionUtil(application);
 
@@ -89,6 +96,8 @@ public class ServiceLocator {
         Geocoder geocoder = new Geocoder(application, Locale.getDefault());
 
         eventsRemoteDataSource = new EventsRemoteDataSource("Bearer MoUe9kWQvZ1KPM1lpoI9Ia3SuzZWGip-PMOX-ujN");
+        placesRemoteDataSource = new PlacesRemoteDataSource();
+
         eventsLocalDataSource = new EventsLocalDataSource(getDao(application), sharedPreferencesUtil, dataEncryptionUtil);
         placesLocalDataSource = new PlacesLocalDataSource(getDao(application), sharedPreferencesUtil, dataEncryptionUtil);
         placeDetailsSource = new PlaceDetailsSource(placesClient,geocoder);
@@ -123,8 +132,17 @@ public class ServiceLocator {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return new RepositoryWithLiveData(eventsRemoteDataSource, eventsLocalDataSource, placesLocalDataSource, placeDetailsSource, favoriteEventsDataSource, favoritePlacesDataSource, myEventsDataSource);
+        try {
+            myPlacesDataSource = new MyPlacesDataSource(dataEncryptionUtil.
+                    readSecretDataWithEncryptedSharedPreferences(
+                            ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, EMAIL_ADDRESS
+                    ));
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new RepositoryWithLiveData(eventsRemoteDataSource, placesRemoteDataSource, eventsLocalDataSource, placesLocalDataSource, placeDetailsSource, favoriteEventsDataSource, favoritePlacesDataSource, myEventsDataSource, myPlacesDataSource);
     }
 
     public IUserRepository getUserRepository(Application application) {

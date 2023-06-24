@@ -1,6 +1,9 @@
 package com.example.eventiapp.ui.user;
 
-import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYPLACES;
 
 import android.os.Bundle;
 
@@ -194,11 +197,13 @@ public class MyEventsFragment extends Fragment {
         SharedPreferencesUtil sharedPreferencesUtil =
                 new SharedPreferencesUtil(requireActivity().getApplication());
 
-        boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                SHARED_PREFERENCES_FIRST_LOADING);
+        boolean isFirstLoadingFavoriteEvents = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS);
+        boolean isFirstLoadingMyEvents = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS);
 
         eventsAndPlacesViewModel.
-                getFavoriteEventsLiveData(isFirstLoading).
+                getFavoriteEventsLiveData(isFirstLoadingFavoriteEvents).
                 observe(getViewLifecycleOwner(), result -> {
                     if (result != null) {
                         if (result.isSuccess()) {
@@ -208,9 +213,9 @@ public class MyEventsFragment extends Fragment {
                                 eventsList.clear();
                                 eventsList.addAll(fetchedEvents);
                                 eventsRecyclerViewAdapter.notifyDataSetChanged();
-                                if (isFirstLoading) {
+                                if (isFirstLoadingFavoriteEvents) {
                                     sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                                            SHARED_PREFERENCES_FIRST_LOADING, false);
+                                            SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS, false);
                                 }
                             } else {
                                 eventsList.clear();
@@ -230,7 +235,7 @@ public class MyEventsFragment extends Fragment {
                 });
 
         eventsAndPlacesViewModel.
-                getMyEventsLiveData(isFirstLoading).
+                getMyEventsLiveData(isFirstLoadingMyEvents).
                 observe(getViewLifecycleOwner(), result -> {
                     if (result != null) {
                         if (result.isSuccess()) {
@@ -240,9 +245,9 @@ public class MyEventsFragment extends Fragment {
                                 myEventsList.clear();
                                 myEventsList.addAll(fetchedEvents);
                                 myEventsRecyclerViewAdapter.notifyDataSetChanged();
-                                if (isFirstLoading) {
+                                if (isFirstLoadingMyEvents) {
                                     sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                                            SHARED_PREFERENCES_FIRST_LOADING, false);
+                                            SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS, false);
                                 }
                             } else {
                                 myEventsList.clear();

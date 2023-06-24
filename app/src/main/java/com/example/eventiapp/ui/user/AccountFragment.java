@@ -1,6 +1,6 @@
 package com.example.eventiapp.ui.user;
 
-import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS;
 
 import android.app.Application;
 import android.os.Bundle;
@@ -89,7 +89,7 @@ public class AccountFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                SHARED_PREFERENCES_FIRST_LOADING);
+                SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS);
 
         fragmentAccountBinding.emailText.setText("Bentornato, " + userViewModel.getLoggedUser().getEmail());
 

@@ -7,7 +7,8 @@ import static com.example.eventiapp.util.Constants.ENCRYPTED_SHARED_PREFERENCES_
 import static com.example.eventiapp.util.Constants.ID_TOKEN;
 import static com.example.eventiapp.util.Constants.MINIMUM_PASSWORD_LENGTH;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
-import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYPLACES;
 import static com.example.eventiapp.util.Constants.USER_COLLISION_ERROR;
 import static com.example.eventiapp.util.Constants.WEAK_PASSWORD_ERROR;
 
@@ -200,8 +201,13 @@ public class RegistrationFragment extends Fragment {
                     email.concat(":").concat(password));
 
             SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(getActivity().getApplication());
+
+
             sharedPreferencesUtil.writeBooleanData(SHARED_PREFERENCES_FILE_NAME,
-                    SHARED_PREFERENCES_FIRST_LOADING, true);
+                    SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS, true);
+
+            sharedPreferencesUtil.writeBooleanData(SHARED_PREFERENCES_FILE_NAME,
+                    SHARED_PREFERENCES_FIRST_LOADING_MYPLACES, true);
 
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();

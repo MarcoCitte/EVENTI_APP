@@ -76,4 +76,10 @@ public interface IRepositoryWithLiveData {
     MutableLiveData<Result> getMyEvents(boolean firstLoading);
 
     void deleteMyEvent(Events events);
+
+    MutableLiveData<List<Place>> getUsersCreatedPlaces(long lastUpdate);
+
+    MutableLiveData<List<Place>> getMyPlaces(boolean isFirstLoading);
+
+    void deleteMyPlace(Place place);
 }

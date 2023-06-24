@@ -2,6 +2,7 @@ package com.example.eventiapp.source.events;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
+import com.example.eventiapp.model.Place;
 
 public abstract class BaseEventsRemoteDataSource {
 
@@ -18,4 +19,5 @@ public abstract class BaseEventsRemoteDataSource {
     public abstract void insertEvents(Events events);
 
     public abstract void getUsersCreatedEvents();
+
 }

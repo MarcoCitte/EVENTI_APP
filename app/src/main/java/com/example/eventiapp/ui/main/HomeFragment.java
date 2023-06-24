@@ -5,7 +5,6 @@ import static com.example.eventiapp.util.Constants.LAST_UPDATE;
 import static com.example.eventiapp.util.Constants.REQUEST_CODE;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME_USER_EVENTS;
-import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_LANGUAGE;
 
 import android.Manifest;

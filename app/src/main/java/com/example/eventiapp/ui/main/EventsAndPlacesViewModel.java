@@ -29,6 +29,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<Result> eventsFromSearchLiveData; //EVENTI PRESI DALLA SEARCH
     private MutableLiveData<Result> favoriteEventsListLiveData; //EVENTI FAVORITI
     private MutableLiveData<Result> myEventsListLiveData; //EVENTI CREATI DALL'UTENTE CORRENTE
+    private MutableLiveData<List<Place>> myPlacesListLiveData; //POSTI CREATI DALL'UTENTE CORRENTE
 
     private MutableLiveData<Result> categoryEventsLiveData; //EVENTI APPARTENENTI AD UNA CATEGORIA SPECIFICA
     private MutableLiveData<Result> categoriesEventsLiveData; //EVENTI APPARTENENTI A PIU CATEGORIE
@@ -49,6 +50,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<List<Place>> placesFromSearchLiveData; //POSTI PRESI DALLA SEARCH
 
     private MutableLiveData<Result> usersCreatedEventsMutableLiveData; //EVENTI CREATI DAGLI UTENTI
+    private MutableLiveData<List<Place>> usersCreatedPlacesMutableLiveData; //EVENTI CREATI DAGLI UTENTI
 
 
     public EventsAndPlacesViewModel(IRepositoryWithLiveData iRepositoryWithLiveData) {
@@ -94,13 +96,60 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     }
 
-    public void addPlace(Place place){iRepositoryWithLiveData.addPlace(place);}
+    public void addPlace(Place place){
+        iRepositoryWithLiveData.addPlace(place);
+
+
+        if (usersCreatedPlacesMutableLiveData != null) {
+            List<Place> oldUserCreatedPlaces = usersCreatedPlacesMutableLiveData.getValue();
+            oldUserCreatedPlaces.add(place);
+            Log.e(TAG, "userCreatedEvents size: " + oldUserCreatedPlaces.size());
+            usersCreatedPlacesMutableLiveData.postValue(oldUserCreatedPlaces);
+        }else{
+            usersCreatedPlacesMutableLiveData = new MutableLiveData<>();
+            List<Place> oldUserCreatedPlaces2 = new ArrayList<>();
+            oldUserCreatedPlaces2.add(place);
+            usersCreatedPlacesMutableLiveData.postValue(oldUserCreatedPlaces2);
+
+        }
+
+
+        if (myPlacesListLiveData != null) {
+            List<Place> oldMyPlaces = myPlacesListLiveData.getValue();
+            oldMyPlaces.add(place);
+            myPlacesListLiveData.postValue(oldMyPlaces);
+        }else{
+            myPlacesListLiveData = new MutableLiveData<>();
+            List<Place> oldMyPlaces2 = new ArrayList<>();
+            oldMyPlaces2.add(place);
+            myPlacesListLiveData.postValue(oldMyPlaces2);
+        }
+
+        if (placesListLiveData != null) {
+            List<Place> oldMyPlaces = placesListLiveData.getValue();
+            oldMyPlaces.add(place);
+            placesListLiveData.postValue(oldMyPlaces);
+        }else{
+            placesListLiveData = new MutableLiveData<>();
+            List<Place> oldMyPlaces2 = new ArrayList<>();
+            oldMyPlaces2.add(place);
+            placesListLiveData.postValue(oldMyPlaces2);
+
+        }
+    }
 
     public MutableLiveData<Result>  getUserCreatedEvents(long lastUpdate) {
         if (usersCreatedEventsMutableLiveData == null) {
             usersCreatedEventsMutableLiveData = iRepositoryWithLiveData.getUsersCreatedEvents(lastUpdate);
         }
         return usersCreatedEventsMutableLiveData;
+    }
+
+    public MutableLiveData<List<Place>>  getUserCreatedPlaces(long lastUpdate) {
+        if (usersCreatedPlacesMutableLiveData == null) {
+            usersCreatedPlacesMutableLiveData = iRepositoryWithLiveData.getUsersCreatedPlaces(lastUpdate);
+        }
+        return usersCreatedPlacesMutableLiveData;
     }
 
     public MutableLiveData<Result> getEvents(String country, String location, String date, String categories, String sort, int limit, long lastUpdate) {
@@ -361,6 +410,55 @@ public class EventsAndPlacesViewModel extends ViewModel {
                 Log.e(TAG, "userCreatedEventsList size:" + oldUserCreatedEvents.size());
                 usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldUserCreatedEvents)));
             }
+
+        }
+    }
+
+    public MutableLiveData<List<Place>> getMyPlacesLiveData(boolean isFirstLoading) {
+        if (myPlacesListLiveData == null) {
+            myPlacesListLiveData = iRepositoryWithLiveData.getMyPlaces(isFirstLoading);
+        }
+        return myPlacesListLiveData;
+    }
+
+    public void deleteMyPlace(Place place) {
+
+        iRepositoryWithLiveData.deleteMyPlace(place);
+
+        if (usersCreatedPlacesMutableLiveData != null) {
+            List<Place> oldUserCreatedPlaces = usersCreatedPlacesMutableLiveData.getValue();
+            oldUserCreatedPlaces.add(place);
+            Log.e(TAG, "userCreatedEvents size: " + oldUserCreatedPlaces.size());
+            usersCreatedPlacesMutableLiveData.postValue(oldUserCreatedPlaces);
+        }else{
+            usersCreatedPlacesMutableLiveData = new MutableLiveData<>();
+            List<Place> oldUserCreatedPlaces2 = new ArrayList<>();
+            oldUserCreatedPlaces2.add(place);
+            usersCreatedPlacesMutableLiveData.postValue(oldUserCreatedPlaces2);
+
+        }
+
+
+        if (myPlacesListLiveData != null) {
+            List<Place> oldMyPlaces = myPlacesListLiveData.getValue();
+            oldMyPlaces.add(place);
+            myPlacesListLiveData.postValue(oldMyPlaces);
+        }else{
+            myPlacesListLiveData = new MutableLiveData<>();
+            List<Place> oldMyPlaces2 = new ArrayList<>();
+            oldMyPlaces2.add(place);
+            myPlacesListLiveData.postValue(oldMyPlaces2);
+        }
+
+        if (placesListLiveData != null) {
+            List<Place> oldMyPlaces = placesListLiveData.getValue();
+            oldMyPlaces.add(place);
+            placesListLiveData.postValue(oldMyPlaces);
+        }else{
+            placesListLiveData = new MutableLiveData<>();
+            List<Place> oldMyPlaces2 = new ArrayList<>();
+            oldMyPlaces2.add(place);
+            placesListLiveData.postValue(oldMyPlaces2);
 
         }
     }

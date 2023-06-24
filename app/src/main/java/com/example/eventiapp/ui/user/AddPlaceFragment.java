@@ -13,6 +13,7 @@ import com.example.eventiapp.databinding.FragmentAddPlaceBinding;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
@@ -23,6 +24,13 @@ import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.model.Place;
+import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.user.IUserRepository;
+import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
+import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
+import com.example.eventiapp.ui.welcome.UserViewModel;
+import com.example.eventiapp.ui.welcome.UserViewModelFactory;
+import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -50,6 +58,8 @@ public class AddPlaceFragment extends Fragment {
     private String nation;
     private String phoneNumber;
     private LatLng latLng;
+    private EventsAndPlacesViewModel eventsAndPlacesViewModel;
+    private UserViewModel userViewModel;
 
 
     public AddPlaceFragment() {
@@ -63,6 +73,25 @@ public class AddPlaceFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        IRepositoryWithLiveData eventsRepositoryWithLiveData =
+                ServiceLocator.getInstance().getRepository(
+                        requireActivity().getApplication()
+                );
+
+        if (eventsRepositoryWithLiveData != null) {
+            eventsAndPlacesViewModel = new ViewModelProvider(
+                    requireActivity(),
+                    new EventsAndPlacesViewModelFactory(eventsRepositoryWithLiveData)).get(EventsAndPlacesViewModel.class);
+        } else {
+            Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                    R.string.unexpected_error, Snackbar.LENGTH_SHORT).show();
+        }
+
+        IUserRepository userRepository = ServiceLocator.getInstance().
+                getUserRepository(requireActivity().getApplication());
+        userViewModel = new ViewModelProvider(
+                requireActivity(),
+                new UserViewModelFactory(userRepository)).get(UserViewModel.class);
     }
 
     @Override
@@ -134,15 +163,17 @@ public class AddPlaceFragment extends Fragment {
                     //AGGIUNGI POSTO
 
                     Place place = new Place();
-                    place.setId(name + address + latLng.toString()); //?
+                    place.setCreatorEmail(userViewModel.getLoggedUser().getEmail());
                     place.setName(name);
                     place.setAddress(address + ", " + city + ", " + cap + ", " + nation);
                     List<Double> coordinates = new ArrayList<>();
-                    coordinates.add(latLng.latitude);
-                    coordinates.add(latLng.latitude);
-                    place.setCoordinates(coordinates);
+                    //coordinates.add(latLng.latitude);
+                    //coordinates.add(latLng.latitude);
+                    //place.setCoordinates(coordinates);
+                    place.setId(name + place.hashCode()); //?
                     place.setPhoneNumber(phoneNumber);
 
+                    eventsAndPlacesViewModel.addPlace(place);
                     Navigation.findNavController(requireView()).navigate(R.id.action_addPlaceFragment_to_containerMyEventsAndPlaces);
                     Snackbar.make(requireActivity().findViewById(android.R.id.content),
                             (getString(R.string.place_added)), Snackbar.LENGTH_SHORT).show();

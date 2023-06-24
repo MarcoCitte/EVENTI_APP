@@ -1,5 +1,6 @@
 package com.example.eventiapp.source.places;
 
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 
 import java.util.List;
@@ -21,4 +22,16 @@ public interface PlaceCallback {
     void onSuccessFromCloudWriting2(Place place);
 
     void onFailureFromCloud2(Exception exception);
+
+    void onSuccessFromInsertUserCreatedPlace(Place place);
+
+    void onSuccessFromReadUserCreatedPlaces(List<Place> placesList);
+
+    void onSuccessFromReadUserCreatedPlaceLocal(List<Place> usersCreatedPlaces);
+
+    void onSuccessFromRemoteCurrentUserPlacesReading(List<Place> placesList);
+
+    void onSuccessFromLocalCurrentUserPlacesReading(List<Place> myPlaces);
+
+    void onSuccessFromLocalCurrentUserPlaceDeletion(Place place);
 }

@@ -1,6 +1,7 @@
 package com.example.eventiapp.ui.user;
 
-import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYPLACES;
 
 import android.os.Bundle;
 
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +46,11 @@ public class MyPlacesFragment extends Fragment {
     private FragmentMyPlacesBinding fragmentMyPlacesBinding;
 
     private List<Place> placeList;
+    private List<Place> myPlacesList;
+
     private PlacesRecyclerViewAdapter placesRecyclerViewAdapter;
+    private PlacesRecyclerViewAdapter myPlacesRecyclerViewAdapter;
+
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
 
     private LinearLayoutManager layoutManagerMyPlaces;
@@ -78,6 +84,8 @@ public class MyPlacesFragment extends Fragment {
         }
 
         placeList = new ArrayList<>();
+        myPlacesList = new ArrayList<>();
+
     }
 
     @Override
@@ -125,20 +133,58 @@ public class MyPlacesFragment extends Fragment {
 
             }
         });
+
+        myPlacesRecyclerViewAdapter = new PlacesRecyclerViewAdapter(myPlacesList,
+                requireActivity().getApplication(), 2, new PlacesRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onPlacesItemClick(Place place) {
+
+            }
+
+            @Override
+            public void onShareButtonPressed(Place place) {
+
+            }
+
+            @Override
+            public void onFavoriteButtonPressed(int position) {
+                myPlacesList.get(position).setFavorite(false);
+                eventsAndPlacesViewModel.removeFromFavorite(myPlacesList.get(position));
+            }
+
+            @Override
+            public void onModePlaceButtonPressed(Place place) {
+
+            }
+
+            @Override
+            public void onDeletePlaceButtonPressed(Place place) {
+                eventsAndPlacesViewModel.deleteMyPlace(place);
+
+            }
+        });
+
+
         fragmentMyPlacesBinding.recyclerViewFavoritePlaces.setLayoutManager(layoutManagerFavoritePlaces);
         fragmentMyPlacesBinding.recyclerViewFavoritePlaces.setAdapter(placesRecyclerViewAdapter);
 
+        fragmentMyPlacesBinding.recyclerViewMyPlaces.setLayoutManager(layoutManagerMyPlaces);
+        fragmentMyPlacesBinding.recyclerViewMyPlaces.setAdapter(myPlacesRecyclerViewAdapter);
+
         fragmentMyPlacesBinding.progressBarFavoritePlaces.setVisibility(View.VISIBLE);
+        fragmentMyPlacesBinding.progressBarMyPlaces.setVisibility(View.VISIBLE);
+
 
         SharedPreferencesUtil sharedPreferencesUtil =
                 new SharedPreferencesUtil(requireActivity().getApplication());
 
-        boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                SHARED_PREFERENCES_FIRST_LOADING);
-
+        boolean isFirstLoadingFavoritePlaces = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES);
+        boolean isFirstLoadingMyPlaces = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING_MYPLACES);
 
         eventsAndPlacesViewModel.
-                getFavoritePlacesLiveData(isFirstLoading).
+                getFavoritePlacesLiveData(isFirstLoadingFavoritePlaces).
                 observe(getViewLifecycleOwner(), result -> {
                     if (result != null) {
                         if (result.isSuccess()) {
@@ -147,9 +193,9 @@ public class MyPlacesFragment extends Fragment {
                                 placeList.clear();
                                 placeList.addAll(fetchedPlaces);
                                 placesRecyclerViewAdapter.notifyDataSetChanged();
-                                if (isFirstLoading) {
+                                if (isFirstLoadingFavoritePlaces) {
                                     sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                                            SHARED_PREFERENCES_FIRST_LOADING, false);
+                                            SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES, false);
                                 }
                             }else{
                                 placeList.clear();
@@ -170,6 +216,32 @@ public class MyPlacesFragment extends Fragment {
 
 
 
+
+        eventsAndPlacesViewModel.
+                getMyPlacesLiveData(isFirstLoadingMyPlaces).
+                observe(getViewLifecycleOwner(), result -> {
+                    if (result != null) {
+                            List<Place> fetchedPlaces = result;
+                            if (!fetchedPlaces.isEmpty()) {
+                                myPlacesList.clear();
+                                myPlacesList.addAll(fetchedPlaces);
+                                myPlacesRecyclerViewAdapter.notifyDataSetChanged();
+                                if (isFirstLoadingMyPlaces) {
+                                    sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                                            SHARED_PREFERENCES_FIRST_LOADING_MYPLACES, false);
+                                }
+                            } else {
+                                myPlacesList.clear();
+                                myPlacesRecyclerViewAdapter.notifyDataSetChanged();
+                                //fragmentMyEventsBinding.textViewNoMyEvents.setVisibility(View.VISIBLE);
+                                //fragmentMyEventsBinding.textViewNoMyEvents1.setVisibility(View.VISIBLE);
+                            }
+                        } else {
+                        Log.e(TAG, "onViewCreated: result = null");
+                        }
+                        fragmentMyPlacesBinding.progressBarMyPlaces.setVisibility(View.GONE);
+
+                });
 
         fragmentMyPlacesBinding.createPlaceButton.setOnClickListener(new View.OnClickListener() {
             @Override
