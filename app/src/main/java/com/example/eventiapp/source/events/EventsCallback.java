@@ -76,4 +76,8 @@ public interface EventsCallback {
 
 
     void onSuccessFromRemoteCurrentUserEventDeletion(Events events);
+
+    void onSuccessFromRemoteCurrentUserEventEdit(Events modEvent);
+
+    void onSuccessFromLocalCurrentUserEventsEdit(Events modEvent);
 }

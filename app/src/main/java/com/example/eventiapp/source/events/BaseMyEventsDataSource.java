@@ -15,4 +15,6 @@ public abstract class  BaseMyEventsDataSource {
     public abstract void synchronizeMyEvents(List<Events> notSynchronizedEventsList);
     public abstract void deleteMyEvents(Events events);
     public abstract void deleteAllMyEvents();
+
+    public abstract void editEvent(Events oldEvent, Events newEvent);
 }

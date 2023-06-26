@@ -19,6 +19,7 @@ import com.example.eventiapp.util.SharedPreferencesUtil;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -313,6 +314,17 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
                 throw new RuntimeException(e);
             }
             eventsCallback.onSuccessFromLocalCurrentUserEventsReading(myEvents);
+        });
+    }
+
+    @Override
+    public void editEvent(Events oldEvent, Events newEvent) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            eventsDao.delete(oldEvent);
+            List<Events> l = new ArrayList<>();
+            l.add(newEvent);
+            eventsDao.insertEventsList(l);
+            eventsCallback.onSuccessFromLocalCurrentUserEventsEdit(newEvent);
         });
     }
 }
