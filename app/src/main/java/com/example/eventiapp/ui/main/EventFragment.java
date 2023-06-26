@@ -556,6 +556,7 @@ public class EventFragment extends Fragment {
             }
         });
 
+        /*
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -594,6 +595,8 @@ public class EventFragment extends Fragment {
                 }
             }
         });
+
+         */
     }
 
 

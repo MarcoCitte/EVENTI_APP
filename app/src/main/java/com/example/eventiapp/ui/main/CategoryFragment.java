@@ -240,6 +240,7 @@ public class CategoryFragment extends Fragment {
             }
         });
 
+        /*
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -278,6 +279,8 @@ public class CategoryFragment extends Fragment {
                 }
             }
         });
+
+         */
 
 
         NavBackStackEntry navBackStackEntry = Navigation.

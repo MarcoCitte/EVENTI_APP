@@ -64,7 +64,15 @@ public class MyPlacesDataSource extends BaseMyPlacesDataSource{
 
     @Override
     public void deleteMyPlace(Place place) {
-
+        databaseReference.child(FIREBASE_USERS_CREATED_PLACES_COLLECTION)
+                .child(String.valueOf(place.hashCode())).
+                removeValue().addOnSuccessListener(aVoid -> {
+                    //QUI
+                    place.setSynchronized(false);
+                    placesCallback.onSuccessFromRemoteCurrentUserPlaceDeletion(place);
+                }).addOnFailureListener(e -> {
+                    placesCallback.onFailureFromCloud(e);
+                });
     }
 
     @Override

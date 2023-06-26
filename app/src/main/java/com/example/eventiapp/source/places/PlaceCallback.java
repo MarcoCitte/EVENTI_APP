@@ -34,4 +34,8 @@ public interface PlaceCallback {
     void onSuccessFromLocalCurrentUserPlacesReading(List<Place> myPlaces);
 
     void onSuccessFromLocalCurrentUserPlaceDeletion(Place place);
+
+    void onSuccessFromRemoteCurrentUserPlaceDeletion(Place place);
+
+    void onFailureFromCloud(Exception e);
 }

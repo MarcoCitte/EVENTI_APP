@@ -375,6 +375,7 @@ public class PlaceFragment extends Fragment {
             }
         });
 
+        /*
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -413,6 +414,8 @@ public class PlaceFragment extends Fragment {
                 }
             }
         });
+
+         */
 
 
         NavBackStackEntry navBackStackEntry = Navigation.

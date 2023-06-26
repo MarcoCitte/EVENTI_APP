@@ -135,7 +135,7 @@ public class MyPlacesFragment extends Fragment {
         });
 
         myPlacesRecyclerViewAdapter = new PlacesRecyclerViewAdapter(myPlacesList,
-                requireActivity().getApplication(), 2, new PlacesRecyclerViewAdapter.OnItemClickListener() {
+                requireActivity().getApplication(), 6, new PlacesRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onPlacesItemClick(Place place) {
 

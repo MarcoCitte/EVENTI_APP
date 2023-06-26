@@ -427,39 +427,22 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
         if (usersCreatedPlacesMutableLiveData != null) {
             List<Place> oldUserCreatedPlaces = usersCreatedPlacesMutableLiveData.getValue();
-            oldUserCreatedPlaces.add(place);
+            oldUserCreatedPlaces.remove(place);
             Log.e(TAG, "userCreatedEvents size: " + oldUserCreatedPlaces.size());
             usersCreatedPlacesMutableLiveData.postValue(oldUserCreatedPlaces);
-        }else{
-            usersCreatedPlacesMutableLiveData = new MutableLiveData<>();
-            List<Place> oldUserCreatedPlaces2 = new ArrayList<>();
-            oldUserCreatedPlaces2.add(place);
-            usersCreatedPlacesMutableLiveData.postValue(oldUserCreatedPlaces2);
-
         }
 
 
         if (myPlacesListLiveData != null) {
             List<Place> oldMyPlaces = myPlacesListLiveData.getValue();
-            oldMyPlaces.add(place);
+            oldMyPlaces.remove(place);
             myPlacesListLiveData.postValue(oldMyPlaces);
-        }else{
-            myPlacesListLiveData = new MutableLiveData<>();
-            List<Place> oldMyPlaces2 = new ArrayList<>();
-            oldMyPlaces2.add(place);
-            myPlacesListLiveData.postValue(oldMyPlaces2);
         }
 
         if (placesListLiveData != null) {
             List<Place> oldMyPlaces = placesListLiveData.getValue();
-            oldMyPlaces.add(place);
+            oldMyPlaces.remove(place);
             placesListLiveData.postValue(oldMyPlaces);
-        }else{
-            placesListLiveData = new MutableLiveData<>();
-            List<Place> oldMyPlaces2 = new ArrayList<>();
-            oldMyPlaces2.add(place);
-            placesListLiveData.postValue(oldMyPlaces2);
-
         }
     }
 }

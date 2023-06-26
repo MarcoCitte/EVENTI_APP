@@ -919,11 +919,12 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onSuccessFromRemoteCurrentUserPlacesReading(List<Place> placesList) {
         if (placesList != null) {
 
-            System.out.println("lettura da remoto eventi creati dall'utente corrente:");
+            Log.e(TAG, "onSuccessFromRemoteCurrentUserPlacesReading: lettura da remoto posti creati dall'utente corrente");
             //printEventList(placesList);
 
             placesLocalDataSource.insertPlaces(placesList);
             myPlacesListLiveData.postValue(placesList);
+            //allPlacesMutableLiveData.add.....
         }
     }
 
@@ -935,6 +936,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onSuccessFromLocalCurrentUserPlaceDeletion(Place place) {
+
+    }
+
+    @Override
+    public void onSuccessFromRemoteCurrentUserPlaceDeletion(Place place) {
 
     }
 
