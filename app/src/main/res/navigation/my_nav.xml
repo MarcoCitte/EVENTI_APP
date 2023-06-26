@@ -197,6 +197,9 @@
         <action
             android:id="@+id/action_containerMyEventsAndPlaces_to_editEventFragment"
             app:destination="@id/editEventFragment" />
+        <action
+            android:id="@+id/action_containerMyEventsAndPlaces_to_editPlaceFragment"
+            app:destination="@id/editPlaceFragment" />
     </fragment>
     <fragment
         android:id="@+id/addEventFragment"
@@ -243,6 +246,15 @@
         tools:layout="@layout/fragment_edit_event" >
         <action
             android:id="@+id/action_editEventFragment_to_containerMyEventsAndPlaces"
+            app:destination="@id/containerMyEventsAndPlaces" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaceFragment"
+        android:name="com.example.eventiapp.ui.user.EditPlaceFragment"
+        android:label="fragment_edit_place"
+        tools:layout="@layout/fragment_edit_place" >
+        <action
+            android:id="@+id/action_editPlaceFragment_to_containerMyEventsAndPlaces"
             app:destination="@id/containerMyEventsAndPlaces" />
     </fragment>
 </navigation>

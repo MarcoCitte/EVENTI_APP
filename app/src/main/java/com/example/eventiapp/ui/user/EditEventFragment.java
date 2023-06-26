@@ -363,7 +363,7 @@ public class EditEventFragment extends Fragment {
         fragmentEditEventBinding.checkBoxPrivate.setChecked(events.isPrivate());
 
         //EDIT BUTTON
-        fragmentEditEventBinding.buttonAdd.setOnClickListener(new View.OnClickListener() {
+        fragmentEditEventBinding.buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 title = String.valueOf(fragmentEditEventBinding.editTextTitle.getText());
@@ -468,10 +468,19 @@ public class EditEventFragment extends Fragment {
             }
         });
 
+        //CANCEL
         fragmentEditEventBinding.buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Navigation.findNavController(requireView()).navigate(R.id.action_editEventFragment_to_containerMyEventsAndPlaces);
+            }
+        });
+
+        //DELETE EVENT
+        fragmentEditEventBinding.buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

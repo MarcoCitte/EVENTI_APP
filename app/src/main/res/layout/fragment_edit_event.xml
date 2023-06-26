@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200sp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_baseline_image_24" />
+                android:src="@drawable/upload_image" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox.Dense"
@@ -282,7 +282,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonAdd"
+                    android:id="@+id/buttonEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/edit" />
@@ -292,7 +292,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
-                    android:text="@string/delete" />
+                    android:text="@string/cancel_text" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:backgroundTint="@color/colorRed"
+                    android:layout_marginStart="10sp"
+                    android:text="@string/delete_event" />
+
 
             </LinearLayout>
 

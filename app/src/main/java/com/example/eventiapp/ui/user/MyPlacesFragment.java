@@ -197,7 +197,7 @@ public class MyPlacesFragment extends Fragment {
                                     sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
                                             SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES, false);
                                 }
-                            }else{
+                            } else {
                                 placeList.clear();
                                 placesRecyclerViewAdapter.notifyDataSetChanged();
                                 fragmentMyPlacesBinding.textViewNoFavoritePlaces.setVisibility(View.VISIBLE);

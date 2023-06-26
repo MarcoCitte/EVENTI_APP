@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.user.AddPlaceFragment">
+    tools:context=".ui.user.EditPlaceFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -174,10 +174,10 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonAdd"
+                    android:id="@+id/buttonEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/add" />
+                    android:text="@string/edit" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonCancel"
@@ -185,6 +185,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
                     android:text="@string/cancel_text" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:backgroundTint="@color/colorRed"
+                    android:layout_marginStart="10sp"
+                    android:text="@string/delete_place" />
 
             </LinearLayout>
 

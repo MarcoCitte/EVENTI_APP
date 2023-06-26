@@ -5,6 +5,7 @@
     <color name="colorAccent">#007EA7</color>
     <color name="colorBackground">#FFFFFF</color>
     <color name="colorBackgroundSecondary">#caf0f8</color>
+    <color name="colorRed">#e63946</color>
     <color name="colorTextPrimary">#00171F</color>
     <color name="colorTextSecondary">#003459</color>
     <color name="colorButton">#0A9396</color>

@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200sp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_baseline_image_24" />
+                android:src="@drawable/upload_image" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox.Dense"
@@ -292,7 +292,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
-                    android:text="@string/delete" />
+                    android:text="@string/cancel_text" />
 
             </LinearLayout>
 

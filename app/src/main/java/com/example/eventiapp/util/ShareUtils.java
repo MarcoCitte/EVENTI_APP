@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.CalendarContract;
 
+import com.example.eventiapp.R;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 
@@ -20,19 +21,19 @@ public class ShareUtils {
         String location=events.getPlaces().get(0).getName();
         String address = events.getPlaces().get(0).getAddress();
 
-        String shareText = "Check out this event:\n" +
-                "Title: " + title + "\n" +
-                "Description: " + description + "\n" +
-                "Date: " + date + "\n" +
-                "Location" + location +"\n" +
-                "Address: " + address;
+        String shareText = context.getString(R.string.check_out_this_event) +
+                context.getString(R.string.title_share) + title + "\n" +
+                context.getString(R.string.description_share) + description + "\n" +
+                context.getString(R.string.date_share) + date + "\n" +
+                context.getString(R.string.location_share) + location +"\n" +
+                context.getString(R.string.address_share) + address;
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Shared Event");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
 
-        context.startActivity(Intent.createChooser(shareIntent, "Share Event"));
+        context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_event)));
     }
 
 
@@ -40,16 +41,16 @@ public class ShareUtils {
         String name = place.getName();
         String address = place.getAddress();
 
-        String shareText = "Check out this place:\n" +
-                "Location: " + name + "\n" +
-                "Address: " + address;
+        String shareText = context.getString(R.string.check_out_this_place) +
+                context.getString(R.string.location_share) + name + "\n" +
+                context.getString(R.string.address_share) + address;
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Shared Place");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
 
-        context.startActivity(Intent.createChooser(shareIntent, "Share Place"));
+        context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_place)));
     }
 
     public static void addToCalendar(Context context, Events events){

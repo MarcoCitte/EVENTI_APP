@@ -185,5 +185,16 @@
     <string name="edit">Edit</string>
     <string name="phone_number">Phone number</string>
     <string name="phone_number_optional">Phone number (optional)</string>
+    <string name="check_out_this_place">Check out this place:\n</string>
+    <string name="location_share">\"Location: \"</string>
+    <string name="address_share">\"Address: \"</string>
+    <string name="check_out_this_event">Check out this event:\n</string>
+    <string name="title_share">\"Title: \"</string>
+    <string name="description_share">\"Description: \"</string>
+    <string name="date_share">\"Date: \"</string>
+    <string name="share_event">Share Event</string>
+    <string name="share_place">Share Place</string>
+    <string name="delete_place">Delete place</string>
+    <string name="delete_event">Delete event</string>
 
 </resources>

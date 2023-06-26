@@ -112,13 +112,6 @@ public class AllPlacesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String country = "IT"; //POI VERRA PRESA DALLE SHAREDPREFERENCES
-        String location = "45.51851, 9.2075123"; //BICOCCA
-        double radius = 4.2;
-        String sort = "start";
-        String date = DateUtils.currentDate();
-        int limit = 5000;
-
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -156,7 +149,7 @@ public class AllPlacesFragment extends Fragment {
 
                     @Override
                     public void onShareButtonPressed(Place place) {
-                        ShareUtils.sharePlace(requireContext(),place);
+                        ShareUtils.sharePlace(requireContext(), place);
                     }
 
                     @Override
@@ -186,10 +179,7 @@ public class AllPlacesFragment extends Fragment {
         eventsAndPlacesViewModel.getPlaces().observe(getViewLifecycleOwner(), result -> {
 
             if (result != null) {
-                Log.i("SUCCESSO", "SUCCESSO");
-
                 List<Place> fetchedPlaces = new ArrayList<>(result);
-
                 if (!eventsAndPlacesViewModel.isLoading()) {
                     if (eventsAndPlacesViewModel.isFirstLoading()) {
                         eventsAndPlacesViewModel.setTotalResults(fetchedPlaces.size());
@@ -225,8 +215,6 @@ public class AllPlacesFragment extends Fragment {
                 }
                 fragmentPlacesBinding.numberOfEvents.setText(String.valueOf(placesList.size()));
             } else {
-                Log.i("FALLITO", "FALLITO");
-
                 ErrorMessageUtil errorMessagesUtil =
                         new ErrorMessageUtil(requireActivity().getApplication());
                 Snackbar.make(view, errorMessagesUtil.

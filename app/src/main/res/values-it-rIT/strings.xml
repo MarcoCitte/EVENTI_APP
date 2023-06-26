@@ -9,7 +9,7 @@
     <string name="error_retrieving_events">Errore nello scarimento degli eventi</string>
     <string name="api_key_error">Chiave API non valida</string>
     <string name="unexpected_error">Errore inaspettato</string>
-    <string name="cancel_text">Cancella</string>
+    <string name="cancel_text">Indietro</string>
     <string name="forgot_password">Hai dimenticato la password?</string>
     <string name="google_login">Login con Google</string>
     <string name="new_account">Nuovo su Eventi APP?</string>
@@ -162,6 +162,15 @@
     <string name="edit">Modifica</string>
     <string name="phone_number">Numero di telefono</string>
     <string name="phone_number_optional">Numero di telefono (opzionale)</string>
+    <string name="check_out_this_place">Dai un\'occhiata a questo posto:\n</string>
+    <string name="check_out_this_event">Dai un\'occhiata a questo evento:\n</string>
+    <string name="title_share">\"Titolo: \"</string>
+    <string name="description_share">\"Descrizione: \"</string>
+    <string name="date_share">\"Data: \"</string>
+    <string name="share_event">Evento condiviso</string>
+    <string name="share_place">Posto condiviso</string>
+    <string name="delete_place">Elimina posto</string>
+    <string name="delete_event">Elimina evento</string>
 
 
 </resources>
