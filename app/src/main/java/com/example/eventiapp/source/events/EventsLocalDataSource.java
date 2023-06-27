@@ -328,10 +328,10 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     @Override
     public void editEvent(Events oldEvent, Events newEvent) {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
-            eventsDao.delete(oldEvent);
+            deleteMyEvents(oldEvent);
             List<Events> l = new ArrayList<>();
             l.add(newEvent);
-            eventsDao.insertEventsList(l);
+            insertEvents(l);
             eventsCallback.onSuccessFromLocalCurrentUserEventsEdit(newEvent);
         });
     }
