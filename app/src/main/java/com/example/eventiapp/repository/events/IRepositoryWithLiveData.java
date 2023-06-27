@@ -84,4 +84,6 @@ public interface IRepositoryWithLiveData {
     MutableLiveData<List<Place>> getMyPlaces(boolean isFirstLoading);
 
     void deleteMyPlace(Place place);
+
+    void editEvent(Events oldEvent, Events newEvent);
 }

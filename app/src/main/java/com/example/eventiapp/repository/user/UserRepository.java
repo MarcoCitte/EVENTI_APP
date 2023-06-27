@@ -253,6 +253,16 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
+    public void onSuccessFromRemoteCurrentUserEventEdit(Events modEvent) {
+
+    }
+
+    @Override
+    public void onSuccessFromLocalCurrentUserEventsEdit(Events modEvent) {
+
+    }
+
+    @Override
     public void onSuccessSynchronization() {
         userFavoriteEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(null));
     }

@@ -79,4 +79,20 @@ public class MyEventsDataSource extends BaseMyEventsDataSource {
     public void deleteAllMyEvents() {
 
     }
+
+    @Override
+    public void editEvent(Events oldEvent, Events newEvent) {
+
+        deleteMyEvents(oldEvent);
+
+        databaseReference.child(FIREBASE_USERS_CREATED_EVENTS_COLLECTION)
+                .child(String.valueOf(newEvent.hashCode())).
+                setValue(newEvent).addOnSuccessListener(aVoid -> {
+                    //QUI
+                    newEvent.setSynchronized(false);
+                    eventsCallback.onSuccessFromRemoteCurrentUserEventEdit(newEvent);
+                }).addOnFailureListener(e -> {
+                    eventsCallback.onFailureFromCloud(e);
+                });
+    }
 }

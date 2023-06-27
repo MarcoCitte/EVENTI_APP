@@ -64,4 +64,6 @@ public abstract class BaseEventsLocalDataSource {
     public abstract void getUsersCreatedEvents();
 
     public abstract void getMyEvents();
+
+    public abstract void editEvent(Events oldEvent, Events newEvent);
 }

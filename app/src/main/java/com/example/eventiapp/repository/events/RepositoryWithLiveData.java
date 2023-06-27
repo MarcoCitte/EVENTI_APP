@@ -787,6 +787,16 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     }
 
+    @Override
+    public void onSuccessFromRemoteCurrentUserEventEdit(Events modEvent) {
+
+    }
+
+    @Override
+    public void onSuccessFromLocalCurrentUserEventsEdit(Events modEvent) {
+
+    }
+
     public static void printEventList(List<Events> eventList) {
         for (Events event : eventList) {
             Log.d(TAG, "printEventList: " + event.getTitle());
@@ -992,6 +1002,12 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void deleteMyPlace(Place place) {
         backupDataSource4.deleteMyPlace(place);
         placesLocalDataSource.deleteMyPlace(place);
+    }
+
+    @Override
+    public void editEvent(Events oldEvent, Events newEvent) {
+        backupDataSource3.editEvent( oldEvent, newEvent);
+        eventsLocalDataSource.editEvent(oldEvent, newEvent);
     }
     //-----------------------------------------------------------------
 }

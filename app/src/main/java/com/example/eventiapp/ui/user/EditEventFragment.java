@@ -18,17 +18,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.databinding.FragmentAddEventBinding;
 import com.example.eventiapp.databinding.FragmentEditEventBinding;
 import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
@@ -84,6 +81,8 @@ public class EditEventFragment extends Fragment {
     private boolean isPrivate;
     private boolean googlePlace;
 
+    private Events oldEvent;
+
 
     public EditEventFragment() {
     }
@@ -132,6 +131,7 @@ public class EditEventFragment extends Fragment {
         //BUNDLE
         assert getArguments() != null;
         Events events = getArguments().getParcelable("event");
+        oldEvent = events;
 
         MaterialDatePicker.Builder<Long> builderStartDate = MaterialDatePicker.Builder.datePicker();
         builderStartDate.setTitleText("Select a start date");
@@ -412,7 +412,7 @@ public class EditEventFragment extends Fragment {
                     } else {
                         fragmentEditEventBinding.placeTextView1.setError(getString(R.string.field_mandatory));
                     }
-                    isOk = false;
+                    isOk = true;
                 }
 
                 if (fragmentEditEventBinding.checkBoxPrivate.isChecked()) {
@@ -423,26 +423,26 @@ public class EditEventFragment extends Fragment {
 
                 if (isOk) {
                     //MODIFICA EVENTO
-                    Events event = new Events();
-                    event.setCreatorEmail(userViewModel.getLoggedUser().getEmail());
-                    event.setTitle(title);
-                    event.setDescription(description);
+                    Events newEvent = new Events();
+                    newEvent.setCreatorEmail(userViewModel.getLoggedUser().getEmail());
+                    newEvent.setTitle(title);
+                    newEvent.setDescription(description);
                     if (fragmentEditEventBinding.allDayCheckBox.isChecked()) {
-                        event.setStart(startDate.trim());
+                        newEvent.setStart(startDate.trim());
                     } else {
-                        event.setStart(startDate.trim() + "userH" + startTime);
-                        event.setEnd(endDate.trim() + "userH" + endTime);
+                        newEvent.setStart(startDate.trim() + "userH" + startTime);
+                        newEvent.setEnd(endDate.trim() + "userH" + endTime);
                     }
-                    event.setTimezone("Europe/Rome");
+                    newEvent.setTimezone("Europe/Rome");
                     if (imageUri != null) {
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
-                            event.setEventSource(new EventSource(null, String.valueOf(bitmap)));
+                            newEvent.setEventSource(new EventSource(null, String.valueOf(bitmap)));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-                    event.setCoordinates(coordinates);
+                    newEvent.setCoordinates(coordinates);
 
                     //SALVATAGGIO CATEGORIA IN INGLESE
                     Resources res = getResources();
@@ -452,14 +452,14 @@ public class EditEventFragment extends Fragment {
                     String[] categoriesEnglish = res.getStringArray(R.array.categories);
                     int selectedCategoryIndex = fragmentEditEventBinding.categoriesSpinner.getSelectedItemPosition();
                     String category = categoriesEnglish[selectedCategoryIndex];
-                    event.setCategory(category.toLowerCase(Locale.ROOT));
+                    newEvent.setCategory(category.toLowerCase(Locale.ROOT));
 
                     List<Place> placeList = new ArrayList<>();
-                    Place place = new Place(idPlace, namePlace, "venue", address);
+                    Place place = new Place("idPlace", "namePlace", "venue", "address");
                     placeList.add(place);
-                    event.setPlaces(placeList);
-                    event.setPrivate(isPrivate);
-                    eventsAndPlacesViewModel.addEvent(event);
+                    newEvent.setPlaces(placeList);
+                    newEvent.setPrivate(isPrivate);
+                    eventsAndPlacesViewModel.editEvent(oldEvent, newEvent);
                     Navigation.findNavController(requireView()).navigate(R.id.action_editEventFragment_to_containerMyEventsAndPlaces);
                     Snackbar.make(requireActivity().findViewById(android.R.id.content),
                             getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();

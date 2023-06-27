@@ -99,4 +99,6 @@ public interface EventsDao {
 
     @Query("DELETE FROM events WHERE is_favorite=0")
     void deleteNotFavoriteEvents();
+    @Update
+    void editEvent(Events modEvent);
 }
