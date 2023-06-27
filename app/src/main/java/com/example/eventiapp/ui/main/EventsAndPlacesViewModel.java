@@ -34,6 +34,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
     private MutableLiveData<Result> categoryEventsLiveData; //EVENTI APPARTENENTI AD UNA CATEGORIA SPECIFICA
     private MutableLiveData<Result> categoriesEventsLiveData; //EVENTI APPARTENENTI A PIU CATEGORIE
     private MutableLiveData<Result> eventsInADateLiveData; //EVENTI CHE SI TENGONO IN UNA DATA SPECIFICA
+    private MutableLiveData<Result> eventsFromADateLiveData; //EVENTI CHE SI TENGONO DA UNA DATA SPECIFICA
     private MutableLiveData<Result> eventsBetweenDatesLiveData; //EVENTI CHE SI TENGONO TRA DUE DATE
     private MutableLiveData<Result> categoryEventsBetweenDatesLiveData; //EVENTI CHE SI TENGONO TRA DUE DATE CON CATEGORIE
     private MutableLiveData<Result> placeEventsLiveData; //EVENTI CHE SI TENGONO IN UN LUOGO SPECIFICO
@@ -64,7 +65,6 @@ public class EventsAndPlacesViewModel extends ViewModel {
         iRepositoryWithLiveData.addEvent(events);
 
 
-
         Result userCreatedEventsResult = usersCreatedEventsMutableLiveData.getValue();
 
         if (userCreatedEventsResult != null && userCreatedEventsResult.isSuccess()) {
@@ -72,7 +72,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
             oldUserCreatedEvents.add(events);
             Log.e(TAG, "userCreatedEvents size: " + oldUserCreatedEvents.size());
             usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldUserCreatedEvents)));
-        }else{
+        } else {
             List<Events> oldUserCreatedEvents = new ArrayList<>();
             oldUserCreatedEvents.add(events);
             usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldUserCreatedEvents)));
@@ -86,7 +86,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
             oldMyEvents.add(events);
             Log.e(TAG, "MyEventsList size:" + oldMyEvents.size());
             myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
-        }else{
+        } else {
             List<Events> oldMyEvents = new ArrayList<>();
             oldMyEvents.add(events);
             myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
@@ -96,7 +96,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
     }
 
-    public void addPlace(Place place){
+    public void addPlace(Place place) {
         iRepositoryWithLiveData.addPlace(place);
 
 
@@ -105,7 +105,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
             oldUserCreatedPlaces.add(place);
             Log.e(TAG, "userCreatedEvents size: " + oldUserCreatedPlaces.size());
             usersCreatedPlacesMutableLiveData.postValue(oldUserCreatedPlaces);
-        }else{
+        } else {
             usersCreatedPlacesMutableLiveData = new MutableLiveData<>();
             List<Place> oldUserCreatedPlaces2 = new ArrayList<>();
             oldUserCreatedPlaces2.add(place);
@@ -118,7 +118,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
             List<Place> oldMyPlaces = myPlacesListLiveData.getValue();
             oldMyPlaces.add(place);
             myPlacesListLiveData.postValue(oldMyPlaces);
-        }else{
+        } else {
             myPlacesListLiveData = new MutableLiveData<>();
             List<Place> oldMyPlaces2 = new ArrayList<>();
             oldMyPlaces2.add(place);
@@ -129,7 +129,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
             List<Place> oldMyPlaces = placesListLiveData.getValue();
             oldMyPlaces.add(place);
             placesListLiveData.postValue(oldMyPlaces);
-        }else{
+        } else {
             placesListLiveData = new MutableLiveData<>();
             List<Place> oldMyPlaces2 = new ArrayList<>();
             oldMyPlaces2.add(place);
@@ -138,14 +138,14 @@ public class EventsAndPlacesViewModel extends ViewModel {
         }
     }
 
-    public MutableLiveData<Result>  getUserCreatedEvents(long lastUpdate) {
+    public MutableLiveData<Result> getUserCreatedEvents(long lastUpdate) {
         if (usersCreatedEventsMutableLiveData == null) {
             usersCreatedEventsMutableLiveData = iRepositoryWithLiveData.getUsersCreatedEvents(lastUpdate);
         }
         return usersCreatedEventsMutableLiveData;
     }
 
-    public MutableLiveData<List<Place>>  getUserCreatedPlaces(long lastUpdate) {
+    public MutableLiveData<List<Place>> getUserCreatedPlaces(long lastUpdate) {
         if (usersCreatedPlacesMutableLiveData == null) {
             usersCreatedPlacesMutableLiveData = iRepositoryWithLiveData.getUsersCreatedPlaces(lastUpdate);
         }
@@ -225,6 +225,11 @@ public class EventsAndPlacesViewModel extends ViewModel {
     public MutableLiveData<Result> getEventsInADateLiveData(String date) {
         eventsInADateLiveData = iRepositoryWithLiveData.getEventsInADate(date);
         return eventsInADateLiveData;
+    }
+
+    public MutableLiveData<Result> getEventsFromADateLiveData(String date) {
+        eventsFromADateLiveData = iRepositoryWithLiveData.getEventsFromADate(date);
+        return eventsFromADateLiveData;
     }
 
     public MutableLiveData<Result> getEventsBetweenDatesLiveData(String firstDate, String endDate) {
@@ -385,7 +390,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
         if (myEventsResult != null && myEventsResult.isSuccess()) {
             List<Events> oldMyEvents = ((Result.EventsResponseSuccess) myEventsResult).getData().getEventsList();
-            if(oldMyEvents.contains(events)){
+            if (oldMyEvents.contains(events)) {
                 oldMyEvents.remove(events);
                 Log.e(TAG, "MyEventsList size:" + oldMyEvents.size());
                 myEventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldMyEvents)));
@@ -395,7 +400,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
         if (allEventsResult != null && allEventsResult.isSuccess()) {
             List<Events> oldAllEvents = ((Result.EventsResponseSuccess) allEventsResult).getData().getEventsList();
-            if(oldAllEvents.contains(events)){
+            if (oldAllEvents.contains(events)) {
                 oldAllEvents.remove(events);
                 Log.e(TAG, "AllEventsList size:" + oldAllEvents.size());
                 eventsListLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldAllEvents)));
@@ -405,7 +410,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
 
         if (userCreatedEventsResult != null) {
             List<Events> oldUserCreatedEvents = ((Result.EventsResponseSuccess) userCreatedEventsResult).getData().getEventsList();
-            if(oldUserCreatedEvents.contains(events)){
+            if (oldUserCreatedEvents.contains(events)) {
                 oldUserCreatedEvents.remove(events);
                 Log.e(TAG, "userCreatedEventsList size:" + oldUserCreatedEvents.size());
                 usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(oldUserCreatedEvents)));

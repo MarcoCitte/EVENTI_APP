@@ -25,6 +25,7 @@ public class Events implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private long id_db;
+    private long id_remoto;
     private EventSource eventSource;
     private String title;
     private String description;
@@ -66,6 +67,7 @@ public class Events implements Parcelable {
 
     protected Events(Parcel in) {
         id_db = in.readLong();
+        id_remoto=in.readLong();
         title = in.readString();
         description = in.readString();
         category = in.readString();
@@ -102,7 +104,6 @@ public class Events implements Parcelable {
     };
 
 
-
     public String getCreatorEmail() {
         return creatorEmail;
     }
@@ -125,6 +126,14 @@ public class Events implements Parcelable {
 
     public void setId_db(long id_db) {
         this.id_db = id_db;
+    }
+
+    public long getId_remoto() {
+        return id_remoto;
+    }
+
+    public void setId_remoto(long id_remoto) {
+        this.id_remoto = id_remoto;
     }
 
     public String getTitle() {
@@ -150,7 +159,6 @@ public class Events implements Parcelable {
     public void setCategory(String category) {
         this.category = category;
     }
-
 
     public int getRank() {
         return rank;
@@ -207,6 +215,7 @@ public class Events implements Parcelable {
     public void setEnd(String end) {
         this.end = end;
     }
+
     public List<String> getHours() {
         return hours;
     }
@@ -222,6 +231,7 @@ public class Events implements Parcelable {
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }
+
     public List<Double> getCoordinates() {
         return coordinates;
     }
@@ -261,6 +271,7 @@ public class Events implements Parcelable {
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
     }
+
     @Exclude
     public boolean isSynchronized() {
         return isSynchronized;
@@ -279,6 +290,7 @@ public class Events implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeLong(id_db);
+        dest.writeLong(id_remoto);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(category);
@@ -323,7 +335,7 @@ public class Events implements Parcelable {
 
     public static class SortByLeastRecent implements java.util.Comparator<Events> {
         public int compare(Events a, Events b) {
-            if(a.getStart()!=null && b.getStart()!=null) {
+            if (a.getStart() != null && b.getStart() != null) {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 try {
                     Date dateA = format.parse(a.getStart());
@@ -339,7 +351,7 @@ public class Events implements Parcelable {
 
     public static class SortByMostRecent implements java.util.Comparator<Events> {
         public int compare(Events a, Events b) {
-            if(a.getStart()!=null && b.getStart()!=null) {
+            if (a.getStart() != null && b.getStart() != null) {
                 try {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     Date date1 = formatter.parse(a.getStart());
@@ -367,7 +379,7 @@ public class Events implements Parcelable {
 
     public static class SortByRank implements java.util.Comparator<Events> {
         public int compare(Events a, Events b) {
-                return Integer.compare(b.getRank(), a.getRank());
+            return Integer.compare(b.getRank(), a.getRank());
         }
     }
 }

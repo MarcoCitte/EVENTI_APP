@@ -109,12 +109,14 @@ public class MyPlacesFragment extends Fragment {
                 requireActivity().getApplication(), 2, new PlacesRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onPlacesItemClick(Place place) {
-
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("place", place);
+                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_placeFragment);
             }
 
             @Override
             public void onShareButtonPressed(Place place) {
-
+                ShareUtils.sharePlace(requireContext(), place);
             }
 
             @Override
@@ -138,12 +140,14 @@ public class MyPlacesFragment extends Fragment {
                 requireActivity().getApplication(), 6, new PlacesRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onPlacesItemClick(Place place) {
-
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("place", place);
+                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_placeFragment);
             }
 
             @Override
             public void onShareButtonPressed(Place place) {
-
+                ShareUtils.sharePlace(requireContext(), place);
             }
 
             @Override
@@ -154,13 +158,14 @@ public class MyPlacesFragment extends Fragment {
 
             @Override
             public void onModePlaceButtonPressed(Place place) {
-
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("place", place);
+                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_editPlaceFragment, bundle);
             }
 
             @Override
             public void onDeletePlaceButtonPressed(Place place) {
                 eventsAndPlacesViewModel.deleteMyPlace(place);
-
             }
         });
 
@@ -215,31 +220,29 @@ public class MyPlacesFragment extends Fragment {
                 });
 
 
-
-
         eventsAndPlacesViewModel.
                 getMyPlacesLiveData(isFirstLoadingMyPlaces).
                 observe(getViewLifecycleOwner(), result -> {
                     if (result != null) {
-                            List<Place> fetchedPlaces = result;
-                            if (!fetchedPlaces.isEmpty()) {
-                                myPlacesList.clear();
-                                myPlacesList.addAll(fetchedPlaces);
-                                myPlacesRecyclerViewAdapter.notifyDataSetChanged();
-                                if (isFirstLoadingMyPlaces) {
-                                    sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
-                                            SHARED_PREFERENCES_FIRST_LOADING_MYPLACES, false);
-                                }
-                            } else {
-                                myPlacesList.clear();
-                                myPlacesRecyclerViewAdapter.notifyDataSetChanged();
-                                //fragmentMyEventsBinding.textViewNoMyEvents.setVisibility(View.VISIBLE);
-                                //fragmentMyEventsBinding.textViewNoMyEvents1.setVisibility(View.VISIBLE);
+                        List<Place> fetchedPlaces = result;
+                        if (!fetchedPlaces.isEmpty()) {
+                            myPlacesList.clear();
+                            myPlacesList.addAll(fetchedPlaces);
+                            myPlacesRecyclerViewAdapter.notifyDataSetChanged();
+                            if (isFirstLoadingMyPlaces) {
+                                sharedPreferencesUtil.writeBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                                        SHARED_PREFERENCES_FIRST_LOADING_MYPLACES, false);
                             }
                         } else {
-                        Log.e(TAG, "onViewCreated: result = null");
+                            myPlacesList.clear();
+                            myPlacesRecyclerViewAdapter.notifyDataSetChanged();
+                            //fragmentMyEventsBinding.textViewNoMyEvents.setVisibility(View.VISIBLE);
+                            //fragmentMyEventsBinding.textViewNoMyEvents1.setVisibility(View.VISIBLE);
                         }
-                        fragmentMyPlacesBinding.progressBarMyPlaces.setVisibility(View.GONE);
+                    } else {
+                        Log.e(TAG, "onViewCreated: result = null");
+                    }
+                    fragmentMyPlacesBinding.progressBarMyPlaces.setVisibility(View.GONE);
 
                 });
 

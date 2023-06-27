@@ -7,12 +7,12 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 import com.example.eventiapp.model.Events;
+import com.example.eventiapp.util.DateUtils;
 
 import java.util.List;
 
 @Dao
 public interface EventsDao {
-
 
     @Query("SELECT DISTINCT * FROM events ORDER BY startDate ASC")
     List<Events> getAll();

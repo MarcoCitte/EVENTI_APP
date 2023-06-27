@@ -42,6 +42,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     private final MutableLiveData<Result> categoryEventsMutableLiveData;
     private final MutableLiveData<Result> eventsInADateMutableLiveData;
+    private final MutableLiveData<Result> eventsFromADateMutableLiveData;
     private final MutableLiveData<Result> categoriesEventsMutableLiveData;
     private final MutableLiveData<Result> eventsBetweenDatesMutableLiveData;
     private final MutableLiveData<Result> categoryEventsBetweenDatesMutableLiveData;
@@ -93,6 +94,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         myPlacesListLiveData = new MutableLiveData<>();
         categoryEventsMutableLiveData = new MutableLiveData<>();
         eventsInADateMutableLiveData = new MutableLiveData<>();
+        eventsFromADateMutableLiveData = new MutableLiveData<>();
         eventsBetweenDatesMutableLiveData = new MutableLiveData<>();
         categoriesEventsMutableLiveData = new MutableLiveData<>();
         categoryEventsBetweenDatesMutableLiveData = new MutableLiveData<>();
@@ -233,6 +235,12 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public MutableLiveData<Result> getEventsInADate(String date) {
         eventsLocalDataSource.getEventsInADate(date);
         return eventsInADateMutableLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Result> getEventsFromADate(String date) {
+        eventsLocalDataSource.getEventsFromADate(date);
+        return eventsFromADateMutableLiveData;
     }
 
     @Override
@@ -657,6 +665,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
+    public void onEventsFromADate(List<Events> events) {
+        eventsFromADateMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
+    }
+
+    @Override
     public void onEventsBetweenDates(List<Events> events) {
         eventsBetweenDatesMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(events)));
     }
@@ -960,7 +973,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         } else {
             placesLocalDataSource.getUsersCreatedPlaces();
         }
-        return usersCreatedPlacesMutableLiveData;    }
+        return usersCreatedPlacesMutableLiveData;
+    }
 
     @Override
     public MutableLiveData<List<Place>> getMyPlaces(boolean isFirstLoading) {

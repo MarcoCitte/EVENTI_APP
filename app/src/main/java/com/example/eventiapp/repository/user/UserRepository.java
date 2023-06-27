@@ -365,6 +365,11 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     }
 
     @Override
+    public void onEventsFromADate(List<Events> events) {
+
+    }
+
+    @Override
     public void onEventsBetweenDates(List<Events> events) {
 
     }

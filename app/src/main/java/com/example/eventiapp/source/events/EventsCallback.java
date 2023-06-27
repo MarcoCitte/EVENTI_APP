@@ -33,7 +33,9 @@ public interface EventsCallback {
     void onFavoriteCategoryEvents(List<Events> events);
 
     void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
+
     public void onSuccessFromRemoteCurrentUserEventsWriting(Events events);
+
     public void onSuccessFromLocalCurrentUserEventDeletion(Events events);
 
     void onEventsFavoriteStatusChanged(List<Events> events);
@@ -47,6 +49,8 @@ public interface EventsCallback {
     void onCategoriesInADate(List<String> categories);
 
     void onCategoriesEvents(List<Events> events);
+
+    void onEventsFromADate(List<Events> events);
 
     void onEventsBetweenDates(List<Events> events);
 
@@ -66,6 +70,7 @@ public interface EventsCallback {
     void onSuccessDeletion();
 
     void onSuccessFromInsertUserCreatedEvent(Events events);
+
     void onSuccessFromReadUserCreatedEvent(List<Events> eventsList);
 
     void onSuccessFromReadUserCreatedEventLocal(List<Events> eventsList);

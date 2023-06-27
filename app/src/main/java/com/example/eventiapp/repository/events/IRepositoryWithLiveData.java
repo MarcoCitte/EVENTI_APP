@@ -34,6 +34,8 @@ public interface IRepositoryWithLiveData {
 
     MutableLiveData<Result> getEventsInADate(String date);
 
+    MutableLiveData<Result> getEventsFromADate(String date);
+
     MutableLiveData<List<String>> getAllCategories();
 
     MutableLiveData<List<String>> getCategoriesInADate(String date);
