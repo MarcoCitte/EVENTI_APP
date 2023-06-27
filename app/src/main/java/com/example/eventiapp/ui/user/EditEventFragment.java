@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 
+import com.bumptech.glide.Glide;
 import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentEditEventBinding;
 import com.example.eventiapp.model.EventSource;
@@ -39,6 +42,8 @@ import com.example.eventiapp.ui.welcome.UserViewModel;
 import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ServiceLocator;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -46,7 +51,11 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -153,8 +162,8 @@ public class EditEventFragment extends Fragment {
 
         //IMAGEVIEW
 
-        if (events.getEventSource()!=null && events.getEventSource().getUrlPhoto() != null) {
-            fragmentEditEventBinding.eventImage.setImageURI(Uri.parse(events.getEventSource().getUrlPhoto()));
+        if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
+            Glide.with(requireView()).load(events.getEventSource().getUrlPhoto()).into(fragmentEditEventBinding.eventImage);
         }
 
         fragmentEditEventBinding.eventImage.setOnClickListener(new View.OnClickListener() {
@@ -166,12 +175,12 @@ public class EditEventFragment extends Fragment {
         });
 
         //TITLE
-        if(events.getTitle()!=null){
+        if (events.getTitle() != null) {
             fragmentEditEventBinding.editTextTitle.setText(events.getTitle());
         }
 
         //DESCRIPTION
-        if(events.getDescription()!=null){
+        if (events.getDescription() != null) {
             fragmentEditEventBinding.editTextDescription.setText(events.getDescription());
         }
 
@@ -326,7 +335,7 @@ public class EditEventFragment extends Fragment {
                             address = place.getAddress();
                             namePlace = place.getName();
                             idPlace = place.getId();
-                            coordinates=new ArrayList<>();
+                            coordinates = new ArrayList<>();
                             coordinates.add(place.getLatLng().latitude);
                             coordinates.add(place.getLatLng().longitude);
                         }
@@ -459,11 +468,53 @@ public class EditEventFragment extends Fragment {
                     placeList.add(place);
                     newEvent.setPlaces(placeList);
                     newEvent.setPrivate(isPrivate);
-                    eventsAndPlacesViewModel.editEvent(oldEvent, newEvent);
-                    Navigation.findNavController(requireView()).navigate(R.id.action_editEventFragment_to_containerMyEventsAndPlaces);
-                    Snackbar.make(requireActivity().findViewById(android.R.id.content),
-                            getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();
 
+
+                    if (imageUri != null) {
+                        FirebaseStorage storage = FirebaseStorage.getInstance();
+                        fragmentEditEventBinding.eventImage.setDrawingCacheEnabled(true);
+                        fragmentEditEventBinding.eventImage.buildDrawingCache();
+                        Bitmap bitmapImage = ((BitmapDrawable) fragmentEditEventBinding.eventImage.getDrawable()).getBitmap();
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] data = baos.toByteArray();
+
+                        StorageReference storageRef = storage.getReference().child("images/");
+
+                        UploadTask uploadTask = storageRef.putBytes(data);
+
+                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                String downloadUrl = uri.toString();
+                                                Log.i("URL", downloadUrl);
+                                                newEvent.setEventSource(new EventSource("user", downloadUrl));
+                                                eventsAndPlacesViewModel.editEvent(oldEvent, newEvent);
+                                                Navigation.findNavController(requireView()).navigate(R.id.action_editEventFragment_to_containerMyEventsAndPlaces);
+                                                Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                                                        getString(R.string.event_modified), Snackbar.LENGTH_SHORT).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                            }
+                                        });
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                    }
+                                });
+                    } else {
+                        eventsAndPlacesViewModel.editEvent(oldEvent, newEvent);
+                        Navigation.findNavController(requireView()).navigate(R.id.action_editEventFragment_to_containerMyEventsAndPlaces);
+                        Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                                getString(R.string.event_modified), Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -480,7 +531,10 @@ public class EditEventFragment extends Fragment {
         fragmentEditEventBinding.buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                eventsAndPlacesViewModel.deleteMyEvent(events);
+                Navigation.findNavController(requireView()).navigate(R.id.action_editEventFragment_to_containerMyEventsAndPlaces);
+                Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                        getString(R.string.event_deleted), Snackbar.LENGTH_SHORT).show();
             }
         });
     }

@@ -41,6 +41,7 @@ public class Place implements Serializable, Parcelable {
     private boolean isSynchronized;
     @ColumnInfo(name = "creator_email")
     private String creatorEmail;
+    private String urlUserImage;
 
     @Ignore
     public Place() {
@@ -67,6 +68,17 @@ public class Place implements Serializable, Parcelable {
         this.isSynchronized = false;
     }
 
+    @Ignore
+    public Place(@NonNull String id, String name, String type, String address, String urlUserImage) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.address = address;
+        this.urlUserImage=urlUserImage;
+        this.isFavorite = false;
+        this.isSynchronized = false;
+    }
+
     public Place(@NonNull String id, String name, String type, String address, String idGoogle, List<Double> coordinates, String phoneNumber, List<PhotoMetadata> images) {
         this.id = id;
         this.name = name;
@@ -88,6 +100,7 @@ public class Place implements Serializable, Parcelable {
         address = in.readString();
         idGoogle = in.readString();
         //coordinates = in.createDoubleArray();
+        urlUserImage=in.readString();
         phoneNumber = in.readString();
         isFavorite = in.readByte() != 0;
         isSynchronized = in.readByte() != 0;
@@ -195,6 +208,13 @@ public class Place implements Serializable, Parcelable {
         this.images = images;
     }
 
+    public String getUrlUserImage() {
+        return urlUserImage;
+    }
+
+    public void setUrlUserImage(String urlUserImage) {
+        this.urlUserImage = urlUserImage;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -239,6 +259,7 @@ public class Place implements Serializable, Parcelable {
         dest.writeString(address);
         dest.writeString(idGoogle);
         //dest.writeTypedList(coordinates);
+        dest.writeString(urlUserImage);
         dest.writeString(phoneNumber);
         dest.writeTypedList(images);
         dest.writeByte((byte) (isFavorite ? 1 : 0));

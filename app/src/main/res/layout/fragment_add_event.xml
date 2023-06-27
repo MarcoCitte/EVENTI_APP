@@ -264,6 +264,15 @@
                     android:layout_gravity="end"
                     android:layout_marginEnd="16sp" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/noPersonalPlacesTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10sp"
+                    android:text="@string/you_have_no_created_places"
+                    android:visibility="gone"
+                    android:textSize="18sp" />
+
             </LinearLayout>
 
 

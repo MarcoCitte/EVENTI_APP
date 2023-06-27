@@ -111,7 +111,7 @@ public class MyPlacesFragment extends Fragment {
             public void onPlacesItemClick(Place place) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("place", place);
-                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_placeFragment);
+                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_placeFragment,bundle);
             }
 
             @Override
@@ -142,7 +142,7 @@ public class MyPlacesFragment extends Fragment {
             public void onPlacesItemClick(Place place) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("place", place);
-                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_placeFragment);
+                Navigation.findNavController(requireView()).navigate(R.id.action_containerMyEventsAndPlaces_to_placeFragment,bundle);
             }
 
             @Override
@@ -236,8 +236,8 @@ public class MyPlacesFragment extends Fragment {
                         } else {
                             myPlacesList.clear();
                             myPlacesRecyclerViewAdapter.notifyDataSetChanged();
-                            //fragmentMyEventsBinding.textViewNoMyEvents.setVisibility(View.VISIBLE);
-                            //fragmentMyEventsBinding.textViewNoMyEvents1.setVisibility(View.VISIBLE);
+                            fragmentMyPlacesBinding.textViewNoMyPlaces.setVisibility(View.VISIBLE);
+                            fragmentMyPlacesBinding.textViewNoMyPlaces1.setVisibility(View.VISIBLE);
                         }
                     } else {
                         Log.e(TAG, "onViewCreated: result = null");

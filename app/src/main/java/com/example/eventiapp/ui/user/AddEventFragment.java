@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 
 import com.example.eventiapp.R;
+import com.example.eventiapp.adapter.PlaceAdapter;
 import com.example.eventiapp.databinding.FragmentAddEventBinding;
 import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
@@ -44,6 +47,9 @@ import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -51,7 +57,11 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,6 +94,8 @@ public class AddEventFragment extends Fragment {
     private String idPlace;
     private String address;
     private List<Double> coordinates;
+    private String placePhoneNumber;
+    private List<PhotoMetadata> photoMetadata;
     private boolean isPrivate;
     private boolean googlePlace;
 
@@ -119,6 +131,7 @@ public class AddEventFragment extends Fragment {
                 new UserViewModelFactory(userRepository)).get(UserViewModel.class);
 
         categories = requireContext().getResources().getStringArray(R.array.categories);
+        googlePlace = false;
     }
 
     @Override
@@ -242,6 +255,21 @@ public class AddEventFragment extends Fragment {
 
         //PLACE
 
+
+        eventsAndPlacesViewModel.getMyPlacesLiveData(false).observe(getViewLifecycleOwner(), result -> {
+            if (result != null) {
+                List<Place> fetchedPlaces = result;
+                if (!fetchedPlaces.isEmpty()) {
+                    PlaceAdapter adapterPlaces = new PlaceAdapter(requireContext(), fetchedPlaces);
+                    adapterPlaces.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    fragmentAddEventBinding.placesSpinner.setAdapter(adapterPlaces);
+                } else {
+                    fragmentAddEventBinding.noPersonalPlacesTextView.setVisibility(View.VISIBLE);
+                    fragmentAddEventBinding.placesSpinner.setVisibility(View.GONE);
+                }
+            }
+        });
+
         fragmentAddEventBinding.placeSourceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -249,6 +277,7 @@ public class AddEventFragment extends Fragment {
                     //MOSTRA I POSTI CREATI DALL'UTENTE
                     fragmentAddEventBinding.layoutPersonalPlaces.setVisibility(View.VISIBLE);
                     fragmentAddEventBinding.layoutGooglePlaces.setVisibility(View.GONE);
+
                     googlePlace = false;
                 } else {
                     //MOSTRA QUELLI DI GOOGLE PLACES
@@ -258,7 +287,7 @@ public class AddEventFragment extends Fragment {
 
                     AutocompleteSupportFragment autocompleteFragment = AutocompleteSupportFragment.newInstance();
                     autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS);
-                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.LAT_LNG,com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.PHOTO_METADATAS,com.google.android.libraries.places.api.model.Place.Field.PHONE_NUMBER, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
 
                     // Aggiungi il fragment all'activity
                     requireActivity().getSupportFragmentManager().beginTransaction()
@@ -271,7 +300,9 @@ public class AddEventFragment extends Fragment {
                             address = place.getAddress();
                             namePlace = place.getName();
                             idPlace = place.getId();
-                            coordinates=new ArrayList<>();
+                            placePhoneNumber = place.getPhoneNumber();
+                            photoMetadata=place.getPhotoMetadatas();
+                            coordinates = new ArrayList<>();
                             coordinates.add(place.getLatLng().latitude);
                             coordinates.add(place.getLatLng().longitude);
                         }
@@ -308,6 +339,7 @@ public class AddEventFragment extends Fragment {
         fragmentAddEventBinding.buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 title = String.valueOf(fragmentAddEventBinding.editTextTitle.getText());
                 description = String.valueOf(fragmentAddEventBinding.editTextDescription.getText());
                 startDate = String.valueOf(fragmentAddEventBinding.editTextStartDate.getText());
@@ -351,10 +383,13 @@ public class AddEventFragment extends Fragment {
                 if (address == null || address.isEmpty()) {
                     if (googlePlace) {
                         fragmentAddEventBinding.placeTextView.setError(getString(R.string.field_mandatory));
+                        isOk = false;
                     } else {
-                        fragmentAddEventBinding.placeTextView1.setError(getString(R.string.field_mandatory));
+                        if (fragmentAddEventBinding.placesSpinner.getSelectedItem() == null) {
+                            fragmentAddEventBinding.placeTextView1.setError(getString(R.string.field_mandatory));
+                            isOk = false;
+                        }
                     }
-                    isOk = true;
                 }
 
                 if (fragmentAddEventBinding.checkBoxPrivate.isChecked()) {
@@ -376,15 +411,6 @@ public class AddEventFragment extends Fragment {
                         event.setEnd(endDate.trim() + "userH" + endTime);
                     }
                     event.setTimezone("Europe/Rome");
-                    if (imageUri != null) {
-                        try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
-                            event.setEventSource(new EventSource(null, String.valueOf(bitmap)));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    event.setCoordinates(coordinates);
 
                     //SALVATAGGIO CATEGORIA IN INGLESE
                     Resources res = getResources();
@@ -396,16 +422,78 @@ public class AddEventFragment extends Fragment {
                     String category = categoriesEnglish[selectedCategoryIndex];
                     event.setCategory(category.toLowerCase(Locale.ROOT));
 
-                    List<Place> placeList = new ArrayList<>();
-                    Place place = new Place("idPlace", "namePlace", "venue", "address");
-                    placeList.add(place);
-                    event.setPlaces(placeList);
-                    event.setPrivate(isPrivate);
-                    eventsAndPlacesViewModel.addEvent(event);
-                    Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
-                    Snackbar.make(requireActivity().findViewById(android.R.id.content),
-                            getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();
+                    //PLACE
+                    if (googlePlace) {
+                        List<Place> placeList = new ArrayList<>();
+                        Place place = new Place(idPlace, namePlace, "venue", address);
+                        place.setIdGoogle(idPlace);
+                        place.setCoordinates(coordinates);
+                        placeList.add(place);
+                        event.setPlaces(placeList);
+                        event.setCoordinates(coordinates);
+                        if (placePhoneNumber != null) {
+                            place.setPhoneNumber(placePhoneNumber);
+                        }
+                        if(photoMetadata != null){
+                            place.setImages(photoMetadata);
+                        }
+                        eventsAndPlacesViewModel.addPlace(place);
+                    } else { //POSTO CREATO DALL'UTENTE
+                        List<Place> placeList = new ArrayList<>();
+                        Place selectedPlace = (Place) fragmentAddEventBinding.placesSpinner.getSelectedItem();
+                        placeList.add(selectedPlace);
+                        event.setPlaces(placeList);
+                        event.setCoordinates(selectedPlace.getCoordinates());
+                    }
 
+                    event.setPrivate(isPrivate);
+
+
+                    if (imageUri != null) {
+                        FirebaseStorage storage = FirebaseStorage.getInstance();
+                        fragmentAddEventBinding.eventImage.setDrawingCacheEnabled(true);
+                        fragmentAddEventBinding.eventImage.buildDrawingCache();
+                        Bitmap bitmapImage = ((BitmapDrawable) fragmentAddEventBinding.eventImage.getDrawable()).getBitmap();
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] data = baos.toByteArray();
+
+                        StorageReference storageRef = storage.getReference().child("images/");
+
+                        UploadTask uploadTask = storageRef.putBytes(data);
+
+                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                String downloadUrl = uri.toString();
+                                                Log.i("URL", downloadUrl);
+                                                event.setEventSource(new EventSource("user", downloadUrl));
+                                                eventsAndPlacesViewModel.addEvent(event);
+                                                Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
+                                                Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                                                        getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                            }
+                                        });
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                    }
+                                });
+                    } else {
+                        eventsAndPlacesViewModel.addEvent(event);
+                        Navigation.findNavController(requireView()).navigate(R.id.action_addEventFragment_to_containerMyEventsAndPlaces);
+                        Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                                getString(R.string.event_added), Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

@@ -5,6 +5,8 @@ import static com.example.eventiapp.util.Constants.BICOCCA_LATLNG;
 import static com.example.eventiapp.util.Constants.REQUEST_CODE_PICK_IMAGE;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -23,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
+import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.repository.user.IUserRepository;
@@ -39,8 +42,14 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,16 +176,57 @@ public class AddPlaceFragment extends Fragment {
                     place.setName(name);
                     place.setAddress(address + ", " + city + ", " + cap + ", " + nation);
                     List<Double> coordinates = new ArrayList<>();
-                    //coordinates.add(latLng.latitude);
-                    //coordinates.add(latLng.latitude);
-                    //place.setCoordinates(coordinates);
+                    coordinates.add(latLng.latitude);
+                    coordinates.add(latLng.longitude);
+                    place.setCoordinates(coordinates);
                     place.setId(name + place.hashCode()); //?
                     place.setPhoneNumber(phoneNumber);
 
-                    eventsAndPlacesViewModel.addPlace(place);
-                    Navigation.findNavController(requireView()).navigate(R.id.action_addPlaceFragment_to_containerMyEventsAndPlaces);
-                    Snackbar.make(requireActivity().findViewById(android.R.id.content),
-                            (getString(R.string.place_added)), Snackbar.LENGTH_SHORT).show();
+                    if (imageUri != null) {
+                        FirebaseStorage storage = FirebaseStorage.getInstance();
+                        fragmentAddPlaceBinding.placeImage.setDrawingCacheEnabled(true);
+                        fragmentAddPlaceBinding.placeImage.buildDrawingCache();
+                        Bitmap bitmapImage = ((BitmapDrawable)  fragmentAddPlaceBinding.placeImage.getDrawable()).getBitmap();
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] data = baos.toByteArray();
+
+                        StorageReference storageRef = storage.getReference().child("images/");
+
+                        UploadTask uploadTask = storageRef.putBytes(data);
+
+                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                String downloadUrl = uri.toString();
+                                                Log.i("URL", downloadUrl);
+                                                place.setUrlUserImage(downloadUrl);
+                                                eventsAndPlacesViewModel.addPlace(place);
+                                                Navigation.findNavController(requireView()).navigate(R.id.action_addPlaceFragment_to_containerMyEventsAndPlaces);
+                                                Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                                                        (getString(R.string.place_added)), Snackbar.LENGTH_SHORT).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                            }
+                                        });
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                    }
+                                });
+                    } else {
+                        eventsAndPlacesViewModel.addPlace(place);
+                        Navigation.findNavController(requireView()).navigate(R.id.action_addPlaceFragment_to_containerMyEventsAndPlaces);
+                        Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                                (getString(R.string.place_added)), Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

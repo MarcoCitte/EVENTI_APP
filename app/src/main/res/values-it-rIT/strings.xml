@@ -169,8 +169,13 @@
     <string name="date_share">\"Data: \"</string>
     <string name="share_event">Evento condiviso</string>
     <string name="share_place">Posto condiviso</string>
+    <string name="location_share">\"Nome luogo: \"</string>
+    <string name="address_share">\"Indirizzo: \"</string>
     <string name="delete_place">Elimina posto</string>
     <string name="delete_event">Elimina evento</string>
-
+    <string name="event_deleted">Evento eliminato con successo</string>
+    <string name="place_deleted">Posto eliminato con successo</string>
+    <string name="event_modified">Evento modificato con successo</string>
+    <string name="place_modified">Posto modificato con successo</string>
 
 </resources>

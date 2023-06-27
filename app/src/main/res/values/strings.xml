@@ -165,6 +165,8 @@
     <string name="field_mandatory">The field is mandatory</string>
     <string name="place_added">Place successfully added</string>
     <string name="event_added">Event successfully added</string>
+    <string name="event_modified">Event edited successfully</string>
+    <string name="place_modified">Place edited successfully</string>
     <string name="number_not_found">Number not found</string>
     <string name="none">None</string>
     <string name="save_events_to_see_recommended_ones">Save events to see recommended ones</string>
@@ -196,5 +198,7 @@
     <string name="share_place">Share Place</string>
     <string name="delete_place">Delete place</string>
     <string name="delete_event">Delete event</string>
+    <string name="event_deleted">Event successfully deleted</string>
+    <string name="place_deleted">Place successfully deleted</string>
 
 </resources>

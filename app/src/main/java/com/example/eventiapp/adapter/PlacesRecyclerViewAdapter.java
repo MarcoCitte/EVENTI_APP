@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventiapp.R;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.source.google.PlaceDetailsSource;
@@ -171,6 +172,8 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         imageViewPlace.setVisibility(View.GONE);
                     }
                 });
+            } else if (places.getUrlUserImage() != null) { //POSTO CREATO DALL'UTENTE
+                Glide.with(itemView).load(places.getUrlUserImage()).into(imageViewPlace);
             } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
@@ -246,6 +249,8 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         imageViewPlace.setVisibility(View.GONE);
                     }
                 });
+            } else if (places.getUrlUserImage() != null) { //POSTO CREATO DALL'UTENTE
+                Glide.with(itemView).load(places.getUrlUserImage()).into(imageViewPlace);
             } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
@@ -325,6 +330,8 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         imageViewPlace.setVisibility(View.GONE);
                     }
                 });
+            } else if (places.getUrlUserImage() != null) { //POSTO CREATO DALL'UTENTE
+                Glide.with(itemView).load(places.getUrlUserImage()).into(imageViewPlace);
             } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
