@@ -105,7 +105,13 @@
                 android:layout_marginTop="-40sp"
                 android:orientation="horizontal">
 
-
+                <ImageView
+                    android:id="@+id/imageViewFavorite"
+                    android:layout_width="24sp"
+                    android:layout_height="24sp"
+                    android:layout_marginStart="90sp"
+                    android:layout_marginTop="10sp"
+                    android:src="@drawable/ic_baseline_favorite_border_24" />
 
                 <ImageView
                     android:id="@+id/imageViewShare"

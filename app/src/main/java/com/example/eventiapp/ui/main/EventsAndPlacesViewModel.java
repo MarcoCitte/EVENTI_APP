@@ -498,7 +498,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
             List<Place> oldMyPlaces = myPlacesListLiveData.getValue();
             oldMyPlaces.remove(oldPlace);
             oldMyPlaces.add(newPlace);
-            Log.e(TAG, "myPlacesListLiveData size:" + oldMyPlaces.size());
+            Log.e(TAG, "MyEventsList size:" + oldMyPlaces.size());
             myPlacesListLiveData.postValue(oldMyPlaces);
 
 
@@ -508,7 +508,7 @@ public class EventsAndPlacesViewModel extends ViewModel {
             List<Place> oldAllPlaces = placesListLiveData.getValue();
             oldAllPlaces.remove(oldPlace);
             oldAllPlaces.add(newPlace);
-            Log.e(TAG, "placesListLiveData size:" + oldAllPlaces.size());
+            Log.e(TAG, "MyEventsList size:" + oldAllPlaces.size());
             placesListLiveData.postValue(oldAllPlaces);
         }
 
@@ -516,8 +516,8 @@ public class EventsAndPlacesViewModel extends ViewModel {
             List<Place> oldUserCreatedPlaces = usersCreatedPlacesMutableLiveData.getValue();
             oldUserCreatedPlaces.remove(oldPlace);
             oldUserCreatedPlaces.add(newPlace);
-            Log.e(TAG, "usersCreatedPlacesMutableLiveData size:" + oldUserCreatedPlaces.size());
-            usersCreatedPlacesMutableLiveData.postValue(oldUserCreatedPlaces);
+            Log.e(TAG, "MyEventsList size:" + oldUserCreatedPlaces.size());
+            placesListLiveData.postValue(oldUserCreatedPlaces);
         }
     }
 }
