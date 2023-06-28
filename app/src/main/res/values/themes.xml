@@ -4,11 +4,16 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/colorTextPrimary</item>
         <item name="colorPrimaryVariant">@color/colorAccent</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/colorPrimary</item>
+        <item name="colorOnBackground">@color/colorBackground</item>
+        <item name="colorContainer">@color/colorBackgroundSecondary</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/colorTextSecondary</item>
         <item name="colorSecondaryVariant">@color/colorPrimary</item>
         <item name="colorOnSecondary">@color/black</item>
+        <item name="colorButtonNormal">@color/colorButton</item>
+
+        <item name="itemFillColor">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:fontFamily">@font/baloo_tammudu</item>

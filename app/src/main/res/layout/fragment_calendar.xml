@@ -19,7 +19,7 @@
             android:layout_height="60sp"
             android:id="@+id/buttonBackward"
             android:text="@string/back"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorOnBackground"
             android:background="@null"
             android:textStyle="bold"
             android:onClick="previousMonthAction"
@@ -33,14 +33,14 @@
             android:text="Feb 2021"
             android:textSize="20sp"
             android:textAlignment="center"
-            android:textColor="@color/colorTextPrimary"/>
+            android:textColor="?attr/colorPrimary"/>
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="120sp"
             android:layout_height="60sp"
             android:id="@+id/buttonForward"
             android:text="@string/forward"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorOnBackground"
             android:background="@null"
             android:textStyle="bold"
             android:onClick="nextMonthAction"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/sun"
-            android:textColor="@color/colorTextSecondary"
+            android:textColor="?attr/colorSecondary"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/mon"
-            android:textColor="@color/colorTextSecondary"
+            android:textColor="?attr/colorSecondary"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/tue"
-            android:textColor="@color/colorTextSecondary"
+            android:textColor="?attr/colorSecondary"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/wed"
-            android:textColor="@color/colorTextSecondary"
+            android:textColor="?attr/colorSecondary"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/thur"
-            android:textColor="@color/colorTextSecondary"
+            android:textColor="?attr/colorSecondary"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/fri"
-            android:textColor="@color/colorTextSecondary"
+            android:textColor="?attr/colorSecondary"
             android:textAlignment="center"
             android:textSize="16sp"/>
 
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/sat"
-            android:textColor="@color/colorTextSecondary"
+            android:textColor="?attr/colorSecondary"
             android:textAlignment="center"
             android:textSize="16sp"/>
 

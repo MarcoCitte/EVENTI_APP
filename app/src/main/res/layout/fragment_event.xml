@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorBackground"
+        android:background="?attr/colorOnBackground"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -70,7 +70,7 @@
                     android:paddingTop="16dp"
                     android:paddingBottom="8dp"
                     android:text="Titolo dell'evento"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -82,9 +82,10 @@
                     android:paddingBottom="8dp"
                     android:text="@string/category"
                     android:textAllCaps="true"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="?attr/colorPrimaryVariant"
                     android:textSize="16sp"
-                    app:chipBackgroundColor="@color/colorBackgroundSecondary" />
+                    app:chipBackgroundColor="?attr/colorContainer"
+                    tools:ignore="PrivateResource" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -106,7 +107,7 @@
                         android:layout_weight="1"
                         android:lineSpacingExtra="-20sp"
                         android:text="Data dell'evento"
-                        android:textColor="@color/colorTextPrimary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -131,7 +132,7 @@
                         android:layout_weight="1"
                         android:lineSpacingExtra="-20sp"
                         android:text="Place"
-                        android:textColor="@color/colorTextPrimary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -154,7 +155,7 @@
                     android:layout_marginTop="2sp"
                     android:lineSpacingExtra="-20sp"
                     android:text="PHONE NUMBER"
-                    android:textColor="@color/colorTextSecondary"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp" />
 
 
@@ -172,7 +173,7 @@
                         android:lineSpacingExtra="-20sp"
                         android:text="Info"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorTextPrimary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -202,7 +203,8 @@
                         android:lineSpacingExtra="-20sp"
                         android:linksClickable="true"
                         android:text="@string/for_more_information"
-                        android:textColor="@color/colorTextPrimary" />
+                        android:textColor="?attr/colorPrimary"
+                        />
 
 
                     <com.google.android.material.textview.MaterialTextView
@@ -214,7 +216,8 @@
                         android:lineSpacingExtra="-20sp"
                         android:linksClickable="true"
                         android:text="source"
-                        android:textColor="@color/colorButton" />
+                        android:textColor="?attr/colorButtonNormal"
+                        />
 
                 </LinearLayout>
 
@@ -295,7 +298,7 @@
             android:maxLines="3"
             android:text="@string/address"
             android:textAlignment="center"
-            android:textColor="@color/colorTextPrimary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="20sp"
             tools:ignore="HardcodedText" />
 
@@ -304,7 +307,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="0sp"
-            app:cardBackgroundColor="@color/colorBackground"
+            app:cardBackgroundColor="?attr/colorOnBackground"
             app:cardCornerRadius="20sp">
 
             <LinearLayout
@@ -347,7 +350,8 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="Drive"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="?attr/colorSecondary"
+                            />
 
                     </LinearLayout>
 
@@ -381,7 +385,8 @@
                             android:gravity="center"
                             android:lineSpacingExtra="-15sp"
                             android:text="Walk"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="?attr/colorSecondary"
+                            />
 
                     </LinearLayout>
 
@@ -416,7 +421,8 @@
                             android:gravity="center"
                             android:lineSpacingExtra="-15sp"
                             android:text="Open in \nGoogle Maps"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="?attr/colorSecondary"
+                            />
 
                     </LinearLayout>
 
@@ -450,7 +456,8 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="Call"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="?attr/colorSecondary"
+                            />
 
                     </LinearLayout>
 
@@ -470,7 +477,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="10"
-            android:background="@color/colorBackground"
+            android:background="?attr/colorOnBackground"
             android:orientation="vertical">
 
             <com.google.android.material.textview.MaterialTextView
@@ -481,7 +488,7 @@
                 android:paddingTop="16sp"
                 android:paddingBottom="8sp"
                 android:text="@string/similar_events"
-                android:textColor="@color/colorTextSecondary"
+                android:textColor="?attr/colorSecondary"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -490,7 +497,7 @@
                 android:id="@+id/line"
                 android:layout_width="match_parent"
                 android:layout_height="1sp"
-                android:background="@color/colorTextPrimary"
+                android:background="?attr/colorPrimary"
                 android:visibility="gone"
                 tools:ignore="SmallSp" />
 

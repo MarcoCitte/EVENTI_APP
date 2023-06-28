@@ -56,7 +56,7 @@
             android:id="@+id/placeTextView"
             android:text="@string/name"
             android:visibility="gone"
-            android:textColor="@color/colorTextPrimary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="20sp"
             android:padding="10sp"/>
 
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/addressTextView"
             android:text="@string/address"
-            android:textColor="@color/colorTextSecondary"
+            android:textColor="?attr/colorSecondary"
             android:layout_marginTop="-30sp"
             android:textSize="15sp"
             android:padding="10sp"/>
@@ -74,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
-            app:cardBackgroundColor="@color/colorBackground"
+            app:cardBackgroundColor="?attr/colorOnBackground"
             app:cardCornerRadius="20sp">
 
             <LinearLayout
@@ -116,7 +116,8 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="Drive"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="?attr/colorSecondary"
+                            />
 
                     </LinearLayout>
 
@@ -151,7 +152,8 @@
                             android:gravity="center"
                             android:lineSpacingExtra="-15sp"
                             android:text="Open in \nGoogle Maps"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="?attr/colorSecondary"
+                            />
 
                     </LinearLayout>
 
@@ -185,7 +187,8 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="Call"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="?attr/colorSecondary"
+                            />
 
                     </LinearLayout>
 
@@ -220,7 +223,8 @@
                             android:gravity="center"
                             android:lineSpacingExtra="-15sp"
                             android:text="Add to \nfavourite"
-                            android:textColor="@color/colorTextSecondary" />
+                            android:textColor="?attr/colorSecondary"
+                            />
 
                     </LinearLayout>
 
@@ -237,7 +241,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/colorBackground">
+            android:background="?attr/colorOnBackground">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -250,7 +254,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16sp"
-                    android:textColor="@color/colorTextPrimary"
+                    android:textColor="?attr/colorPrimary"
                     android:paddingBottom="8sp"
                     android:text="Eventi presenti: "
                     android:textSize="25sp"
@@ -264,7 +268,7 @@
                     android:clickable="false"
                     android:paddingBottom="8sp"
                     android:text="10"
-                    android:textColor="@color/colorTextPrimary"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold"
                     android:textSize="25sp"/>
 
@@ -274,7 +278,7 @@
                 android:id="@+id/line"
                 android:layout_width="match_parent"
                 android:layout_height="1sp"
-                android:background="@color/colorTextPrimary" />
+                android:background="?attr/colorPrimary" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_events"

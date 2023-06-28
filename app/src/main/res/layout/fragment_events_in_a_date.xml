@@ -14,7 +14,7 @@
         android:layout_marginTop="2sp"
         android:padding="15sp"
         android:text="@string/date"
-        android:textColor="@color/colorTextPrimary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30sp"
             android:text="@string/number_of_events"
-            android:textColor="@color/colorTextPrimary"
+            android:textColor="?attr/colorSecondary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30sp"
             android:text="0"
-            android:textColor="@color/colorTextPrimary"
+            android:textColor="?attr/colorSecondary"
             app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
             app:layout_constraintTop_toTopOf="@id/numberOfEvents0"
             tools:ignore="HardcodedText" />
@@ -65,6 +65,7 @@
         android:layout_marginTop="15sp"
         android:layout_marginEnd="15sp"
         android:elevation="4sp"
+        app:iconTint="?attr/colorOnBackground"
         app:icon="@drawable/ic_baseline_sort_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

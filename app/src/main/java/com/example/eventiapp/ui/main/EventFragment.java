@@ -327,7 +327,7 @@ public class EventFragment extends Fragment {
                                     Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
                                     startActivity(intent);
                                 } else {
-                                    fragmentEventBinding.callImageView.setVisibility(View.GONE);
+                                    Toast.makeText(requireContext(), R.string.number_not_found, Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
@@ -357,7 +357,52 @@ public class EventFragment extends Fragment {
                     }
 
                 } else {  //NON ESISTE IL PLACE DELL'EVENTO NEL DATABASE
-                    fragmentEventBinding.cardView.setVisibility(View.GONE);
+                    if (events.getCoordinates() != null && !events.getCoordinates().isEmpty()) {
+                        LatLng latLng;
+                        if (events.getCoordinates().get(0) > events.getCoordinates().get(1)) {
+                            latLng = new LatLng(events.getCoordinates().get(0), events.getCoordinates().get(1));
+                        } else {
+                            latLng = new LatLng(events.getCoordinates().get(1), events.getCoordinates().get(0));
+                        }
+                        fragmentEventBinding.carImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //NAVIGAZIONE
+                                String uri = String.format(Locale.ENGLISH, "google.navigation:mode=d&q=%f,%f", latLng.latitude, latLng.longitude);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                intent.setPackage("com.google.android.apps.maps");
+                                startActivity(intent);
+                            }
+                        });
+
+                        fragmentEventBinding.walkImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //NAVIGAZIONE A PIEDI
+                                String uri = String.format(Locale.ENGLISH, "google.navigation:mode=w&q=%f,%f", latLng.latitude, latLng.longitude);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                intent.setPackage("com.google.android.apps.maps");
+                                startActivity(intent);
+                            }
+                        });
+
+                        fragmentEventBinding.mapsImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //APRI SU GOOGLE MAPS
+                                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latLng.latitude, latLng.longitude);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                startActivity(intent);
+                            }
+                        });
+
+                        fragmentEventBinding.callImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(requireContext(), R.string.number_not_found, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     showEventWithNoPlace(events);
                 }
             });

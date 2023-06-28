@@ -28,7 +28,7 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="20dp" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/textview_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,29 +90,30 @@
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/button_forgot_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="24dp"
                 android:text="@string/forgot_password"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="14sp"
                 app:textAllCaps="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_input_layout_password" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="24dp"
-                android:backgroundTint="@color/colorButton"
-                app:rippleColor="@color/colorBackground"
+                android:backgroundTint="?attr/colorButtonNormal"
+                app:rippleColor="?attr/colorOnBackground"
                 android:text="@string/login"
-                android:textColor="@color/white"
+                android:textColor="?attr/colorOnBackground"
                 android:textSize="14sp"
                 style="@style/Widget.Material3.Button.ElevatedButton"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -136,7 +137,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_toStartOf="@id/textview_or" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textview_or"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -154,7 +155,7 @@
 
             </RelativeLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_google_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -171,7 +172,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/relative_layout" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/textview_new_account"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -183,10 +184,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_google_login" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnBackground"
+                android:layout_marginLeft="10sp"
                 android:text="@string/register"
                 android:textSize="14sp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textview_new_account"
@@ -203,8 +206,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="?attr/actionBarSize"
-        app:indicatorColor="@color/colorPrimary"
-        app:trackColor="@color/colorTextPrimary"
+        app:indicatorColor="?attr/colorPrimary"
+        app:trackColor="?attr/colorPrimary"
         android:indeterminate="true"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
