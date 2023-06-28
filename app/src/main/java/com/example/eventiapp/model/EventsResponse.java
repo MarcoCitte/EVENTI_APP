@@ -16,9 +16,12 @@ public class EventsResponse implements Parcelable {
     @SerializedName("results")
     private List<Events> eventsList;
 
-    public EventsResponse() {}
+    public EventsResponse() {
+    }
 
-    public EventsResponse(List<Events> eventsList){this.eventsList=eventsList;};
+    public EventsResponse(List<Events> eventsList) {
+        this.eventsList = eventsList;
+    }
 
     protected EventsResponse(Parcel in) {
         isLoading = in.readByte() != 0;

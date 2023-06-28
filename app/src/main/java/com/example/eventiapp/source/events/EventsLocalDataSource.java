@@ -310,15 +310,13 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
     @Override
     public void getMyEvents() {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
-            List<Events> myEvents = null;
+            List<Events> myEvents;
             try {
                 myEvents = eventsDao.getMyEvents(dataEncryptionUtil.
                         readSecretDataWithEncryptedSharedPreferences(
                                 ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, EMAIL_ADDRESS
                         ));
-            } catch (GeneralSecurityException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (GeneralSecurityException | IOException e) {
                 throw new RuntimeException(e);
             }
             eventsCallback.onSuccessFromLocalCurrentUserEventsReading(myEvents);

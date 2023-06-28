@@ -1,5 +1,6 @@
 package com.example.eventiapp.model;
 
+import android.annotation.SuppressLint;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -14,7 +15,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -67,7 +67,7 @@ public class Events implements Parcelable {
 
     protected Events(Parcel in) {
         id_db = in.readLong();
-        id_remoto=in.readLong();
+        id_remoto = in.readLong();
         title = in.readString();
         description = in.readString();
         category = in.readString();
@@ -315,7 +315,7 @@ public class Events implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Events events = (Events) o;
-        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && Objects.equals(eventSource, events.eventSource) && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(hours, events.hours) && Objects.equals(timezone, events.timezone) && Objects.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state) && ((creatorEmail != null) ? creatorEmail.equals(events.creatorEmail) : true);
+        return rank == events.rank && localRank == events.localRank && attendance == events.attendance && duration == events.duration && Objects.equals(eventSource, events.eventSource) && Objects.equals(title, events.title) && Objects.equals(description, events.description) && Objects.equals(category, events.category) && Objects.equals(places, events.places) && Objects.equals(start, events.start) && Objects.equals(end, events.end) && Objects.equals(hours, events.hours) && Objects.equals(timezone, events.timezone) && Objects.equals(coordinates, events.coordinates) && Objects.equals(country, events.country) && Objects.equals(state, events.state) && (creatorEmail == null || creatorEmail.equals(events.creatorEmail));
     }
 
     @Override
@@ -336,7 +336,7 @@ public class Events implements Parcelable {
     public static class SortByLeastRecent implements java.util.Comparator<Events> {
         public int compare(Events a, Events b) {
             if (a.getStart() != null && b.getStart() != null) {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 try {
                     Date dateA = format.parse(a.getStart());
                     Date dateB = format.parse(b.getStart());
@@ -353,7 +353,7 @@ public class Events implements Parcelable {
         public int compare(Events a, Events b) {
             if (a.getStart() != null && b.getStart() != null) {
                 try {
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                     Date date1 = formatter.parse(a.getStart());
                     Date date2 = formatter.parse(b.getStart());
                     return Objects.requireNonNull(date1).compareTo(date2);

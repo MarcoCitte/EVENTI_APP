@@ -7,26 +7,21 @@ import static com.example.eventiapp.util.Constants.USER_COLLISION_ERROR;
 import static com.example.eventiapp.util.Constants.WEAK_PASSWORD_ERROR;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.eventiapp.model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthEmailException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.Objects;
 
 
 /**
@@ -150,24 +145,18 @@ public class UserAuthenticationRemoteDataSource extends BaseUserAuthenticationRe
     public void changePassword(String oldPassword, String newPassword) {
         final FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
-            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
-            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    userResponseCallback.onSuccessFromChangePassword("Password changed successfully");
-                                } else {
-                                    userResponseCallback.onFailureFromChangePassword("Failed to change password");
-                                }
-                            }
-                        });
-                    } else {
-                        userResponseCallback.onFailureFromChangePassword("Invalid old password");
-                    }
+            AuthCredential credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), oldPassword);
+            user.reauthenticate(credential).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    user.updatePassword(newPassword).addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            userResponseCallback.onSuccessFromChangePassword("Password changed successfully");
+                        } else {
+                            userResponseCallback.onFailureFromChangePassword("Failed to change password");
+                        }
+                    });
+                } else {
+                    userResponseCallback.onFailureFromChangePassword("Invalid old password");
                 }
             });
         }
@@ -176,7 +165,7 @@ public class UserAuthenticationRemoteDataSource extends BaseUserAuthenticationRe
     @Override
     public void getLoggedUserProvider() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser.getProviderData().size() > 0) {
+        if (Objects.requireNonNull(firebaseUser).getProviderData().size() > 0) {
             String provider = firebaseUser.getProviderData().get(firebaseUser.getProviderData().size() - 1).getProviderId();
             userResponseCallback.onSuccessFromProvider(provider);
         }else{

@@ -6,12 +6,9 @@ import java.util.Objects;
 
 public class EventSource {
 
-    private String url;
-    private String urlPhoto;
+    private final String url;
+    private final String urlPhoto;
 
-    public EventSource() {
-
-    }
 
     public EventSource(String url, String urlPhoto) {
         this.url = url;
@@ -22,16 +19,8 @@ public class EventSource {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getUrlPhoto() {
         return urlPhoto;
-    }
-
-    public void setUrlPhoto(String urlPhoto) {
-        this.urlPhoto = urlPhoto;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.example.eventiapp.service;
 
-import static com.example.eventiapp.util.Constants.CLIENT_ID;
 import static com.example.eventiapp.util.Constants.CONTENT_TYPE;
 import static com.example.eventiapp.util.Constants.EVENTS_CATEGORY;
 import static com.example.eventiapp.util.Constants.EVENTS_COUNTRY;
@@ -29,5 +28,4 @@ public interface EventsApiService {
             @Query(EVENTS_LIMIT) int limit,
             @Header(TOKEN_API) String authorization,
             @Header(CONTENT_TYPE) String contentType);
-
 }

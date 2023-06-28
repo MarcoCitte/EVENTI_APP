@@ -1,6 +1,5 @@
 package com.example.eventiapp.repository.user;
 
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -16,12 +15,8 @@ import com.example.eventiapp.source.user.BaseUserDataRemoteDataSource;
 import java.util.List;
 
 
-/**
- * Repository class to get the user information.
- */
 public class UserRepository implements IUserRepository, UserResponseCallback, EventsCallback {
 
-    private static final String TAG = UserRepository.class.getSimpleName();
 
     private final BaseUserAuthenticationRemoteDataSource userRemoteDataSource;
     private final BaseUserDataRemoteDataSource userDataRemoteDataSource;
@@ -30,10 +25,10 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     private final MutableLiveData<Result> userFavoriteEventsMutableLiveData;
     //private final MutableLiveData<Result> userPreferencesMutableLiveData;
 
-    private MutableLiveData<Result> resetPasswordMutableLiveData;
-    private MutableLiveData<Result> changePasswordMutableLiveData;
+    private final MutableLiveData<Result> resetPasswordMutableLiveData;
+    private final MutableLiveData<Result> changePasswordMutableLiveData;
 
-    private MutableLiveData<String> userProvider;
+    private final MutableLiveData<String> userProvider;
 
 
     public UserRepository(BaseUserAuthenticationRemoteDataSource userRemoteDataSource,
@@ -113,7 +108,8 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     @Override
     public MutableLiveData<Result> changePassword(String oldPassword, String newPassword) {
         userRemoteDataSource.changePassword(oldPassword, newPassword);
-        return changePasswordMutableLiveData;    }
+        return changePasswordMutableLiveData;
+    }
 
 
     @Override
@@ -272,10 +268,6 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
 
     }
 
-    @Override
-    public void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse) {
-
-    }
 
     @Override
     public void onFailureFromRemote(Exception exception) {
@@ -341,7 +333,6 @@ public class UserRepository implements IUserRepository, UserResponseCallback, Ev
     public void onSuccessFromLocalCurrentUserEventDeletion(Events events) {
 
     }
-
 
 
     @Override

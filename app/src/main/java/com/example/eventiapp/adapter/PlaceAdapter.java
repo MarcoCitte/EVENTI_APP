@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.example.eventiapp.model.Place;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
 // Creazione della classe personalizzata dell'ArrayAdapter
 public class PlaceAdapter extends ArrayAdapter<Place> {
 
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
 
     public PlaceAdapter(Context context, List<Place> places) {
         super(context, 0, places);
@@ -39,7 +41,7 @@ public class PlaceAdapter extends ArrayAdapter<Place> {
     }
 
     @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
         }

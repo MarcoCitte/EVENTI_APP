@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 
 import java.util.List;
@@ -36,9 +35,6 @@ public interface PlaceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertPlacesList(List<Place> placeList);
 
-    @Insert
-    void insertAll(Place... places);
-
     @Update
     int updateSingleFavoritePlace(Place place);
 
@@ -48,14 +44,9 @@ public interface PlaceDao {
     @Delete
     void delete(Place place);
 
-    @Delete
-    void deleteAllWithoutQuery(Place... places);
-
     @Query("DELETE FROM place")
     int deleteAll();
 
-    @Query("DELETE FROM place WHERE is_favorite=0")
-    void deleteNotFavoritePlaces();
     @Query("SELECT * FROM place WHERE creator_email <> null")
     List<Place> getUsersCreatedPlaces();
 

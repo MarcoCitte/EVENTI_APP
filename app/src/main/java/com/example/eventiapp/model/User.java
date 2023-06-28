@@ -65,12 +65,6 @@ public class User implements Parcelable {
         dest.writeString(this.idToken);
     }
 
-    public void readFromParcel(Parcel source) {
-        this.name = source.readString();
-        this.email = source.readString();
-        this.idToken = source.readString();
-    }
-
     protected User(Parcel in) {
         this.name = in.readString();
         this.email = in.readString();

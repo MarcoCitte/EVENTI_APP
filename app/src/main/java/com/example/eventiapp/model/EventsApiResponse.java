@@ -6,15 +6,17 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
-public class EventsApiResponse extends EventsResponse{
+public class EventsApiResponse extends EventsResponse {
     private int count;
     private boolean overflow;
     private String next;
     private String previous;
 
-    public EventsApiResponse() {super();}
+    public EventsApiResponse() {
+        super();
+    }
 
-    public EventsApiResponse(int count, boolean overflow, String next, String previous,List<Events> eventsList) {
+    public EventsApiResponse(int count, boolean overflow, String next, String previous, List<Events> eventsList) {
         super(eventsList);
         this.count = count;
         this.overflow = overflow;
@@ -22,7 +24,7 @@ public class EventsApiResponse extends EventsResponse{
         this.previous = previous;
     }
 
-    public EventsApiResponse(List<Events> eventsList){
+    public EventsApiResponse(List<Events> eventsList) {
         super(eventsList);
     }
 
@@ -34,29 +36,6 @@ public class EventsApiResponse extends EventsResponse{
         this.count = count;
     }
 
-    public boolean isOverflow() {
-        return overflow;
-    }
-
-    public void setOverflow(boolean overflow) {
-        this.overflow = overflow;
-    }
-
-    public String getNext() {
-        return next;
-    }
-
-    public void setNext(String next) {
-        this.next = next;
-    }
-
-    public String getPrevious() {
-        return previous;
-    }
-
-    public void setPrevious(String previous) {
-        this.previous = previous;
-    }
 
     @NonNull
     @Override
@@ -82,13 +61,6 @@ public class EventsApiResponse extends EventsResponse{
         dest.writeByte(this.overflow ? (byte) 1 : (byte) 0);
         dest.writeString(this.next);
         dest.writeString(this.previous);
-    }
-
-    public void readFromParcel(Parcel source) {
-        this.count = source.readInt();
-        this.overflow = source.readByte() != 0;
-        this.next = source.readString();
-        this.previous = source.readString();
     }
 
     protected EventsApiResponse(Parcel in) {

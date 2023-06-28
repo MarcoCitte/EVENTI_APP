@@ -1,11 +1,8 @@
 package com.example.eventiapp.source.user;
 
-
-
 import static com.example.eventiapp.util.Constants.FIREBASE_FAVORITE_EVENTS_COLLECTION;
 import static com.example.eventiapp.util.Constants.FIREBASE_REALTIME_DATABASE;
 import static com.example.eventiapp.util.Constants.FIREBASE_USERS_COLLECTION;
-import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FILE_NAME;
 
 import android.util.Log;
 
@@ -14,10 +11,6 @@ import androidx.annotation.NonNull;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.User;
 import com.example.eventiapp.util.SharedPreferencesUtil;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,9 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 
 /**
@@ -58,18 +50,8 @@ public class UserDataRemoteDataSource extends BaseUserDataRemoteDataSource {
                 } else {
                     Log.d(TAG, "User not present in Firebase Realtime Database");
                     databaseReference.child(FIREBASE_USERS_COLLECTION).child(user.getIdToken()).setValue(user)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    userResponseCallback.onSuccessFromRemoteDatabase(user);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    userResponseCallback.onFailureFromRemoteDatabase(e.getLocalizedMessage());
-                                }
-                            });
+                            .addOnSuccessListener(aVoid -> userResponseCallback.onSuccessFromRemoteDatabase(user))
+                            .addOnFailureListener(e -> userResponseCallback.onFailureFromRemoteDatabase(e.getLocalizedMessage()));
                 }
             }
 
@@ -83,23 +65,22 @@ public class UserDataRemoteDataSource extends BaseUserDataRemoteDataSource {
     @Override
     public void getUserFavoriteEvents(String idToken) {
         databaseReference.child(FIREBASE_USERS_COLLECTION).child(idToken).
-            child(FIREBASE_FAVORITE_EVENTS_COLLECTION).get().addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Log.d(TAG, "Error getting data", task.getException());
-                    userResponseCallback.onFailureFromRemoteDatabase(task.getException().getLocalizedMessage());
-                }
-                else {
-                    Log.d(TAG, "Successful read: " + task.getResult().getValue());
+                child(FIREBASE_FAVORITE_EVENTS_COLLECTION).get().addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.d(TAG, "Error getting data", task.getException());
+                        userResponseCallback.onFailureFromRemoteDatabase(Objects.requireNonNull(task.getException()).getLocalizedMessage());
+                    } else {
+                        Log.d(TAG, "Successful read: " + task.getResult().getValue());
 
-                    List<Events> newsList = new ArrayList<>();
-                    for(DataSnapshot ds : task.getResult().getChildren()) {
-                        Events news = ds.getValue(Events.class);
-                        newsList.add(news);
+                        List<Events> newsList = new ArrayList<>();
+                        for (DataSnapshot ds : task.getResult().getChildren()) {
+                            Events news = ds.getValue(Events.class);
+                            newsList.add(news);
+                        }
+
+                        userResponseCallback.onSuccessFromRemoteDatabase(newsList);
                     }
-
-                    userResponseCallback.onSuccessFromRemoteDatabase(newsList);
-                }
-            });
+                });
     }
  /*
     @Override

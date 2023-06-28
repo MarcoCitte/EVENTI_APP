@@ -10,11 +10,7 @@ public abstract class Result {
     private Result() {}
 
     public boolean isSuccess() {
-        if (this instanceof EventsResponseSuccess || this instanceof UserResponseSuccess || this instanceof ResetPasswordSuccess || this instanceof PlacesResponseSuccess || this instanceof ChangePasswordSuccess) {
-            return true;
-        } else {
-            return false;
-        }
+        return this instanceof EventsResponseSuccess || this instanceof UserResponseSuccess || this instanceof ResetPasswordSuccess || this instanceof PlacesResponseSuccess || this instanceof ChangePasswordSuccess;
     }
 
     public static final class EventsResponseSuccess extends Result {

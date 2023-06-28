@@ -1,14 +1,11 @@
 package com.example.eventiapp.source.jsoup;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.Place;
-import com.example.eventiapp.source.events.BaseEventsRemoteDataSource;
-import com.example.eventiapp.ui.main.AllEventsFragment;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.EventClassifier;
 
@@ -19,13 +16,11 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 
 public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
 
@@ -69,21 +64,21 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
         try {
             Document document = Jsoup.connect("https://www.ucicinemas.it/cinema/lombardia/milano/uci-cinemas-bicocca-milano/").get();
             Element element = document.getElementById("showtimes-venue-container");
-            Element element2 = element.getElementsByClass("showtimes__movie").first();
-            Elements show = element2.getElementsByClass("showtimes__show");
+            Element element2 = Objects.requireNonNull(element).getElementsByClass("showtimes__movie").first();
+            Elements show = Objects.requireNonNull(element2).getElementsByClass("showtimes__show");
 
             for (Element e : show) {
                 Element movie = e.getElementsByClass("movie-name").first();
                 Element movieNote = e.getElementsByClass("mobile-showtimes__movie__notes-container").first();
-                Element movie3D = movieNote.getElementsByClass("mobile-showtimes__movie__notes").first();
+                Element movie3D = Objects.requireNonNull(movieNote).getElementsByClass("mobile-showtimes__movie__notes").first();
                 String srcValue3D = null;
                 if (movie3D != null) {
                     Element image3D = movie3D.select("img").first();
-                    srcValue3D = image3D.attr("src");
+                    srcValue3D = Objects.requireNonNull(image3D).attr("src");
                 }
                 Elements timetables = e.getElementsByClass("showtimes__movie__shows list-inline");
-                Element href = movie.select("a").first();
-                String name = href.text();
+                Element href = Objects.requireNonNull(movie).select("a").first();
+                String name = Objects.requireNonNull(href).text();
                 String urlMovie = "https://www.ucicinemas.it" + href.attr("href");
 
                 //ORARI FILM
@@ -104,7 +99,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                 StringBuilder description = new StringBuilder();
                 Document document2 = Jsoup.connect(urlMovie).get();
                 Element movieDetail = document2.getElementsByClass("movie-data__wrapper").first();
-                Elements p = movieDetail.getAllElements();
+                Elements p = Objects.requireNonNull(movieDetail).getAllElements();
                 int count = 0;
                 for (Element o : p) {
                     if (count < 2) {
@@ -115,8 +110,8 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
 
                 //FOTO FILM
                 Element movieImage = document2.getElementsByClass("main-carousel").first();
-                Element imageElement = movieImage.select("img").first();
-                String srcValue = imageElement.attr("src");
+                Element imageElement = Objects.requireNonNull(movieImage).select("img").first();
+                String srcValue = Objects.requireNonNull(imageElement).attr("src");
 
                 Events event = new Events();
                 event.setTitle(name);
@@ -154,26 +149,26 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                 Events event = new Events();
                 Element href = e.select("a").first();
                 Element eventType = e.getElementsByClass("spot-info uppercase").first();
-                String category = eventType.text();
+                String category = Objects.requireNonNull(eventType).text();
                 category = category.replace("Evento", "");
                 category = category.replaceAll("\\s", " ");
                 event.setCategory(category);
                 Element imageElement = e.select("img").first();
-                String srcValue = "https:" + imageElement.attr("src");
-                event.setEventSource(new EventSource(href.attr("href"), srcValue));
+                String srcValue = "https:" + Objects.requireNonNull(imageElement).attr("src");
+                event.setEventSource(new EventSource(Objects.requireNonNull(href).attr("href"), srcValue));
 
                 //DATA EVENTO
                 Element dateElement = e.getElementsByClass("spot-date uppercase").first();
-                String date = dateElement.text();
+                String date = Objects.requireNonNull(dateElement).text();
                 Date date1 = DateUtils.parseDate(date, "it");
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 if (date1 != null) {
                     String formattedDate = formatter.format(date1);
                     if (formattedDate.compareTo(DateUtils.currentDate()) >= 0) { //METTE SOLO EVENTI NUOVI A PARTIRE DALLA DATA CORRENTE
                         event.setStart(formattedDate);
                         event.setTimezone("Europe/Rome");
                         Element titleElement = e.select("h2").first();
-                        event.setTitle(titleElement.text());
+                        event.setTitle(Objects.requireNonNull(titleElement).text());
                         List<Place> placeList = new ArrayList<>();
                         Double[] coordinates = {45.5203608, 9.2160497};
                         event.setCoordinates(Arrays.asList(coordinates));
@@ -201,7 +196,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
         int currentPage = 0;
         boolean hasNextPage = true;
         while (hasNextPage) {
-            String url = String.format(urlTemplate, currentPage);
+            @SuppressLint("DefaultLocale") String url = String.format(urlTemplate, currentPage);
 
             try {
                 Document document = Jsoup.connect(url).get();
@@ -222,21 +217,21 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                     String description = e.select(".views-field-field-sottotitolo").text();
 
                     String imageValue = "https://www.unimib.it" + imageSrc;
-                    event.setEventSource(new EventSource("https://www.unimib.it" + e.select(".views-field-title a").first().attr("href"), imageValue));
-                    String start = "";
-                    String end = "";
-                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    event.setEventSource(new EventSource("https://www.unimib.it" + Objects.requireNonNull(e.select(".views-field-title a").first()).attr("href"), imageValue));
+                    String start;
+                    String end;
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
                     if (dateRange.contains("da")) { //INIZIO E FINE EVENTO
                         String[] dates = dateRange.split(" a ");
                         start = dates[0];
                         end = dates[1];
                         Date startDate = DateUtils.parseDate(start, "it");
                         Date endDate = DateUtils.parseDate(end, "it");
-                        start = outputFormat.format(startDate);
-                        end = outputFormat.format(endDate);
+                        start = outputFormat.format(Objects.requireNonNull(startDate));
+                        end = outputFormat.format(Objects.requireNonNull(endDate));
                     } else {
                         Date startDate = DateUtils.parseDate(dateRange, "it");
-                        start = outputFormat.format(startDate);
+                        start = outputFormat.format(Objects.requireNonNull(startDate));
                         end = null;
                     }
                     event.setStart(start);
@@ -285,7 +280,7 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
         try {
             Document document = Jsoup.connect("https://www.teatroarcimboldi.it/all/").get();
             Element newEvents = document.getElementById("tab-programmazione");
-            Elements eventItems = newEvents.select(".fat-event-item");
+            Elements eventItems = Objects.requireNonNull(newEvents).select(".fat-event-item");
             for (Element eventItem : eventItems) {
                 Events event = new Events();
                 String title = eventItem.select(".fat-event-title a").text();
@@ -298,9 +293,9 @@ public class JsoupDataSource extends AsyncTask<Void, Void, List<Events>> {
                 event.setEventSource(new EventSource(eventUrl, imageUrl));
                 event.setDescription(description);
 
-                SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDate = DateUtils.parseDate(date, "it");
-                String start = outputFormat.format(startDate);
+                String start = outputFormat.format(Objects.requireNonNull(startDate));
                 event.setStart(start);
                 event.setTimezone("Europe/Rome");
 

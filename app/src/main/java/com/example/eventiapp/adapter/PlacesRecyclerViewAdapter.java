@@ -289,8 +289,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private final TextView textViewDistance;
         private final ImageView imageViewPlace;
         private final ImageView imageViewFavorite;
-        private final ImageView imageViewMode;
-        private final ImageView imageViewDelete;
 
         public Places3ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -299,8 +297,8 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewAddress = itemView.findViewById(R.id.addressTextView);
             imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
             imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
-            imageViewMode = itemView.findViewById(R.id.imageViewMode);
-            imageViewDelete = itemView.findViewById(R.id.imageViewDelete);
+            ImageView imageViewMode = itemView.findViewById(R.id.imageViewMode);
+            ImageView imageViewDelete = itemView.findViewById(R.id.imageViewDelete);
             ImageView imageViewShare = itemView.findViewById(R.id.imageViewShare);
 
             itemView.setOnClickListener(this);

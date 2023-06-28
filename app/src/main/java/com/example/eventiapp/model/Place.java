@@ -12,10 +12,7 @@ import com.example.eventiapp.util.StringUtils;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.firebase.database.Exclude;
 import com.google.gson.annotations.SerializedName;
-
-
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,8 +20,8 @@ import java.util.Objects;
 public class Place implements Serializable, Parcelable {
 
     @PrimaryKey
-    @NonNull
     @SerializedName("entity_id")
+    @NonNull
     private String id;
     private String name;
     private String type;

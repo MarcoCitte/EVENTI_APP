@@ -7,5 +7,4 @@ import java.util.List;
 public interface EventsResponseCallback {
     void onSuccess(List<Events> eventsList);
     void onFailure(String errorMessage);
-    void onEventsFavoriteStatusChanged(Events events);
 }

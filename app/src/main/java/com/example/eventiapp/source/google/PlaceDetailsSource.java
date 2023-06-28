@@ -1,42 +1,36 @@
 package com.example.eventiapp.source.google;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Geocoder;
-import android.media.ExifInterface;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
+
 
 import androidx.annotation.NonNull;
 
-import com.example.eventiapp.R;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class PlaceDetailsSource {
 
     private static PlacesClient placesClient;
-    private Geocoder geoCoder;
+    private static Geocoder geoCoder;
 
     public PlaceDetailsSource(PlacesClient placesClient, Geocoder geoCoder) {
-        this.placesClient = placesClient;
-        this.geoCoder = geoCoder;
+        PlaceDetailsSource.placesClient = placesClient;
+        PlaceDetailsSource.geoCoder = geoCoder;
     }
+
 
     public interface PlaceDetailsListener {
         void onPlaceDetailsFetched(Place place);
@@ -105,7 +99,7 @@ public class PlaceDetailsSource {
             Log.w("TAG", "No photo metadata.");
             return;
         }
-        int length = 0;
+        int length;
         if (onePhoto) {
             length = 1;
         } else {

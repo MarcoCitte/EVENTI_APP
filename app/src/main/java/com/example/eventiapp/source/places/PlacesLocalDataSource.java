@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.example.eventiapp.database.PlaceDao;
 import com.example.eventiapp.database.RoomDatabase;
-import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.util.DataEncryptionUtil;
 import com.example.eventiapp.util.SharedPreferencesUtil;
@@ -155,15 +154,13 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
     @Override
     public void getMyPlaces() {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
-            List<Place> myPlaces = null;
+            List<Place> myPlaces;
             try {
                 myPlaces = placeDao.getMyPlaces(dataEncryptionUtil.
                         readSecretDataWithEncryptedSharedPreferences(
                                 ENCRYPTED_SHARED_PREFERENCES_FILE_NAME, EMAIL_ADDRESS
                         ));
-            } catch (GeneralSecurityException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (GeneralSecurityException | IOException e) {
                 throw new RuntimeException(e);
             }
             placeCallback.onSuccessFromLocalCurrentUserPlacesReading(myPlaces);

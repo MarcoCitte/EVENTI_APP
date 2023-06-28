@@ -15,12 +15,10 @@ public class MyEventsAndPlacesPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position) {
-            case 1:
-                return new MyPlacesFragment();
-            default:
-                return new MyEventsFragment();
+        if (position == 1) {
+            return new MyPlacesFragment();
         }
+        return new MyEventsFragment();
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.example.eventiapp.source.events;
 
-import static com.example.eventiapp.util.Constants.FIREBASE_FAVORITE_EVENTS_COLLECTION;
 import static com.example.eventiapp.util.Constants.FIREBASE_REALTIME_DATABASE;
-import static com.example.eventiapp.util.Constants.FIREBASE_USERS_COLLECTION;
 import static com.example.eventiapp.util.Constants.FIREBASE_USERS_CREATED_EVENTS_COLLECTION;
 
 import android.util.Log;
@@ -37,14 +35,13 @@ public class MyEventsDataSource extends BaseMyEventsDataSource {
                 .get().addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
                         Log.d(TAG, "Error getting data", task.getException());
-                    }
-                    else {
+                    } else {
                         Log.d(TAG, "Successful read: " + task.getResult().getValue());
 
                         List<Events> eventsList = new ArrayList<>();
-                        for(DataSnapshot ds : task.getResult().getChildren()) {
+                        for (DataSnapshot ds : task.getResult().getChildren()) {
                             Events events = ds.getValue(Events.class);
-                            if(events.getCreatorEmail().equals(email)){
+                            if (events != null && events.getCreatorEmail().equals(email)) {
                                 events.setSynchronized(true);
                                 eventsList.add(events);
                             }
@@ -56,12 +53,6 @@ public class MyEventsDataSource extends BaseMyEventsDataSource {
     }
 
 
-
-    @Override
-    public void synchronizeMyEvents(List<Events> notSynchronizedEventsList) {
-
-    }
-
     @Override
     public void deleteMyEvents(Events events) {
         databaseReference.child(FIREBASE_USERS_CREATED_EVENTS_COLLECTION)
@@ -70,9 +61,7 @@ public class MyEventsDataSource extends BaseMyEventsDataSource {
                     //QUI
                     events.setSynchronized(false);
                     eventsCallback.onSuccessFromRemoteCurrentUserEventDeletion(events);
-                }).addOnFailureListener(e -> {
-                    eventsCallback.onFailureFromCloud(e);
-                });
+                }).addOnFailureListener(e -> eventsCallback.onFailureFromCloud(e));
     }
 
     @Override
@@ -91,8 +80,6 @@ public class MyEventsDataSource extends BaseMyEventsDataSource {
                     //QUI
                     newEvent.setSynchronized(false);
                     eventsCallback.onSuccessFromRemoteCurrentUserEventEdit(newEvent);
-                }).addOnFailureListener(e -> {
-                    eventsCallback.onFailureFromCloud(e);
-                });
+                }).addOnFailureListener(e -> eventsCallback.onFailureFromCloud(e));
     }
 }

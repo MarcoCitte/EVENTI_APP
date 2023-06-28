@@ -1,6 +1,5 @@
 package com.example.eventiapp.source.places;
 
-import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 
 public abstract class BasePlacesRemoteDataSource {

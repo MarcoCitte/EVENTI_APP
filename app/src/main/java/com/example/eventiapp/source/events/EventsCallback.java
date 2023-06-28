@@ -8,8 +8,6 @@ import java.util.List;
 public interface EventsCallback {
     void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate);
 
-    void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse);
-
     void onFailureFromRemote(Exception exception);
 
     void onSuccessFromLocal(EventsApiResponse eventsApiResponse);
@@ -34,9 +32,9 @@ public interface EventsCallback {
 
     void onEventsFavoriteStatusChanged(Events events, List<Events> favoriteEvents);
 
-    public void onSuccessFromRemoteCurrentUserEventsWriting(Events events);
+    void onSuccessFromRemoteCurrentUserEventsWriting(Events events);
 
-    public void onSuccessFromLocalCurrentUserEventDeletion(Events events);
+    void onSuccessFromLocalCurrentUserEventDeletion(Events events);
 
     void onEventsFavoriteStatusChanged(List<Events> events);
 
@@ -62,7 +60,6 @@ public interface EventsCallback {
 
     void onSuccessFromCloudWriting(Events events);
 
-
     void onFailureFromCloud(Exception exception);
 
     void onSuccessSynchronization();
@@ -78,7 +75,6 @@ public interface EventsCallback {
     void onSuccessFromRemoteCurrentUserEventsReading(List<Events> eventsList);
 
     void onSuccessFromLocalCurrentUserEventsReading(List<Events> eventsList);
-
 
     void onSuccessFromRemoteCurrentUserEventDeletion(Events events);
 

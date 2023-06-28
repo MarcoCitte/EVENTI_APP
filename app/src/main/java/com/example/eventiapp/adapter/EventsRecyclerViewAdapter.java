@@ -8,7 +8,6 @@ import static com.example.eventiapp.util.Constants.MAX_ITEMS;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -350,8 +349,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private final TextView textViewAttendance;
         private final TextView textViewNumberAttendance;
         private final ImageView imageViewEvent;
-        private final ImageView imageViewModeEvent;
-        private final ImageView imageViewDeleteEvent;
 
         public Events3ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -362,8 +359,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewAttendance = itemView.findViewById(R.id.attendanceTextView);
             textViewNumberAttendance = itemView.findViewById(R.id.numberAttendanceTextView);
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
-            imageViewModeEvent = itemView.findViewById(R.id.imageViewMode);
-            imageViewDeleteEvent = itemView.findViewById(R.id.imageViewDelete);
+            ImageView imageViewModeEvent = itemView.findViewById(R.id.imageViewMode);
+            ImageView imageViewDeleteEvent = itemView.findViewById(R.id.imageViewDelete);
             ImageView imageViewShareEvent = itemView.findViewById(R.id.imageViewShare);
             itemView.setOnClickListener(this);
             imageViewShareEvent.setOnClickListener(this);

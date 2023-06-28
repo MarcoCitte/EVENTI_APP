@@ -25,10 +25,15 @@ import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
 import com.example.eventiapp.source.places.BasePlacesRemoteDataSource;
 import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
+import com.example.eventiapp.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCallback, PlaceCallback {
 
@@ -37,8 +42,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     private final MutableLiveData<Result> allEventsMutableLiveData;
     private final MutableLiveData<Result> eventsFromSearchLiveData;
     private final MutableLiveData<Result> favoriteEventsMutableLiveData;
-    private MutableLiveData<Result> myEventsListLiveData; //EVENTI CREATI DALL'UTENTE CORRENTE
-    private MutableLiveData<List<Place>> myPlacesListLiveData; //POSTI CREATI DALL'UTENTE CORRENTE
+    private final MutableLiveData<Result> myEventsListLiveData; //EVENTI CREATI DALL'UTENTE CORRENTE
+    private final MutableLiveData<List<Place>> myPlacesListLiveData; //POSTI CREATI DALL'UTENTE CORRENTE
 
     private final MutableLiveData<Result> categoryEventsMutableLiveData;
     private final MutableLiveData<Result> eventsInADateMutableLiveData;
@@ -78,11 +83,10 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
 
     private final PlaceDetailsSource placeDetailsSource;
-    private List<String> dates;
     private int count;
 
-    private LifecycleRegistry lifecycleRegistry;
-    private MutableLiveData<List<Place>> usersCreatedPlacesMutableLiveData;
+    private final LifecycleRegistry lifecycleRegistry;
+    private final MutableLiveData<List<Place>> usersCreatedPlacesMutableLiveData;
 
 
     public RepositoryWithLiveData(BaseEventsRemoteDataSource eventsRemoteDataSource, BasePlacesRemoteDataSource placesRemoteDataSource, BaseEventsLocalDataSource eventsLocalDataSource,
@@ -104,9 +108,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         moviesHoursMutableLiveData = new MutableLiveData<>();
         allPlacesMutableLiveData = new MutableLiveData<>();
         placesFromSearchLiveData = new MutableLiveData<>();
-        //favoritePlacesMutableLiveData = new MutableLiveData<>();
         favoritePlacesMutableLiveData2 = new MutableLiveData<>();
-        singlePlaceMutableLiveData = new MutableLiveData();
+        singlePlaceMutableLiveData = new MutableLiveData<>();
         allCategoriesMutableLiveData = new MutableLiveData<>();
         categoriesInADateMutableLiveData = new MutableLiveData<>();
         favoriteCategoryMutableLiveData = new MutableLiveData<>();
@@ -369,11 +372,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
-    public void deleteFavoriteEvents() {
-        eventsLocalDataSource.deleteFavoriteEvents();
-    }
-
-    @Override
     public void updatePlace(Place place) {
         placesLocalDataSource.updatePlaces(place);
         if (place.isFavorite()) {
@@ -389,11 +387,12 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         eventsLocalDataSource.insertEvents(eventsApiResponse);
         //PLACES
 
+
         /*
         List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
-        Map<String, Events> map = new HashMap<String, Events>();
+        Map<String, Events> map = new HashMap<>();
         for (Events e : fetchedEvents) {
             if (!e.getPlaces().isEmpty()) {
                 String placeName = e.getPlaces().get(0).getName(); //PRENDO IL NOME PERCHè LE API DI PREDICTQ DANNO ID DIVERSI PER LO STESSO POSTO
@@ -403,7 +402,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             }
         }
         List<Events> eventsNoDuplicates = new ArrayList<>(map.values());
-        List<Place> placesAlreadyInDb=new ArrayList<>(allPlacesMutableLiveData.getValue());
+        List<Place> placesAlreadyInDb = new ArrayList<>(Objects.requireNonNull(allPlacesMutableLiveData.getValue()));
 
 
         for (Events e : eventsNoDuplicates) {
@@ -416,8 +415,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             }
             if (!isPlaceAlreadyAdded) {  //COSI RISPARMIO SULLA VELOCITA E SUI SOLDI PER LE API PLACES DI GOOGLE
                 //DEVO PRENDERE COORDINATE, INDIRIZZO, FOTO E NUMERO DI TELEFONO DEL POSTO  PIU PRECISI
-                Log.i("POSTO NUOVO", e.getPlaces().toString());
-               placeDetailsSource.fetchPlaceDetails(e.getPlaces().get(0).getName(), e.getPlaces().get(0).getAddress(), new PlaceDetailsSource.PlaceDetailsListener() {
+                placeDetailsSource.fetchPlaceDetails(e.getPlaces().get(0).getName(), e.getPlaces().get(0).getAddress(), new PlaceDetailsSource.PlaceDetailsListener() {
                     @Override
                     public void onPlaceDetailsFetched(com.google.android.libraries.places.api.model.Place place) {
                         // Hai ottenuto i dettagli del posto
@@ -434,14 +432,15 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
                     @Override
                     public void onError(String message) {
-                        Log.i("ERRORE FETCH PLACE:", message);
                         //PER I POSTI NON TROVATI USO IL COSTUTTORE DI DEFAULT CON LE INFORMAZIONI BASE
-                        //placesList.add(new Place(e.getPlaces().get(0).getId(), e.getPlaces().get(0).getName(), e.getPlaces().get(0).getType(), e.getPlaces().get(0).getAddress(), e.getCoordinates()));
+                        List<Place> placesList = new ArrayList<>();
+                        placesList.add(new Place(e.getPlaces().get(0).getId(), e.getPlaces().get(0).getName(), e.getPlaces().get(0).getType(), e.getPlaces().get(0).getAddress(), e.getCoordinates()));
+                        placesLocalDataSource.insertPlaces(placesList);
                     }
                 });
 
 
-            }else{
+            } else {
                 Log.i("POSTO GIA ESISTENTE", e.getPlaces().toString());
             }
 
@@ -449,69 +448,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
          */
 
-
-    }
-
-
-    @Override
-    public void onSuccessFromRemoteJsoup(EventsApiResponse eventsApiResponse) { // NON USATO
-        eventsLocalDataSource.insertEvents(eventsApiResponse);
-
-/*
-        //PLACES
-        Place uci = new Place("uci_bicocca", "UCI Cinemas Bicocca", "venue", "Via Chiese, 20126 Milan MI, Italy", new double[]{45.5220145, 9.2133497});
-        Place pirelli = new Place("pirelli_hangar", "Pirelli HangarBicocca", "venue", "Via Chiese, 2, 20126 Milan MI, Italy", new double[]{45.5203608, 9.2160497});
-        Place unimib = new Place("unimib", "Università degli Studi di Milano Bicocca", "venue", "Piazza dell'Ateneo Nuovo, 1, 20126 Milano MI, Italy", new double[]{45.5182898, 9.2111811});
-        Place arcimboldi = new Place("arcimboldi", "Teatro arcimboldi", "venue", "Viale dell'Innovazione, 20, 20126 Milano MI, Italy", new double[]{45.514842, 9.2109728});
-
-        List<Place> placeList = new ArrayList<>();
-        placeList.add(uci);
-        placeList.add(pirelli);
-        placeList.add(unimib);
-        placeList.add(arcimboldi);
-*/
-
-        /*
-        allPlacesMutableLiveData.observe(new LifecycleOwner() {
-            @NonNull
-            @Override
-            public Lifecycle getLifecycle() {
-                return lifecycleRegistry;
-            }
-        }, new Observer<List<Place>>() {
-            @Override
-            public void onChanged(List<Place> places) {
-                for (Place p : placeList) {
-                    boolean isPlaceAlreadyAdded = false;
-                    for (Place place : (allPlacesMutableLiveData.getValue())) {
-                        if (place.getId().equals(p.getId())) {
-                            isPlaceAlreadyAdded = true;
-                            break;
-                        }
-                    }
-                    if (!isPlaceAlreadyAdded) {  //COSI RISPARMIO SULLA VELOCITA E SUI SOLDI PER LE API PLACES DI GOOGLE
-                        //DEVO PRENDERE COORDINATE, INDIRIZZO, FOTO E NUMERO DI TELEFONO DEL POSTO  PIU PRECISI
-                        placeDetailsSource.fetchPlaceDetails(p.getName(), p.getAddress(), new PlaceDetailsSource.PlaceDetailsListener() {
-                            @Override
-                            public void onPlaceDetailsFetched(com.google.android.libraries.places.api.model.Place place) {
-                                List<Place> placesList = new ArrayList<>();
-                                placesList.add(new Place(p.getId(), StringUtils.capitalizeFirstLetter(place.getName()), p.getType(), place.getAddress(), place.getId(), p.getCoordinates(), place.getPhoneNumber(), place.getPhotoMetadatas()));
-                                placesLocalDataSource.insertPlaces(placesList);
-                            }
-
-                            @Override
-                            public void onError(String message) {
-                                Log.i("ERRORE FETCH PLACE:", message);
-                            }
-                        });
-                    }
-
-                }
-            }
-        });
-
-
-         */
 
     }
 
@@ -722,22 +658,11 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onSuccessFromInsertUserCreatedEvent(Events events) {
-        /*
-        if (events != null && !events.isFavorite()) {
-            events.setSynchronized(false);
-        }
-         */
-
-        //eventsRemoteDataSource.getUsersCreatedEvents();
-
         Log.d(TAG, "Event inserted in Firebase:" + myEventsListLiveData.getValue());
-
-
     }
 
     @Override
     public void onSuccessFromReadUserCreatedEvent(List<Events> eventsList) {
-        //eventsLocalDataSource.insertEvents(eventsList);
         usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
     }
 
@@ -818,7 +743,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onFailureFromLocalP(Exception exception) {
-        exception.getMessage();
+        Log.e(TAG, exception.getMessage());
     }
 
 
@@ -837,9 +762,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     public void onPlacesFavoriteStatusChanged(Place place, List<Place> favoritePlaces) {
         List<Place> allPlaces = allPlacesMutableLiveData.getValue();
         if (allPlaces != null) {
-            List<Place> oldAllPlaces = allPlaces;
-            if (oldAllPlaces.contains(place)) {
-                oldAllPlaces.set(oldAllPlaces.indexOf(place), place);
+            if (allPlaces.contains(place)) {
+                allPlaces.set(allPlaces.indexOf(place), place);
                 allPlacesMutableLiveData.postValue(allPlaces);
             }
         }
@@ -868,10 +792,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         List<Place> allPlaces = allPlacesMutableLiveData.getValue();
 
         if (allPlaces != null) {
-            List<Place> oldAllPlaces = allPlaces;
             for (Place p : favoritePlaces) {
-                if (oldAllPlaces.contains(p)) {
-                    oldAllPlaces.set(oldAllPlaces.indexOf(p), p);
+                if (allPlaces.contains(p)) {
+                    allPlaces.set(allPlaces.indexOf(p), p);
                 }
             }
             allPlacesMutableLiveData.postValue(allPlaces);
@@ -881,8 +804,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             favoritePlaces.clear();
             favoritePlacesMutableLiveData2.postValue(new Result.PlacesResponseSuccess(favoritePlaces));
         }
-
-        //backupDataSource.deleteAllFavoriteNews();
     }
 
     @Override
@@ -943,11 +864,9 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         if (placesList != null) {
 
             Log.e(TAG, "onSuccessFromRemoteCurrentUserPlacesReading: lettura da remoto posti creati dall'utente corrente");
-            //printEventList(placesList);
 
             placesLocalDataSource.insertPlaces(placesList);
             myPlacesListLiveData.postValue(placesList);
-            //allPlacesMutableLiveData.add.....
         }
     }
 
@@ -1006,7 +925,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void editEvent(Events oldEvent, Events newEvent) {
-        backupDataSource3.editEvent( oldEvent, newEvent);
+        backupDataSource3.editEvent(oldEvent, newEvent);
         eventsLocalDataSource.editEvent(oldEvent, newEvent);
     }
     //-----------------------------------------------------------------

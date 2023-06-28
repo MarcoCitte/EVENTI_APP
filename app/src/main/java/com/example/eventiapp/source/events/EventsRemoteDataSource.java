@@ -3,14 +3,12 @@ package com.example.eventiapp.source.events;
 import static com.example.eventiapp.util.Constants.API_KEY_ERROR;
 import static com.example.eventiapp.util.Constants.CONTENT_TYPE_VALUE;
 import static com.example.eventiapp.util.Constants.FIREBASE_REALTIME_DATABASE;
-import static com.example.eventiapp.util.Constants.FIREBASE_USERS_COLLECTION;
 import static com.example.eventiapp.util.Constants.FIREBASE_USERS_CREATED_EVENTS_COLLECTION;
 import static com.example.eventiapp.util.Constants.RETROFIT_ERROR;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
@@ -25,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -116,19 +115,11 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
     @Override
     public void insertEvents(Events events) {
         databaseReference.child(FIREBASE_USERS_CREATED_EVENTS_COLLECTION).child(String.valueOf(events.hashCode())).
-                setValue(events).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        //events.setSynchronized(true);
-                        eventsCallback.onSuccessFromInsertUserCreatedEvent(events);
-                    }
+                setValue(events).addOnSuccessListener(aVoid -> {
+                    //events.setSynchronized(true);
+                    eventsCallback.onSuccessFromInsertUserCreatedEvent(events);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        eventsCallback.onFailureFromCloud(e);
-                    }
-                });
+                .addOnFailureListener(e -> eventsCallback.onFailureFromCloud(e));
     }
 
     @Override
@@ -144,7 +135,9 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
                 List<Events> eventsList = new ArrayList<>();
                 for(DataSnapshot ds : task.getResult().getChildren()) {
                     Events events = ds.getValue(Events.class);
-                    events.setSynchronized(true);
+                    if (events != null) {
+                        events.setSynchronized(true);
+                    }
                     eventsList.add(events);
                 }
                 eventsCallback.onSuccessFromReadUserCreatedEvent(eventsList);
@@ -155,8 +148,8 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
 
     @Override
     public void onPostExecuted(List<Events> eventsList) {
-        List<Events> updatedEventsList = new ArrayList<>(eventsApiResponse.body().getEventsList());
-        List<Events> updatedEventsList2 = new ArrayList<>(eventsApiResponse2.body().getEventsList());
+        List<Events> updatedEventsList = new ArrayList<>(Objects.requireNonNull(eventsApiResponse.body()).getEventsList());
+        List<Events> updatedEventsList2 = new ArrayList<>(Objects.requireNonNull(eventsApiResponse2.body()).getEventsList());
 
         updatedEventsList.addAll(updatedEventsList2);
         updatedEventsList.addAll(eventsList);

@@ -6,8 +6,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+
 import com.example.eventiapp.model.Events;
-import com.example.eventiapp.util.DateUtils;
 
 import java.util.List;
 
@@ -75,12 +75,8 @@ public interface EventsDao {
     @Query("SELECT DISTINCT * FROM events WHERE title LIKE '%' || :input || '%' OR category LIKE '%' || :input || '%' ")
     List<Events> getEventsFromSearch(String input);
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     List<Long> insertEventsList(List<Events> eventsList);
-
-    @Insert
-    void insertAll(Events... events);
 
     @Update
     int updateSingleFavoriteEvents(Events events);
@@ -91,14 +87,8 @@ public interface EventsDao {
     @Delete
     void delete(Events events);
 
-    @Delete
-    void deleteAllWithoutQuery(Events... events);
 
     @Query("DELETE FROM events")
     int deleteAll();
 
-    @Query("DELETE FROM events WHERE is_favorite=0")
-    void deleteNotFavoriteEvents();
-    @Update
-    void editEvent(Events modEvent);
 }
