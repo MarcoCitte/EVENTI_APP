@@ -288,7 +288,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private final TextView textViewAddress;
         private final TextView textViewDistance;
         private final ImageView imageViewPlace;
-        private final ImageView imageViewFavorite;
 
         public Places3ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -296,13 +295,11 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewDistance = itemView.findViewById(R.id.distanceTextView);
             textViewAddress = itemView.findViewById(R.id.addressTextView);
             imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
-            imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
             ImageView imageViewMode = itemView.findViewById(R.id.imageViewMode);
             ImageView imageViewDelete = itemView.findViewById(R.id.imageViewDelete);
             ImageView imageViewShare = itemView.findViewById(R.id.imageViewShare);
 
             itemView.setOnClickListener(this);
-            imageViewFavorite.setOnClickListener(this);
             imageViewShare.setOnClickListener(this);
             imageViewMode.setOnClickListener(this);
             imageViewDelete.setOnClickListener(this);
@@ -333,15 +330,11 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
-            setImageViewFavoritePlace(placeList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.imageViewFavorite) {
-                setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
-                onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
-            } else if (v.getId() == R.id.imageViewShare) {
+            if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(placeList.get(getAdapterPosition()));
             } else if (v.getId() == R.id.imageViewMode) {
                 onItemClickListener.onModePlaceButtonPressed(placeList.get(getAdapterPosition()));
@@ -349,18 +342,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 onItemClickListener.onDeletePlaceButtonPressed(placeList.get(getAdapterPosition()));
             } else {
                 onItemClickListener.onPlacesItemClick(placeList.get(getAdapterPosition()));
-            }
-        }
-
-        private void setImageViewFavoritePlace(boolean isFavorite) {
-            if (isFavorite) {
-                imageViewFavorite.setImageDrawable(
-                        AppCompatResources.getDrawable(application,
-                                R.drawable.ic_baseline_favorite_24));
-            } else {
-                imageViewFavorite.setImageDrawable(
-                        AppCompatResources.getDrawable(application,
-                                R.drawable.ic_baseline_favorite_border_24));
             }
         }
     }
