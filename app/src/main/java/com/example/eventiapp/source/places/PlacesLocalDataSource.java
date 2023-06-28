@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.example.eventiapp.database.PlaceDao;
 import com.example.eventiapp.database.RoomDatabase;
+import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.util.DataEncryptionUtil;
 import com.example.eventiapp.util.SharedPreferencesUtil;
@@ -174,6 +175,17 @@ public class PlacesLocalDataSource extends BasePlacesLocalDataSource {
                 placeDao.delete(place);
                 placeCallback.onSuccessFromLocalCurrentUserPlaceDeletion(place);
             }
+        });
+    }
+
+    @Override
+    public void editPlace(Place oldPlace, Place newPlace) {
+        RoomDatabase.databaseWriteExecutor.execute(() -> {
+            deleteMyPlace(oldPlace);
+            List<Place> l = new ArrayList<>();
+            l.add(newPlace);
+            insertPlaces(l);
+            placeCallback.onSuccessFromLocalCurrentUserPlaceEdit(newPlace);
         });
     }
 }

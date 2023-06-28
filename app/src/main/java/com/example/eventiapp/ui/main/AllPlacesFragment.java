@@ -231,7 +231,16 @@ public class AllPlacesFragment extends Fragment {
             if (result != null) {
                 Log.e("ALLPLACESFRAGMENT", "user created places: "+result.size()+"");
 
-                //NON AGGIUNGERE ALTRO FUNZIONA BENE COSI
+                //tolgo i posti creati dagli utenti e poi li riaggiungo da result, per evitare di avere un posto e la sua versione modificata
+                for(int i = 0; i < placesList.size(); i++){
+                    if(placesList.get(i).getCreatorEmail() != null)
+                        placesList.remove(i);
+                }
+                for(int i=0; i < result.size(); i++)
+                    placesList.add(result.get(i));
+
+
+                placesRecyclerViewAdapter.notifyDataSetChanged();
 
 
             } else {

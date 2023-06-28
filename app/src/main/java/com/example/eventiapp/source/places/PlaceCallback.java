@@ -38,4 +38,8 @@ public interface PlaceCallback {
     void onSuccessFromRemoteCurrentUserPlaceDeletion(Place place);
 
     void onFailureFromCloud(Exception e);
+
+    void onSuccessFromRemoteCurrentUserPlaceEdit(Place newPlace);
+
+    void onSuccessFromLocalCurrentUserPlaceEdit(Place newPlace);
 }

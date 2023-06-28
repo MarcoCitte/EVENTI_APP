@@ -14,6 +14,7 @@ import com.example.eventiapp.database.EventsDao;
 import com.example.eventiapp.database.RoomDatabase;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
+import com.example.eventiapp.model.Place;
 import com.example.eventiapp.util.DataEncryptionUtil;
 import com.example.eventiapp.util.SharedPreferencesUtil;
 
@@ -204,6 +205,8 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
         });
     }
 
+
+
     @Override
     public void deleteFavoriteEvents() {
         RoomDatabase.databaseWriteExecutor.execute(() -> {
@@ -333,4 +336,6 @@ public class EventsLocalDataSource extends BaseEventsLocalDataSource {
             eventsCallback.onSuccessFromLocalCurrentUserEventsEdit(newEvent);
         });
     }
+
+
 }

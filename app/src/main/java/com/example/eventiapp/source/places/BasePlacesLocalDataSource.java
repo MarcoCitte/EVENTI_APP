@@ -35,4 +35,6 @@ public abstract class BasePlacesLocalDataSource {
     public abstract void getMyPlaces();
 
     public abstract void deleteMyPlace(Place place);
+
+    public abstract void editPlace(Place oldPlace, Place newPlace);
 }

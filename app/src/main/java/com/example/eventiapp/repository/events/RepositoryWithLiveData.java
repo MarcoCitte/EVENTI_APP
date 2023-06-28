@@ -647,6 +647,16 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     }
 
     @Override
+    public void onSuccessFromRemoteCurrentUserPlaceEdit(Place newPlace) {
+
+    }
+
+    @Override
+    public void onSuccessFromLocalCurrentUserPlaceEdit(Place newPlace) {
+
+    }
+
+    @Override
     public void onSuccessSynchronization() {
         Log.d(TAG, "Events synchronized from remote");
     }
@@ -849,7 +859,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onSuccessFromReadUserCreatedPlaces(List<Place> placesList) {
-        //eventsLocalDataSource.insertEvents(eventsList);
+        placesLocalDataSource.insertPlaces(placesList);
         usersCreatedPlacesMutableLiveData.postValue(placesList);
     }
 
@@ -928,5 +938,12 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         backupDataSource3.editEvent(oldEvent, newEvent);
         eventsLocalDataSource.editEvent(oldEvent, newEvent);
     }
-    //-----------------------------------------------------------------
+
+    @Override
+    public void editPlace(Place oldPlace, Place newPlace) {
+        backupDataSource4.editPlace(oldPlace, newPlace);
+        placesLocalDataSource.editPlace(oldPlace, newPlace);
+    }
+
+
 }

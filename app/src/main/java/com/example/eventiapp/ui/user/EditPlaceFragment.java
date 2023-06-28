@@ -71,6 +71,7 @@ public class EditPlaceFragment extends Fragment {
 
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     private UserViewModel userViewModel;
+    private Place oldPlace;
 
 
 
@@ -118,10 +119,11 @@ public class EditPlaceFragment extends Fragment {
         //BUNDLE
         assert getArguments() != null;
         Place place = getArguments().getParcelable("place");
+        oldPlace = place;
 
         mapView = fragmentEditPlaceBinding.mapView;
-        mapView.onCreate(savedInstanceState);
-        mapView.onResume();
+        //mapView.onCreate(savedInstanceState);
+        //mapView.onResume();
         if (mapView != null) {
             mapView.getMapAsync(callback);
         }
@@ -187,15 +189,16 @@ public class EditPlaceFragment extends Fragment {
                 if (isOk) {
                     //AGGIUNGI POSTO
 
-                    Place place = new Place();
-                    place.setId(name + address + latLng.toString()); //?
-                    place.setName(name);
-                    place.setAddress(address + ", " + city + ", " + cap + ", " + nation);
+                    Place newPlace = new Place();
+                    newPlace.setCreatorEmail(userViewModel.getLoggedUser().getEmail());
+                    newPlace.setId(name + address + latLng.toString()); //?
+                    newPlace.setName(name);
+                    newPlace.setAddress(address + ", " + city + ", " + cap + ", " + nation);
                     List<Double> coordinates = new ArrayList<>();
                     coordinates.add(latLng.latitude);
                     coordinates.add(latLng.latitude);
-                    place.setCoordinates(coordinates);
-                    place.setPhoneNumber(phoneNumber);
+                    newPlace.setCoordinates(coordinates);
+                    newPlace.setPhoneNumber(phoneNumber);
 
                     if (imageUri != null) {
                         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -217,9 +220,11 @@ public class EditPlaceFragment extends Fragment {
                                             @Override
                                             public void onSuccess(Uri uri) {
                                                 String downloadUrl = uri.toString();
-                                                Log.i("URL", downloadUrl);
-                                                place.setUrlUserImage(downloadUrl);
+                                                Log.e("URL", downloadUrl);
+                                                newPlace.setUrlUserImage(downloadUrl);
 
+
+                                                eventsAndPlacesViewModel.editPlace(oldPlace, newPlace);
                                                 Navigation.findNavController(requireView()).navigate(R.id.action_editPlaceFragment_to_containerMyEventsAndPlaces);
                                                 Snackbar.make(requireActivity().findViewById(android.R.id.content),
                                                         (getString(R.string.place_modified)), Snackbar.LENGTH_SHORT).show();
@@ -237,7 +242,7 @@ public class EditPlaceFragment extends Fragment {
                                     }
                                 });
                     } else {
-
+                        eventsAndPlacesViewModel.editPlace(oldPlace, newPlace);
                         Navigation.findNavController(requireView()).navigate(R.id.action_editPlaceFragment_to_containerMyEventsAndPlaces);
                         Snackbar.make(requireActivity().findViewById(android.R.id.content),
                                 (getString(R.string.place_modified)), Snackbar.LENGTH_SHORT).show();
@@ -297,25 +302,25 @@ public class EditPlaceFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mapView.onResume();
+        //mapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        //mapView.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        //mapView.onDestroy();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        //mapView.onSaveInstanceState(outState);
     }
 
 

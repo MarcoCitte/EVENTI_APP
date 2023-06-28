@@ -2,6 +2,7 @@ package com.example.eventiapp.source.events;
 
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
+import com.example.eventiapp.model.Place;
 
 import java.util.List;
 
@@ -51,6 +52,7 @@ public abstract class BaseEventsLocalDataSource {
 
     public abstract void deleteMyEvents(Events events);
 
+
     public abstract void deleteFavoriteEvents();
 
     public abstract void insertEvents(EventsApiResponse eventsApiResponse);
@@ -66,4 +68,5 @@ public abstract class BaseEventsLocalDataSource {
     public abstract void getMyEvents();
 
     public abstract void editEvent(Events oldEvent, Events newEvent);
+
 }

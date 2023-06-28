@@ -16,4 +16,6 @@ public abstract class BaseMyPlacesDataSource {
     public abstract void synchronizeMyPlaces(List<Place> notSynchronizedEventsList);
     public abstract void deleteMyPlace(Place place);
     public abstract void deleteAllMyPlaces();
+
+    public abstract void editPlace(Place oldPlace, Place newPlace);
 }

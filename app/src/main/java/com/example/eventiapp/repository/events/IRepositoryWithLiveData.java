@@ -84,4 +84,6 @@ public interface IRepositoryWithLiveData {
     void deleteMyPlace(Place place);
 
     void editEvent(Events oldEvent, Events newEvent);
+
+    void editPlace(Place oldPlace, Place newPlace);
 }

@@ -224,6 +224,7 @@ public class MyPlacesFragment extends Fragment {
                 getMyPlacesLiveData(isFirstLoadingMyPlaces).
                 observe(getViewLifecycleOwner(), result -> {
                     if (result != null) {
+                        Log.e(TAG, "onViewCreated: myPlacesListSize: " + result.size());
                         List<Place> fetchedPlaces = result;
                         if (!fetchedPlaces.isEmpty()) {
                             myPlacesList.clear();

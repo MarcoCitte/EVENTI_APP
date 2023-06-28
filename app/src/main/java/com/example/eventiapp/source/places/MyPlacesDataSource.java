@@ -1,6 +1,7 @@
 package com.example.eventiapp.source.places;
 
 import static com.example.eventiapp.util.Constants.FIREBASE_REALTIME_DATABASE;
+import static com.example.eventiapp.util.Constants.FIREBASE_USERS_CREATED_EVENTS_COLLECTION;
 import static com.example.eventiapp.util.Constants.FIREBASE_USERS_CREATED_PLACES_COLLECTION;
 
 import android.util.Log;
@@ -72,5 +73,17 @@ public class MyPlacesDataSource extends BaseMyPlacesDataSource {
     @Override
     public void deleteAllMyPlaces() {
 
+    }
+
+    @Override
+    public void editPlace(Place oldPlace, Place newPlace) {
+        deleteMyPlace(oldPlace);
+
+        databaseReference.child(FIREBASE_USERS_CREATED_PLACES_COLLECTION)
+                .child(String.valueOf(newPlace.hashCode())).
+                setValue(newPlace).addOnSuccessListener(aVoid -> {
+                    newPlace.setSynchronized(false);
+                    placesCallback.onSuccessFromRemoteCurrentUserPlaceEdit(newPlace);
+                }).addOnFailureListener(e -> placesCallback.onFailureFromCloud(e));
     }
 }
