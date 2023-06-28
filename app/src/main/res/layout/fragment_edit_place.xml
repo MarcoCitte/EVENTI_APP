@@ -30,8 +30,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/name"
-                android:outlineAmbientShadowColor="@color/colorTextSecondary"
-                app:boxBackgroundColor="@color/colorBackground"
+                android:outlineAmbientShadowColor="?attr/colorSecondary"
+                app:boxBackgroundColor="?attr/colorOnBackground"
                 app:errorEnabled="true"
                 tools:targetApi="p">
 
@@ -39,7 +39,7 @@
                     android:id="@+id/editTextName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="?attr/colorPrimary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -49,8 +49,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/address"
-                android:outlineAmbientShadowColor="@color/colorTextSecondary"
-                app:boxBackgroundColor="@color/colorBackground"
+                android:outlineAmbientShadowColor="?attr/colorSecondary"
+                app:boxBackgroundColor="?attr/colorOnBackground"
                 app:errorEnabled="true"
                 tools:targetApi="p">
 
@@ -59,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="?attr/colorPrimary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,8 +74,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/city"
-                    android:outlineAmbientShadowColor="@color/colorTextSecondary"
-                    app:boxBackgroundColor="@color/colorBackground"
+                    android:outlineAmbientShadowColor="?attr/colorSecondary"
+                    app:boxBackgroundColor="?attr/colorOnBackground"
                     app:errorEnabled="true"
                     tools:targetApi="p">
 
@@ -84,7 +84,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:textColor="@color/colorTextPrimary" />
+                        android:textColor="?attr/colorPrimary" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -95,8 +95,8 @@
                     android:layout_weight="1"
                     android:layout_marginStart="10sp"
                     android:hint="@string/cap"
-                    android:outlineAmbientShadowColor="@color/colorTextSecondary"
-                    app:boxBackgroundColor="@color/colorBackground"
+                    android:outlineAmbientShadowColor="?attr/colorSecondary"
+                    app:boxBackgroundColor="?attr/colorOnBackground"
                     app:errorEnabled="true"
                     tools:targetApi="p">
 
@@ -105,7 +105,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="number"
-                        android:textColor="@color/colorTextPrimary" />
+                        android:textColor="?attr/colorPrimary" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -117,8 +117,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/nation"
-                android:outlineAmbientShadowColor="@color/colorTextSecondary"
-                app:boxBackgroundColor="@color/colorBackground"
+                android:outlineAmbientShadowColor="?attr/colorSecondary"
+                app:boxBackgroundColor="?attr/colorOnBackground"
                 app:errorEnabled="true"
                 tools:targetApi="p">
 
@@ -127,7 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textAutoComplete"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="?attr/colorPrimary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -136,8 +136,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/phone_number_optional"
-                android:outlineAmbientShadowColor="@color/colorTextSecondary"
-                app:boxBackgroundColor="@color/colorBackground"
+                android:outlineAmbientShadowColor="?attr/colorSecondary"
+                app:boxBackgroundColor="?attr/colorOnBackground"
                 app:errorEnabled="true"
                 tools:targetApi="p">
 
@@ -146,7 +146,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="?attr/colorPrimary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -177,6 +177,7 @@
                     android:id="@+id/buttonEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnBackground"
                     android:text="@string/edit" />
 
                 <com.google.android.material.button.MaterialButton
@@ -184,6 +185,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
+                    android:textColor="?attr/colorOnBackground"
                     android:text="@string/cancel_text" />
 
                 <com.google.android.material.button.MaterialButton
@@ -192,6 +194,7 @@
                     android:layout_height="wrap_content"
                     app:backgroundTint="@color/colorRed"
                     android:layout_marginStart="10sp"
+                    android:textColor="?attr/colorOnBackground"
                     android:text="@string/delete_place" />
 
             </LinearLayout>

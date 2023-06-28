@@ -39,7 +39,7 @@
                         android:layout_weight="1"
                         android:padding="16sp"
                         android:text="@string/myevents_min"
-                        android:textColor="@color/colorTextPrimary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="25sp"
                         android:visibility="visible" />
 
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1sp"
                     android:visibility="visible"
-                    android:background="@color/colorTextPrimary" />
+                    android:background="?attr/colorPrimary" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textViewNoMyEvents"
@@ -61,7 +61,8 @@
                     android:textSize="20sp"
                     android:padding="16sp"
                     android:visibility="gone"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="?attr/colorPrimary"
+                    />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textViewNoMyEvents1"
@@ -108,7 +109,7 @@
                         android:layout_weight="1"
                         android:padding="16sp"
                         android:text="@string/favorite_events"
-                        android:textColor="@color/colorTextPrimary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="25sp"
                         android:visibility="visible" />
 
@@ -119,7 +120,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1sp"
                     android:visibility="visible"
-                    android:background="@color/colorTextPrimary" />
+                    android:background="?attr/colorPrimary" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textViewNoFavoriteEvents"
@@ -130,7 +131,8 @@
                     android:textSize="20sp"
                     android:padding="16sp"
                     android:visibility="gone"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="?attr/colorPrimary"
+                    />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textViewNoFavoriteEvents1"
@@ -174,12 +176,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorBackground">
+        android:background="?attr/colorOnBackground">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/createEventButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnBackground"
             android:text="@string/create_event"
             android:textSize="15sp">
         </com.google.android.material.button.MaterialButton>

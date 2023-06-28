@@ -437,7 +437,7 @@ public class AddEventFragment extends Fragment {
                         if(photoMetadata != null){
                             place.setImages(photoMetadata);
                         }
-                        eventsAndPlacesViewModel.addPlace(place);
+                        //eventsAndPlacesViewModel.addPlace(place);
                     } else { //POSTO CREATO DALL'UTENTE
                         List<Place> placeList = new ArrayList<>();
                         Place selectedPlace = (Place) fragmentAddEventBinding.placesSpinner.getSelectedItem();

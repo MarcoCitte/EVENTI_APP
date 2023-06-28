@@ -23,18 +23,6 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        /*
-        Toolbar toolbar = findViewById(R.id.top_appbar);
-        setSupportActionBar(toolbar);
-
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
-                findFragmentById(R.id.nav_host_fragment);
-        NavController navController = navHostFragment.getNavController();
-
-        // For the Toolbar
-        NavigationUI.setupActionBarWithNavController(this, navController);
-
-         */
 
     }
 }
