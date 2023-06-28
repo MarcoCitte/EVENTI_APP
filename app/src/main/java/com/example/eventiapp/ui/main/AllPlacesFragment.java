@@ -225,35 +225,7 @@ public class AllPlacesFragment extends Fragment {
         });
 
         int old_size = 0;
-        eventsAndPlacesViewModel.getUserCreatedPlaces(0).observe(getViewLifecycleOwner(), result -> {
 
-
-            if (result != null) {
-                Log.e("ALLPLACESFRAGMENT", "user created places: "+result.size()+"");
-
-                //tolgo i posti creati dagli utenti e poi li riaggiungo da result, per evitare di avere un posto e la sua versione modificata
-                for(int i = 0; i < placesList.size(); i++){
-                    if(placesList.get(i).getCreatorEmail() != null)
-                        placesList.remove(i);
-                }
-                for(int i=0; i < result.size(); i++)
-                    placesList.add(result.get(i));
-
-
-                placesRecyclerViewAdapter.notifyDataSetChanged();
-
-
-            } else {
-                Log.i("FALLITO", "FALLITO");
-
-                ErrorMessageUtil errorMessagesUtil =
-                        new ErrorMessageUtil(requireActivity().getApplication());
-                Snackbar.make(view, errorMessagesUtil.
-                                getErrorMessage("ERRORE"),
-                        Snackbar.LENGTH_SHORT).show();
-                fragmentPlacesBinding.progressBar.setVisibility(View.GONE);
-            }
-        });
 
         /*
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
