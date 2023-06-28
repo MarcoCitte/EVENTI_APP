@@ -11,6 +11,7 @@
     android:checkable="true"
     android:clickable="true"
     android:focusable="true"
+    app:cardBackgroundColor="@color/colorBackground"
     card_view:cardElevation="0sp">
 
 
@@ -33,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="8sp"
+            android:layout_marginStart="5sp"
             android:orientation="vertical">
 
             <TextView
@@ -43,7 +44,7 @@
                 android:layout_marginTop="5sp"
                 android:text="Name"
                 android:lineSpacingExtra="-20sp"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="@color/colorTextPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
@@ -54,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:text="Address"
                 android:lineSpacingExtra="-20sp"
-                android:textColor="?attr/colorSecondary"
+                android:textColor="@color/colorTextSecondary"
                 android:textSize="18sp"
                 tools:ignore="HardcodedText" />
 
@@ -64,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/distance"
                 android:lineSpacingExtra="-20sp"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="@color/colorPrimary"
                 android:textSize="15sp" />
 
             <LinearLayout

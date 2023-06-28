@@ -30,8 +30,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/title"
-                android:outlineAmbientShadowColor="?attr/colorSecondary"
-                app:boxBackgroundColor="?attr/colorOnBackground"
+                android:outlineAmbientShadowColor="@color/colorTextSecondary"
+                app:boxBackgroundColor="@color/colorBackground"
                 app:errorEnabled="true"
                 tools:targetApi="p">
 
@@ -39,7 +39,7 @@
                     android:id="@+id/editTextTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorPrimary" />
+                    android:textColor="@color/colorTextPrimary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -49,8 +49,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/description"
-                android:outlineAmbientShadowColor="?attr/colorSecondary"
-                app:boxBackgroundColor="?attr/colorOnBackground"
+                android:outlineAmbientShadowColor="@color/colorTextSecondary"
+                app:boxBackgroundColor="@color/colorBackground"
                 app:errorEnabled="true"
                 tools:targetApi="p">
 
@@ -59,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:textColor="?attr/colorPrimary"  />
+                    android:textColor="@color/colorTextPrimary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -90,7 +90,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1sp"
-                android:background="?attr/colorPrimary"
+                android:background="@color/colorTextPrimary"
                 tools:ignore="SmallSp" />
 
             <LinearLayout
@@ -115,7 +115,7 @@
                     android:focusable="true"
                     android:hint="@string/select_date"
                     android:inputType="none"
-                    android:textColor="?attr/colorSecondary"
+                    android:textColor="@color/colorTextSecondary"
                     android:textSize="18sp"
                     tools:ignore="TextFields" />
 
@@ -128,7 +128,7 @@
                     android:focusable="true"
                     android:hint="@string/select_time"
                     android:inputType="datetime"
-                    android:textColor="?attr/colorSecondary"
+                    android:textColor="@color/colorTextSecondary"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -155,7 +155,7 @@
                     android:focusable="true"
                     android:hint="@string/select_date"
                     android:inputType="date"
-                    android:textColor="?attr/colorSecondary"
+                    android:textColor="@color/colorTextSecondary"
                     android:textSize="18sp"
                     tools:ignore="TextFields" />
 
@@ -168,7 +168,7 @@
                     android:focusable="true"
                     android:hint="@string/select_time"
                     android:inputType="datetime"
-                    android:textColor="?attr/colorSecondary"
+                    android:textColor="@color/colorTextSecondary"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -285,7 +285,6 @@
                     android:id="@+id/buttonEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnBackground"
                     android:text="@string/edit" />
 
                 <com.google.android.material.button.MaterialButton
@@ -293,7 +292,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10sp"
-                    android:textColor="?attr/colorOnBackground"
                     android:text="@string/cancel_text" />
 
                 <com.google.android.material.button.MaterialButton
@@ -302,7 +300,6 @@
                     android:layout_height="wrap_content"
                     app:backgroundTint="@color/colorRed"
                     android:layout_marginStart="10sp"
-                    android:textColor="?attr/colorOnBackground"
                     android:text="@string/delete_event" />
 
 

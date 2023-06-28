@@ -37,7 +37,7 @@
                         android:layout_weight="1"
                         android:padding="16sp"
                         android:text="@string/my_places"
-                        android:textColor="?attr/colorPrimary"
+                        android:textColor="@color/colorTextPrimary"
                         android:textSize="25sp"
                         android:visibility="visible" />
 
@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1sp"
                     android:visibility="visible"
-                    android:background="?attr/colorPrimary" />
+                    android:background="@color/colorTextPrimary" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textViewNoMyPlaces"
@@ -59,8 +59,7 @@
                     android:textSize="20sp"
                     android:padding="16sp"
                     android:visibility="gone"
-                    android:textColor="?attr/colorPrimary"
-                    />
+                    android:textColor="@color/colorTextPrimary" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textViewNoMyPlaces1"
@@ -108,7 +107,7 @@
                         android:layout_weight="1"
                         android:padding="16sp"
                         android:text="@string/favorite_places"
-                        android:textColor="?attr/colorPrimary"
+                        android:textColor="@color/colorTextPrimary"
                         android:textSize="25sp"
                         android:visibility="visible" />
 
@@ -119,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1sp"
                     android:visibility="visible"
-                    android:background="?attr/colorPrimary" />
+                    android:background="@color/colorTextPrimary" />
 
 
                 <com.google.android.material.textview.MaterialTextView
@@ -131,8 +130,7 @@
                     android:textSize="20sp"
                     android:padding="16sp"
                     android:visibility="gone"
-                    android:textColor="?attr/colorPrimary"
-                    />
+                    android:textColor="@color/colorTextPrimary" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textViewNoFavoritePlaces1"
@@ -176,13 +174,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:background="?attr/colorOnBackground">
+        android:background="@color/colorBackground">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/createPlaceButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="?attr/colorOnBackground"
             android:text="@string/create_place"
             android:textSize="15sp">
         </com.google.android.material.button.MaterialButton>

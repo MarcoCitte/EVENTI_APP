@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Bicocca Events HUB</string>
+    <string name="app_name">EVENTI APP</string>
     <string name="map">MAPPA</string>
     <string name="myevents">I MIEI EVENTI</string>
     <string name="myevents_min">I miei eventi</string>
@@ -12,7 +12,7 @@
     <string name="cancel_text">Indietro</string>
     <string name="forgot_password">Hai dimenticato la password?</string>
     <string name="google_login">Login con Google</string>
-    <string name="new_account">Nuovo su Bicocca Events HUB?</string>
+    <string name="new_account">Nuovo su Eventi APP?</string>
     <string name="register">Registrati</string>
     <string name="error_email">Inserisci un valido indirizzo email</string>
     <string name="error_password">La password deve contenere almeno 6 caretteri</string>

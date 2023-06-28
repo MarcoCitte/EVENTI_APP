@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="15sp"
         android:text="@string/created_by_users"
-        android:textColor="?attr/colorSecondary"
+        android:textColor="@color/colorTextSecondary"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,7 +27,7 @@
         android:text="@string/number_of_events"
         android:layout_marginTop="-25sp"
         android:layout_marginStart="15sp"
-        android:textColor="?attr/colorPrimary"
+        android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toStartOf="@id/title"
         app:layout_constraintTop_toBottomOf="@id/title" />
 
@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"
-        android:textColor="?attr/colorPrimary"
+        android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
         app:layout_constraintTop_toTopOf="@id/numberOfEvents0"
         tools:ignore="HardcodedText" />
@@ -49,7 +49,6 @@
         android:elevation="4sp"
         android:layout_marginEnd="10sp"
         app:icon="@drawable/ic_baseline_sort_24"
-        app:iconTint="?attr/colorOnBackground"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="60sp"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -164,11 +164,11 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewTitle.setText(events.getTitle());
             //EVENTS UCI ED EVENTS PIRELLI HANGAR NON HANNO FINE DATA
             SimpleDateFormat outputFormat;
-            if (events.getEventSource() == null && events.getCreatorEmail() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            if (events.getEventSource() == null && events.getCreatorEmail()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            } else if (events.getCreatorEmail() != null && events.getStart().contains("userH")) {
+            } else if(events.getCreatorEmail()!=null && events.getStart().contains("userH")){
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");  //EVENTI CREATI DAGLI UTENTI CHE HANNO ANCHE UN ORARIO
-            } else {
+            }else {
                 outputFormat = new SimpleDateFormat("dd MMM yyyy");
             }
             if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
@@ -269,11 +269,11 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewCategory.setText(events.getCategory());
 
             SimpleDateFormat outputFormat;
-            if (events.getEventSource() == null && events.getCreatorEmail() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            if (events.getEventSource() == null && events.getCreatorEmail()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            } else if (events.getCreatorEmail() != null && events.getStart().contains("userH")) {
+            } else if(events.getCreatorEmail()!=null && events.getStart().contains("userH")){
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");  //EVENTI CREATI DAGLI UTENTI CHE HANNO ANCHE UN ORARIO
-            } else {
+            }else {
                 outputFormat = new SimpleDateFormat("dd MMM yyyy");
             }
             if (events.getEnd() != null && !Objects.equals(events.getStart(), events.getEnd())) {
@@ -373,11 +373,11 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewTitle.setText(events.getTitle());
             textViewCategory.setText(events.getCategory());
             SimpleDateFormat outputFormat;
-            if (events.getEventSource() == null && events.getCreatorEmail() == null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
+            if (events.getEventSource() == null && events.getCreatorEmail()==null) {  //QUESTI EVENTI HANNO ANCHE L'ORARIO
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-            } else if (events.getCreatorEmail() != null && events.getStart().contains("userH")) {
+            } else if(events.getCreatorEmail()!=null && events.getStart().contains("userH")){
                 outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm");  //EVENTI CREATI DAGLI UTENTI CHE HANNO ANCHE UN ORARIO
-            } else {
+            }else {
                 outputFormat = new SimpleDateFormat("dd MMM yyyy");
             }
             if (events.getStart() != null && !events.getStart().isEmpty()) {

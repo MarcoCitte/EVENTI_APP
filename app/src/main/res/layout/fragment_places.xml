@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/number_of_places"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="@color/colorTextPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="@color/colorTextPrimary"
             app:layout_constraintStart_toEndOf="@id/numberOfEvents0"
             app:layout_constraintTop_toTopOf="@id/numberOfEvents0"
             tools:ignore="HardcodedText" />
@@ -42,7 +42,6 @@
         android:layout_height="50sp"
         android:layout_marginTop="5sp"
         android:layout_marginEnd="15sp"
-        app:iconTint="?attr/colorOnBackground"
         android:elevation="4sp"
         app:icon="@drawable/ic_baseline_sort_24"
         app:layout_constraintEnd_toEndOf="parent"
