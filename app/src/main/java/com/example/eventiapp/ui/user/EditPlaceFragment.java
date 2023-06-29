@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentAddPlaceBinding;
 import com.example.eventiapp.databinding.FragmentEditPlaceBinding;
+import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
@@ -38,6 +39,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -74,8 +76,8 @@ public class EditPlaceFragment extends Fragment {
     private Place oldPlace;
 
 
-
-    public EditPlaceFragment() {}
+    public EditPlaceFragment() {
+    }
 
     public static EditPlaceFragment newInstance() {
         return new EditPlaceFragment();
@@ -200,11 +202,14 @@ public class EditPlaceFragment extends Fragment {
                     newPlace.setCoordinates(coordinates);
                     newPlace.setPhoneNumber(phoneNumber);
 
+                    if (place.getUrlUserImage() != null) {
+                        newPlace.setUrlUserImage(place.getUrlUserImage());
+                    }
                     if (imageUri != null) {
                         FirebaseStorage storage = FirebaseStorage.getInstance();
                         fragmentEditPlaceBinding.placeImage.setDrawingCacheEnabled(true);
                         fragmentEditPlaceBinding.placeImage.buildDrawingCache();
-                        Bitmap bitmapImage = ((BitmapDrawable)  fragmentEditPlaceBinding.placeImage.getDrawable()).getBitmap();
+                        Bitmap bitmapImage = ((BitmapDrawable) fragmentEditPlaceBinding.placeImage.getDrawable()).getBitmap();
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                         byte[] data = baos.toByteArray();
@@ -263,7 +268,7 @@ public class EditPlaceFragment extends Fragment {
         fragmentEditPlaceBinding.buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 eventsAndPlacesViewModel.deleteMyPlace(place);
+                eventsAndPlacesViewModel.deleteMyPlace(place);
                 Navigation.findNavController(requireView()).navigate(R.id.action_editPlaceFragment_to_containerMyEventsAndPlaces);
                 Snackbar.make(requireActivity().findViewById(android.R.id.content),
                         (getString(R.string.place_deleted)), Snackbar.LENGTH_SHORT).show();
@@ -275,7 +280,7 @@ public class EditPlaceFragment extends Fragment {
 
         public void onMapReady(@NonNull GoogleMap mMap) {
             googleMap = mMap;
-            googleMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
+            googleMap.addMarker(new MarkerOptions().position(latLng).draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
                 public void onMarkerDrag(@NonNull Marker marker) {

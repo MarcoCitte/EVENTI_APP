@@ -691,6 +691,7 @@ public class HomeFragment extends Fragment {
                 eventsRecyclerViewAdapterUserEvents.notifyItemRangeRemoved(0, eventsListUser.size());
                 eventsListUser.clear();
                 fragmentHomeBinding.textViewUserEvents.setVisibility(View.GONE);
+                fragmentHomeBinding.textViewCreatedByUser.setVisibility(View.GONE);
                 fragmentHomeBinding.progressBarUserEvents.setVisibility(View.GONE);
             }
         } else {

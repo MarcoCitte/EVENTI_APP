@@ -388,7 +388,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         //PLACES
 
 
-        /*
         List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
@@ -425,6 +424,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
                         } else {
                             coordinates = new Double[]{e.getCoordinates().get(0), e.getCoordinates().get(1)};
                         }
+                        Log.i("POSTO NUOVO", place.getName());
                         List<Place> placesList = new ArrayList<>();
                         placesList.add(new Place(e.getPlaces().get(0).getId(), StringUtils.capitalizeFirstLetter(place.getName()), e.getPlaces().get(0).getType(), place.getAddress(), place.getId(), Arrays.asList(coordinates), place.getPhoneNumber(), place.getPhotoMetadatas()));
                         placesLocalDataSource.insertPlaces(placesList);
@@ -446,7 +446,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
         }
 
-         */
 
 
     }

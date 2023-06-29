@@ -443,6 +443,9 @@ public class EditEventFragment extends Fragment {
                         newEvent.setEnd(endDate.trim() + "userH" + endTime);
                     }
                     newEvent.setTimezone("Europe/Rome");
+                    if (events.getEventSource().getUrlPhoto() != null) {
+                        newEvent.setEventSource(new EventSource(null, events.getEventSource().getUrlPhoto()));
+                    }
                     if (imageUri != null) {
                         try {
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);

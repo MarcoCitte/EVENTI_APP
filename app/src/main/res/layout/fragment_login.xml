@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="40sp"
     android:padding="10sp"
     tools:context=".ui.welcome.LoginFragment">
 
@@ -26,39 +25,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_begin="20dp" />
+                app:layout_constraintGuide_begin="20sp" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginTop="-25sp"
+                android:layout_width="300sp"
+                android:layout_height="300sp"
                 android:contentDescription="@string/logo"
+                android:src="@drawable/logoescrittaprincipale"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/textview_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="@string/login"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="34sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logo" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="24dp"
-
+                android:layout_marginTop="-25sp"
+                android:layout_marginEnd="15sp"
+                app:boxBackgroundColor="@color/colorBackgroundSecondary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/left_guideline"
-                app:layout_constraintTop_toBottomOf="@+id/textview_login"
+                app:layout_constraintTop_toBottomOf="@+id/logo"
                 app:endIconMode="clear_text"
                 app:errorEnabled="true">
 
@@ -74,8 +64,9 @@
                 android:id="@+id/text_input_layout_password"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginTop="5sp"
+                android:layout_marginEnd="15sp"
+                app:boxBackgroundColor="@color/colorBackgroundSecondary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/left_guideline"
                 app:layout_constraintTop_toBottomOf="@+id/text_input_layout_email"
@@ -90,25 +81,25 @@
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/button_forgot_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginTop="10sp"
+                android:layout_marginEnd="15sp"
                 android:text="@string/forgot_password"
                 android:textSize="14sp"
                 app:textAllCaps="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_input_layout_password" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24sp"
+                android:layout_marginTop="15sp"
+                android:layout_marginEnd="15sp"
                 android:backgroundTint="@color/colorButton"
                 app:rippleColor="@color/colorBackground"
                 android:text="@string/login"
@@ -124,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/button_login">
@@ -136,13 +127,13 @@
                     android:layout_marginStart="24dp"
                     android:layout_toStartOf="@id/textview_or" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textview_or"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10sp"
+                    android:layout_marginRight="10sp"
                     android:text="@string/txt_or" />
 
                 <View
@@ -154,13 +145,13 @@
 
             </RelativeLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_google_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginEnd="24sp"
                 android:text="@string/google_login"
                 android:textSize="14sp"
                 app:icon="@drawable/googleg_standard_color_18"
@@ -171,7 +162,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/relative_layout" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/textview_new_account"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -183,12 +174,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_google_login" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register"
+                android:backgroundTint="@color/colorButton"
+                app:rippleColor="@color/colorBackground"
                 android:textSize="14sp"
+                android:textColor="@color/white"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_marginLeft="10sp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textview_new_account"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="packed"

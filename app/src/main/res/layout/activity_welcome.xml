@@ -6,18 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.welcome.WelcomeActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/top_appbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.Material3.Dark"
-        app:menu="@menu/top_app_bar"
-        app:popupTheme="@style/ThemeOverlay.Material3.Light" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"

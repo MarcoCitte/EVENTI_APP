@@ -1,11 +1,12 @@
 <resources>
-    <string name="app_name">EVENTS APP</string>
+    <string name="app_name">Bicocca Events HUB</string>
     <string name="home" translatable="false">HOME</string>
     <string name="map">MAP</string>
     <string name="myevents">MY EVENTS</string>
     <string name="myevents_min">My events</string>
     <string name="search">SEARCH</string>
     <string name="account" translatable="false">ACCOUNT</string>
+    <string name="myevents_and_places">MY SELECTION</string>
 
 
     <string name="content_description_fav_addition">Add the event to the favorite list</string>
@@ -64,7 +65,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="txt_or" translatable="false">OR</string>
     <string name="google_login">Login with Google</string>
-    <string name="new_account">New to Events APP?</string>
+    <string name="new_account">New to Bicocca Events HUB?</string>
     <string name="register">Register</string>
 
 
@@ -147,6 +148,7 @@
     <string name="select_time">Select time</string>
     <string name="end">End:</string>
     <string name="place">Place</string>
+    <string name="place_duepunti">Place:</string>
     <string name="isprivate">Private</string>
     <string name="add">Add</string>
     <string name="all_day">All day</string>

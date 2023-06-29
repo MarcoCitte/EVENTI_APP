@@ -38,6 +38,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -245,7 +246,7 @@ public class AddPlaceFragment extends Fragment {
 
         public void onMapReady(@NonNull GoogleMap mMap) {
             googleMap = mMap;
-            googleMap.addMarker(new MarkerOptions().position(BICOCCA_LATLNG).draggable(true));
+            googleMap.addMarker(new MarkerOptions().position(BICOCCA_LATLNG).draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
                 public void onMarkerDrag(@NonNull Marker marker) {

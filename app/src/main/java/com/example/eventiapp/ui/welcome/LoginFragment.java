@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
@@ -198,7 +199,7 @@ public class LoginFragment extends Fragment {
         final Button buttonLogin = view.findViewById(R.id.button_login);
         final Button buttonGoogleLogin = view.findViewById(R.id.button_google_login);
         final Button buttonRegistration = view.findViewById(R.id.button_registration);
-        final Button buttonResetPassword = view.findViewById(R.id.button_forgot_password);
+        final TextView buttonResetPassword = view.findViewById(R.id.button_forgot_password);
 
         dataEncryptionUtil = new DataEncryptionUtil(requireActivity().getApplication());
 

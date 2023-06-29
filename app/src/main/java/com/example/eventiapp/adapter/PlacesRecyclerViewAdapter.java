@@ -133,7 +133,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         private final TextView textViewName;
         private final TextView textViewAddress;
-        private final TextView textViewDistance;
         private final ImageView imageViewPlace;
         private final ImageView imageViewFavorite;
 
@@ -141,7 +140,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         public PlacesViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.nameTextView);
-            textViewDistance = itemView.findViewById(R.id.distanceTextView);
             textViewAddress = itemView.findViewById(R.id.addressTextView);
             imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
             imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
@@ -156,7 +154,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         public void bind(Place places) {
             textViewName.setText(places.getName());
             textViewAddress.setText(places.getAddress());
-            textViewDistance.setText("5.2km");
             if (places.getImages() != null && !places.getImages().isEmpty()) {
                 PlaceDetailsSource.fetchPlacePhotos(places.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
                     @Override
@@ -210,14 +207,12 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         private final TextView textViewName;
         private final TextView textViewAddress;
-        private final TextView textViewDistance;
         private final ImageView imageViewPlace;
         private final ImageView imageViewFavorite;
 
         public Places2ViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.nameTextView);
-            textViewDistance = itemView.findViewById(R.id.distanceTextView);
             textViewAddress = itemView.findViewById(R.id.addressTextView);
             imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
             imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
@@ -233,7 +228,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         public void bind(Place places) {
             textViewName.setText(places.getName());
             textViewAddress.setText(places.getAddress());
-            textViewDistance.setText("5.2km");
             if (places.getImages() != null && !places.getImages().isEmpty()) {
                 PlaceDetailsSource.fetchPlacePhotos(places.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
                     @Override
@@ -286,23 +280,18 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         private final TextView textViewName;
         private final TextView textViewAddress;
-        private final TextView textViewDistance;
         private final ImageView imageViewPlace;
-        private final ImageView imageViewFavorite;
 
         public Places3ViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.nameTextView);
-            textViewDistance = itemView.findViewById(R.id.distanceTextView);
             textViewAddress = itemView.findViewById(R.id.addressTextView);
             imageViewPlace = itemView.findViewById(R.id.imageViewPlace);
-            imageViewFavorite = itemView.findViewById(R.id.imageViewFavorite);
             ImageView imageViewMode = itemView.findViewById(R.id.imageViewMode);
             ImageView imageViewDelete = itemView.findViewById(R.id.imageViewDelete);
             ImageView imageViewShare = itemView.findViewById(R.id.imageViewShare);
 
             itemView.setOnClickListener(this);
-            imageViewFavorite.setOnClickListener(this);
             imageViewShare.setOnClickListener(this);
             imageViewMode.setOnClickListener(this);
             imageViewDelete.setOnClickListener(this);
@@ -312,7 +301,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         public void bind(Place places) {
             textViewName.setText(places.getName());
             textViewAddress.setText(places.getAddress());
-            textViewDistance.setText("5.2km");
             if (places.getImages() != null && !places.getImages().isEmpty()) {
                 PlaceDetailsSource.fetchPlacePhotos(places.getImages(), true, new PlaceDetailsSource.PlacePhotosListener() {
                     @Override
@@ -333,15 +321,11 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 imageViewPlace.setVisibility(View.GONE);
             }
-            setImageViewFavoritePlace(placeList.get(getAdapterPosition()).isFavorite());
         }
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.imageViewFavorite) {
-                setImageViewFavoritePlace(!placeList.get(getAdapterPosition()).isFavorite());
-                onItemClickListener.onFavoriteButtonPressed(getAdapterPosition());
-            } else if (v.getId() == R.id.imageViewShare) {
+            if (v.getId() == R.id.imageViewShare) {
                 onItemClickListener.onShareButtonPressed(placeList.get(getAdapterPosition()));
             } else if (v.getId() == R.id.imageViewMode) {
                 onItemClickListener.onModePlaceButtonPressed(placeList.get(getAdapterPosition()));
@@ -352,17 +336,6 @@ public class PlacesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             }
         }
 
-        private void setImageViewFavoritePlace(boolean isFavorite) {
-            if (isFavorite) {
-                imageViewFavorite.setImageDrawable(
-                        AppCompatResources.getDrawable(application,
-                                R.drawable.ic_baseline_favorite_24));
-            } else {
-                imageViewFavorite.setImageDrawable(
-                        AppCompatResources.getDrawable(application,
-                                R.drawable.ic_baseline_favorite_border_24));
-            }
-        }
     }
 
 
