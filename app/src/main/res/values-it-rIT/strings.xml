@@ -198,5 +198,7 @@
     <string name="source">Sorgente</string>
     <string name="other_dates_of_the_event">Altre date dell\'evento</string>
     <string name="walk">Cammina</string>
+    <string name="reset_password_text">Inserisci l\'e-mail dell\'account di cui stai tentando di reimpostare la password. Ti verrà inviata un\'e-mail per reimpostare la password.</string>
+    <string name="reset_password_title">Resetta password</string>
 
 </resources>
