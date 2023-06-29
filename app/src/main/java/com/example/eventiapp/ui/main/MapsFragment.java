@@ -74,11 +74,12 @@ public class MapsFragment extends Fragment {
     private EventsAndPlacesViewModel eventsAndPlacesViewModel;
     private List<com.example.eventiapp.model.Place> placesList;
     private List<Events> placeEventsList;
-    GoogleMap myGoogleMap;
+    private GoogleMap myGoogleMap;
     private BottomSheetBehavior mBottomSheetBehavior1;
-    View bottomSheet;
-    LinearLayout tapactionlayout;
-    LayoutInflater inflater;
+    private View bottomSheet;
+    private LinearLayout mapsDetailsLayout;
+    private LinearLayout tapactionlayout;
+    private LayoutInflater inflater;
     private ImageView carImageView;
     private ImageView mapsImageView;
     private ImageView callImageView;
@@ -285,6 +286,7 @@ public class MapsFragment extends Fragment {
         //BOTTOM SHEETS
 
         bottomSheet = view.findViewById(R.id.bottom_sheet1);
+        mapsDetailsLayout=view.findViewById(R.id.maps_details_layout);
         tapactionlayout = view.findViewById(R.id.tap_action_layout);
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
         mBottomSheetBehavior1.setPeekHeight(120);
@@ -419,6 +421,8 @@ public class MapsFragment extends Fragment {
                 @Override
                 public boolean onMarkerClick(@NonNull Marker marker) {
                     tapactionlayout.setVisibility(View.VISIBLE);
+                    mapsDetailsLayout.setVisibility(View.VISIBLE);
+                    bottomSheet.setVisibility(View.VISIBLE);
                     LatLng position = marker.getPosition();
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(20).build();
                     myGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

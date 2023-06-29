@@ -18,7 +18,6 @@ public class EventSource {
         this.urlPhoto = urlPhoto;
     }
 
-    public EventSource(){}
 
     public String getUrl() {
         return url;

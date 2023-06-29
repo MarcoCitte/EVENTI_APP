@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:padding="10sp"
     android:layout_height="match_parent"
     tools:context=".ui.main.AllEventsFragment">
 
@@ -30,7 +31,7 @@
         android:id="@+id/filtersButton"
         android:layout_width="55sp"
         android:layout_height="50sp"
-        android:layout_marginStart="164sp"
+        android:layout_marginStart="150sp"
         android:layout_marginTop="2sp"
         android:elevation="4sp"
         app:icon="@drawable/ic_baseline_filter_alt_24"

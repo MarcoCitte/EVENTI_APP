@@ -11,6 +11,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/colorTextPrimary"
+        android:padding="10sp"
         android:textSize="20sp"
         android:text="@string/select_categories" />
 

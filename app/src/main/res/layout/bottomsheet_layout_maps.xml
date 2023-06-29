@@ -4,11 +4,14 @@
     android:id="@+id/bottom_sheet1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:visibility="gone"
     android:background="@android:color/white"
     android:clipToPadding="true"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <LinearLayout
+        android:id="@+id/maps_details_layout"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -37,7 +40,8 @@
 
         <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="200sp"
+            android:padding="10sp"
             android:id="@+id/scrollViewImagesPlace"
             android:visibility="gone"
             android:layout_alignParentBottom="true"
@@ -274,6 +278,8 @@
                 android:id="@+id/line"
                 android:layout_width="match_parent"
                 android:layout_height="1sp"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
                 android:background="@color/colorTextPrimary" />
 
         <androidx.recyclerview.widget.RecyclerView
