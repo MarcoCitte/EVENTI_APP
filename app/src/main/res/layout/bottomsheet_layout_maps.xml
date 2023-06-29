@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:id="@+id/detailsTextView"
                 android:layout_height="wrap_content"
-                android:text="Tap to see place's details" />
+                android:text="@string/tap_to_see_place_s_details" />
 
         </LinearLayout>
 
@@ -115,7 +115,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="Drive"
+                            android:text="@string/drive"
                             android:textColor="@color/colorTextSecondary" />
 
                     </LinearLayout>
@@ -150,7 +150,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:lineSpacingExtra="-15sp"
-                            android:text="Open in \nGoogle Maps"
+                            android:text="@string/open_in_google_maps"
                             android:textColor="@color/colorTextSecondary" />
 
                     </LinearLayout>
@@ -184,7 +184,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="Call"
+                            android:text="@string/call"
                             android:textColor="@color/colorTextSecondary" />
 
                     </LinearLayout>
@@ -219,7 +219,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:lineSpacingExtra="-15sp"
-                            android:text="Add to \nfavourite"
+                            android:text="@string/add_to_favourite"
                             android:textColor="@color/colorTextSecondary" />
 
                     </LinearLayout>
@@ -252,7 +252,7 @@
                     android:paddingTop="16sp"
                     android:textColor="@color/colorTextPrimary"
                     android:paddingBottom="8sp"
-                    android:text="Eventi presenti: "
+                    android:text="@string/present_events"
                     android:textSize="25sp"
                     android:textStyle="bold" />
 

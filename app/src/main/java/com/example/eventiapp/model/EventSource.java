@@ -6,9 +6,12 @@ import java.util.Objects;
 
 public class EventSource {
 
-    private final String url;
-    private final String urlPhoto;
+    private String url;
+    private String urlPhoto;
 
+    public EventSource() {
+
+    }
 
     public EventSource(String url, String urlPhoto) {
         this.url = url;

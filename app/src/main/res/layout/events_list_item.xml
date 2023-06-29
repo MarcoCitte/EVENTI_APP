@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="-20sp"
-                android:text="Date"
+                android:text="@string/date"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="-20sp"
-                android:text="Title"
+                android:text="@string/title"
                 android:textColor="@color/colorTextPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="-20sp"
-                android:text="Category"
+                android:text="@string/category"
                 android:textAllCaps="true"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="15sp"
@@ -71,7 +71,7 @@
                 android:layout_marginTop="0sp"
                 android:layout_marginRight="30sp"
                 android:lineSpacingExtra="-20sp"
-                android:text="Place"
+                android:text="@string/place"
                 android:maxLines="2"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="16sp" />
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/attendanceTextView"
                     android:lineSpacingExtra="-20sp"
-                    android:text="Number"
+                    android:text="@string/number"
                     android:textColor="@color/colorTextSecondary"
                     android:textSize="13sp" />
 

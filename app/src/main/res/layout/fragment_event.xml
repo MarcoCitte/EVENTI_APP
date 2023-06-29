@@ -69,7 +69,7 @@
                     android:lineSpacingExtra="-20sp"
                     android:paddingTop="16dp"
                     android:paddingBottom="8dp"
-                    android:text="Titolo dell'evento"
+                    android:text="@string/event_title"
                     android:textColor="@color/colorPrimary"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -105,7 +105,7 @@
                         android:layout_marginStart="30sp"
                         android:layout_weight="1"
                         android:lineSpacingExtra="-20sp"
-                        android:text="Data dell'evento"
+                        android:text="@string/event_date"
                         android:textColor="@color/colorTextPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -130,7 +130,7 @@
                         android:layout_marginStart="30sp"
                         android:layout_weight="1"
                         android:lineSpacingExtra="-20sp"
-                        android:text="Place"
+                        android:text="@string/place"
                         android:textColor="@color/colorTextPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -143,7 +143,7 @@
                     android:layout_marginStart="85sp"
                     android:layout_marginTop="2sp"
                     android:lineSpacingExtra="-20sp"
-                    android:text="Address"
+                    android:text="@string/address"
                     android:textSize="15sp" />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -153,7 +153,7 @@
                     android:layout_marginStart="85sp"
                     android:layout_marginTop="2sp"
                     android:lineSpacingExtra="-20sp"
-                    android:text="PHONE NUMBER"
+                    android:text="@string/phone_number"
                     android:textColor="@color/colorTextSecondary"
                     android:textSize="14sp" />
 
@@ -170,7 +170,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10sp"
                         android:lineSpacingExtra="-20sp"
-                        android:text="Info"
+                        android:text="@string/info"
                         android:textAllCaps="true"
                         android:textColor="@color/colorTextPrimary"
                         android:textSize="20sp"
@@ -213,7 +213,7 @@
                         android:autoLink="web"
                         android:lineSpacingExtra="-20sp"
                         android:linksClickable="true"
-                        android:text="source"
+                        android:text="@string/source"
                         android:textColor="@color/colorButton" />
 
                 </LinearLayout>
@@ -234,7 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:lineSpacingExtra="-20sp"
-                    android:text="Other dates of the event"
+                    android:text="@string/other_dates_of_the_event"
                     android:visibility="gone" />
 
                 <HorizontalScrollView
@@ -346,7 +346,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="Drive"
+                            android:text="@string/drive"
                             android:textColor="@color/colorTextSecondary" />
 
                     </LinearLayout>
@@ -380,7 +380,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:lineSpacingExtra="-15sp"
-                            android:text="Walk"
+                            android:text="@string/walk"
                             android:textColor="@color/colorTextSecondary" />
 
                     </LinearLayout>
@@ -415,7 +415,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:lineSpacingExtra="-15sp"
-                            android:text="Open in \nGoogle Maps"
+                            android:text="@string/open_in_google_maps"
                             android:textColor="@color/colorTextSecondary" />
 
                     </LinearLayout>
@@ -449,7 +449,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text="Call"
+                            android:text="@string/call"
                             android:textColor="@color/colorTextSecondary" />
 
                     </LinearLayout>

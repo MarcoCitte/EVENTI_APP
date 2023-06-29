@@ -177,5 +177,24 @@
     <string name="place_deleted">Posto eliminato con successo</string>
     <string name="event_modified">Evento modificato con successo</string>
     <string name="place_modified">Posto modificato con successo</string>
+    <string name="favorite_places_account">Posti preferiti</string>
+    <string name="created_events_account">Eventi creati</string>
+    <string name="created_places_account">Posti creati</string>
+    <string name="confirm_button_text">Conferma</string>
+    <string name="old_password_text">Vecchia password</string>
+    <string name="new_password_text">Nuova password</string>
+    <string name="confirm_new_password_text">Conferma nuova password</string>
+    <string name="change_password_text">Cambia password</string>
+    <string name="tap_to_see_place_s_details">Premi per vedere i dettagli del posto</string>
+    <string name="drive">Guida</string>
+    <string name="open_in_google_maps">Apri in Google Maps</string>
+    <string name="call">Chiama</string>
+    <string name="add_to_favourite">Aggiungi ai preferiti</string>
+    <string name="number">Numero</string>
+    <string name="event_title">Titolo dell\'evento</string>
+    <string name="event_date">Data dellìevento</string>
+    <string name="source">Sorgente</string>
+    <string name="other_dates_of_the_event">Altre date dell\'evento</string>
+    <string name="walk">Cammina</string>
 
 </resources>
