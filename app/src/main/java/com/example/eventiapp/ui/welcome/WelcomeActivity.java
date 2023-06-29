@@ -3,6 +3,7 @@ package com.example.eventiapp.ui.welcome;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -23,18 +24,8 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        /*
-        Toolbar toolbar = findViewById(R.id.top_appbar);
-        setSupportActionBar(toolbar);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
-                findFragmentById(R.id.nav_host_fragment);
-        NavController navController = navHostFragment.getNavController();
-
-        // For the Toolbar
-        NavigationUI.setupActionBarWithNavController(this, navController);
-
-         */
 
     }
 }
