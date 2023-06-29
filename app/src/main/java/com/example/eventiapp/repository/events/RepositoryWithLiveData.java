@@ -385,10 +385,12 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
     @Override
     public void onSuccessFromRemote(EventsApiResponse eventsApiResponse, long lastUpdate) {
         eventsLocalDataSource.insertEvents(eventsApiResponse);
+        /*
         //PLACES
 
 
         List<Events> fetchedEvents = eventsApiResponse.getEventsList();
+
 
         //RIMUOVE EVENTI PRESENTI NELLO STESSO LUOGO COSI DA AVERE EVENTI CHE SI TENGONO IN POSTI DIVERSI PER POTER SALVARE QUEST ULTIMI
         Map<String, Events> map = new HashMap<>();
@@ -445,6 +447,8 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
             }
 
         }
+
+         */
 
 
 
