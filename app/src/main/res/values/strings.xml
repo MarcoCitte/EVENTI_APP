@@ -202,5 +202,24 @@
     <string name="delete_event">Delete event</string>
     <string name="event_deleted">Event successfully deleted</string>
     <string name="place_deleted">Place successfully deleted</string>
+    <string name="favorite_places_account">Favorite places</string>
+    <string name="created_events_account">Created events</string>
+    <string name="created_places_account">Created places</string>
+    <string name="confirm_button_text">Confirm</string>
+    <string name="old_password_text">Old password</string>
+    <string name="new_password_text">New Password</string>
+    <string name="confirm_new_password_text">Confirm New Password</string>
+    <string name="change_password_text">Change Password</string>
+    <string name="tap_to_see_place_s_details">Tap to see place\'s details</string>
+    <string name="drive">Drive</string>
+    <string name="open_in_google_maps">Open in \nGoogle Maps</string>
+    <string name="call">Call</string>
+    <string name="add_to_favourite">Add to \nfavourite</string>
+    <string name="number">Number</string>
+    <string name="event_title">Event title</string>
+    <string name="event_date">Event date</string>
+    <string name="source">source</string>
+    <string name="other_dates_of_the_event">Other dates of the event</string>
+    <string name="walk">Walk</string>
 
 </resources>

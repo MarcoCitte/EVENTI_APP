@@ -173,7 +173,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:gravity="center"
-                                android:text="Drive"
+                                android:text="@string/drive"
                                 android:textColor="@color/colorTextSecondary" />
 
                         </LinearLayout>
@@ -207,7 +207,7 @@
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:lineSpacingExtra="-15sp"
-                                android:text="Walk"
+                                android:text="@string/walk"
                                 android:textColor="@color/colorTextSecondary" />
 
                         </LinearLayout>
@@ -242,7 +242,7 @@
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:lineSpacingExtra="-15sp"
-                                android:text="Open in \nGoogle Maps"
+                                android:text="@string/open_in_google_maps"
                                 android:textColor="@color/colorTextSecondary" />
 
                         </LinearLayout>
@@ -276,7 +276,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:gravity="center"
-                                android:text="Call"
+                                android:text="@string/call"
                                 android:textColor="@color/colorTextSecondary" />
 
                         </LinearLayout>

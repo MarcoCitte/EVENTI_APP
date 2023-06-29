@@ -1,6 +1,9 @@
 package com.example.eventiapp.ui.user;
 
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS;
+import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYPLACES;
 
 import android.app.Application;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import com.example.eventiapp.R;
 import com.example.eventiapp.databinding.FragmentAccountBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsResponse;
+import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
 import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
 import com.example.eventiapp.repository.user.IUserRepository;
@@ -88,12 +92,21 @@ public class AccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        boolean isFirstLoading = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+        boolean isFirstLoadingFavEvents = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
                 SHARED_PREFERENCES_FIRST_LOADING_FAVORITEEVENTS);
+
+        boolean isFirstLoadingFavPlaces = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING_FAVORITEPLACES);
+
+        boolean isFirstLoadingMyEvents = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS);
+
+        boolean isFirstLoadingMyPlaces = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
+                SHARED_PREFERENCES_FIRST_LOADING_MYPLACES);
 
         fragmentAccountBinding.emailText.setText("Bentornato, " + userViewModel.getLoggedUser().getEmail());
 
-        eventsAndPlacesViewModel.getFavoriteEventsLiveData(isFirstLoading).observe(getViewLifecycleOwner(), result -> {
+        eventsAndPlacesViewModel.getFavoriteEventsLiveData(isFirstLoadingFavEvents).observe(getViewLifecycleOwner(), result -> {
             if(result!=null){
                 EventsResponse eventsResponse = ((Result.EventsResponseSuccess) result).getData();
                 List<Events> fetchedEvents = eventsResponse.getEventsList();
@@ -121,6 +134,34 @@ public class AccountFragment extends Fragment {
             public void onClick(View v) {
                 Navigation.findNavController(view).navigate(R.id.action_accountFragment_to_changePasswordFragment);
 
+            }
+        });
+
+        eventsAndPlacesViewModel.getFavoritePlacesLiveData(isFirstLoadingFavPlaces).observe(getViewLifecycleOwner(), result -> {
+            if(result!=null){
+                List<Place> fetchedPlaces = ((Result.PlacesResponseSuccess) result).getData();
+                fragmentAccountBinding.numberPlacesTextView.setText(String.valueOf(fetchedPlaces.size()));
+            }else{
+                fragmentAccountBinding.numberPlacesTextView.setText("0");
+            }
+        });
+
+
+        eventsAndPlacesViewModel.getMyPlacesLiveData(isFirstLoadingMyPlaces).observe(getViewLifecycleOwner(), result -> {
+            if(result!=null){
+                List<Place> fetchedPlaces = result;
+                fragmentAccountBinding.numberCreatedPlacesTextView.setText(String.valueOf(fetchedPlaces.size()));
+            }else{
+                fragmentAccountBinding.numberCreatedPlacesTextView.setText("0");
+            }
+        });
+
+        eventsAndPlacesViewModel.getMyEventsLiveData(isFirstLoadingMyEvents).observe(getViewLifecycleOwner(), result -> {
+            if(result!=null){
+                List<Events> fetchedEvents = ((Result.EventsResponseSuccess) result).getData().getEventsList();
+                fragmentAccountBinding.numberCreatedEventsTextView.setText(String.valueOf(fetchedEvents.size()));
+            }else{
+                fragmentAccountBinding.numberCreatedEventsTextView.setText("0");
             }
         });
 

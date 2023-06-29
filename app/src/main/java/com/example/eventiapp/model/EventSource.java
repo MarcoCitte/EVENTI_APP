@@ -9,6 +9,9 @@ public class EventSource {
     private String url;
     private String urlPhoto;
 
+    public EventSource() {
+
+    }
 
     public EventSource(String url, String urlPhoto) {
         this.url = url;
