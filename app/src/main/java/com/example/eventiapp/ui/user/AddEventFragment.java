@@ -287,7 +287,7 @@ public class AddEventFragment extends Fragment {
 
                     AutocompleteSupportFragment autocompleteFragment = AutocompleteSupportFragment.newInstance();
                     autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS);
-                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.PHOTO_METADATAS,com.google.android.libraries.places.api.model.Place.Field.PHONE_NUMBER, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.PHOTO_METADATAS, com.google.android.libraries.places.api.model.Place.Field.PHONE_NUMBER, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
 
                     // Aggiungi il fragment all'activity
                     requireActivity().getSupportFragmentManager().beginTransaction()
@@ -301,10 +301,12 @@ public class AddEventFragment extends Fragment {
                             namePlace = place.getName();
                             idPlace = place.getId();
                             placePhoneNumber = place.getPhoneNumber();
-                            photoMetadata=place.getPhotoMetadatas();
+                            photoMetadata = place.getPhotoMetadatas();
                             coordinates = new ArrayList<>();
-                            coordinates.add(place.getLatLng().latitude);
-                            coordinates.add(place.getLatLng().longitude);
+                            if (place.getLatLng() != null) {
+                                coordinates.add(place.getLatLng().latitude);
+                                coordinates.add(place.getLatLng().longitude);
+                            }
                         }
 
                         @Override
@@ -434,7 +436,7 @@ public class AddEventFragment extends Fragment {
                         if (placePhoneNumber != null) {
                             place.setPhoneNumber(placePhoneNumber);
                         }
-                        if(photoMetadata != null){
+                        if (photoMetadata != null) {
                             place.setImages(photoMetadata);
                         }
                     } else { //POSTO CREATO DALL'UTENTE

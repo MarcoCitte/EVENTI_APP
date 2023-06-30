@@ -389,6 +389,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
         //PLACES
 
 
+        /*
         List<Events> fetchedEvents = eventsApiResponse.getEventsList();
 
 

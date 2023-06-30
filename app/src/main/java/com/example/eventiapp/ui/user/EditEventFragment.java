@@ -29,6 +29,7 @@ import android.widget.RadioGroup;
 
 import com.bumptech.glide.Glide;
 import com.example.eventiapp.R;
+import com.example.eventiapp.adapter.PlaceAdapter;
 import com.example.eventiapp.databinding.FragmentEditEventBinding;
 import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Events;
@@ -44,6 +45,7 @@ import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -87,6 +89,8 @@ public class EditEventFragment extends Fragment {
     private String idPlace;
     private String address;
     private List<Double> coordinates;
+    private String placePhoneNumber;
+    private List<PhotoMetadata> photoMetadata;
     private boolean isPrivate;
     private boolean googlePlace;
 
@@ -298,13 +302,19 @@ public class EditEventFragment extends Fragment {
 
         //PLACE
 
-        if (!events.getPlaces().isEmpty()) {
-            if (events.getPlaces().get(0).getId() != null) { //? DIFFERENZIARE POSTI PRESI DA GOOGLE O PRESI DA QUELLI CREATI DALL'UTENTE
-
-            } else {
-
+        eventsAndPlacesViewModel.getMyPlacesLiveData(false).observe(getViewLifecycleOwner(), result -> {
+            if (result != null) {
+                List<Place> fetchedPlaces = result;
+                if (!fetchedPlaces.isEmpty()) {
+                    PlaceAdapter adapterPlaces = new PlaceAdapter(requireContext(), fetchedPlaces);
+                    adapterPlaces.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    fragmentEditEventBinding.placesSpinner.setAdapter(adapterPlaces);
+                } else {
+                    fragmentEditEventBinding.noPersonalPlacesTextView.setVisibility(View.VISIBLE);
+                    fragmentEditEventBinding.placesSpinner.setVisibility(View.GONE);
+                }
             }
-        }
+        });
 
         fragmentEditEventBinding.placeSourceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -322,7 +332,7 @@ public class EditEventFragment extends Fragment {
 
                     AutocompleteSupportFragment autocompleteFragment = AutocompleteSupportFragment.newInstance();
                     autocompleteFragment.setTypeFilter(TypeFilter.ADDRESS);
-                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
+                    autocompleteFragment.setPlaceFields(Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.PHOTO_METADATAS, com.google.android.libraries.places.api.model.Place.Field.PHONE_NUMBER, com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.ADDRESS, com.google.android.libraries.places.api.model.Place.Field.ID, com.google.android.libraries.places.api.model.Place.Field.NAME));
 
                     // Aggiungi il fragment all'activity
                     requireActivity().getSupportFragmentManager().beginTransaction()
@@ -335,9 +345,13 @@ public class EditEventFragment extends Fragment {
                             address = place.getAddress();
                             namePlace = place.getName();
                             idPlace = place.getId();
+                            placePhoneNumber = place.getPhoneNumber();
+                            photoMetadata = place.getPhotoMetadatas();
                             coordinates = new ArrayList<>();
-                            coordinates.add(place.getLatLng().latitude);
-                            coordinates.add(place.getLatLng().longitude);
+                            if (place.getLatLng() != null) {
+                                coordinates.add(place.getLatLng().latitude);
+                                coordinates.add(place.getLatLng().longitude);
+                            }
                         }
 
                         @Override
@@ -443,7 +457,7 @@ public class EditEventFragment extends Fragment {
                         newEvent.setEnd(endDate.trim() + "userH" + endTime);
                     }
                     newEvent.setTimezone("Europe/Rome");
-                    if (events.getEventSource().getUrlPhoto() != null) {
+                    if (events.getEventSource() != null && events.getEventSource().getUrlPhoto() != null) {
                         newEvent.setEventSource(new EventSource(null, events.getEventSource().getUrlPhoto()));
                     }
                     if (imageUri != null) {
@@ -466,10 +480,29 @@ public class EditEventFragment extends Fragment {
                     String category = categoriesEnglish[selectedCategoryIndex];
                     newEvent.setCategory(category.toLowerCase(Locale.ROOT));
 
-                    List<Place> placeList = new ArrayList<>();
-                    Place place = new Place("idPlace", "namePlace", "venue", "address");
-                    placeList.add(place);
-                    newEvent.setPlaces(placeList);
+                    //PLACE
+                    if (googlePlace) {
+                        List<Place> placeList = new ArrayList<>();
+                        Place place = new Place(idPlace, namePlace, "venue", address);
+                        place.setIdGoogle(idPlace);
+                        place.setCoordinates(coordinates);
+                        placeList.add(place);
+                        newEvent.setPlaces(placeList);
+                        newEvent.setCoordinates(coordinates);
+                        if (placePhoneNumber != null) {
+                            place.setPhoneNumber(placePhoneNumber);
+                        }
+                        if (photoMetadata != null) {
+                            place.setImages(photoMetadata);
+                        }
+                    } else { //POSTO CREATO DALL'UTENTE
+                        List<Place> placeList = new ArrayList<>();
+                        Place selectedPlace = (Place) fragmentEditEventBinding.placesSpinner.getSelectedItem();
+                        placeList.add(selectedPlace);
+                        newEvent.setPlaces(placeList);
+                        newEvent.setCoordinates(selectedPlace.getCoordinates());
+                    }
+
                     newEvent.setPrivate(isPrivate);
 
 

@@ -182,8 +182,12 @@ public class PlaceFragment extends Fragment {
                 googleMap = mMap;
 
                 // For dropping a marker at a point on the Map
-                Double[] location = place.getCoordinates().toArray(new Double[0]);
-                LatLng latLng = new LatLng(location[0], location[1]);
+                LatLng latLng;
+                if (place.getCoordinates().get(0) > place.getCoordinates().get(1)) {
+                    latLng = new LatLng(place.getCoordinates().get(0), place.getCoordinates().get(1));
+                } else {
+                    latLng = new LatLng(place.getCoordinates().get(1), place.getCoordinates().get(0));
+                }
                 googleMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()).snippet(place.getAddress()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
