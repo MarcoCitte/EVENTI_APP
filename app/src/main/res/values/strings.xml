@@ -223,5 +223,6 @@
     <string name="walk">Walk</string>
     <string name="reset_password_text">Enter the email of the account whose password you are trying to reset. An email will be sent to you to reset your password.</string>
     <string name="reset_password_title">Reset password</string>
+    <string name="bentornato">"Welcome back, "</string>
 
 </resources>

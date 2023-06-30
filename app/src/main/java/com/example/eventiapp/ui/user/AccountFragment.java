@@ -104,7 +104,7 @@ public class AccountFragment extends Fragment {
         boolean isFirstLoadingMyPlaces = sharedPreferencesUtil.readBooleanData(Constants.SHARED_PREFERENCES_FILE_NAME,
                 SHARED_PREFERENCES_FIRST_LOADING_MYPLACES);
 
-        fragmentAccountBinding.emailText.setText("Bentornato, " + userViewModel.getLoggedUser().getEmail());
+        fragmentAccountBinding.emailText.setText(getString(R.string.bentornato) + userViewModel.getLoggedUser().getEmail());
 
         eventsAndPlacesViewModel.getFavoriteEventsLiveData(isFirstLoadingFavEvents).observe(getViewLifecycleOwner(), result -> {
             if(result!=null){
