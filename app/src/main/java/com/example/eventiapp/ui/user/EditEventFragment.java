@@ -515,7 +515,7 @@ public class EditEventFragment extends Fragment {
                         bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                         byte[] data = baos.toByteArray();
 
-                        StorageReference storageRef = storage.getReference().child("images/");
+                        StorageReference storageRef = storage.getReference().child("images/" + imageUri + "/");
 
                         UploadTask uploadTask = storageRef.putBytes(data);
 

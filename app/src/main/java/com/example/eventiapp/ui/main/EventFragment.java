@@ -193,7 +193,6 @@ public class EventFragment extends Fragment {
                                         Glide.with(requireView()).load(bitmap).into(fragmentEventBinding.eventImage);
                                     }
                                 }
-
                                 @Override
                                 public void onError(String message) {
                                     Log.e(TAG, message);
@@ -206,7 +205,7 @@ public class EventFragment extends Fragment {
                     }
                     fragmentEventBinding.eventTitle.setText(events.getTitle());
                     fragmentEventBinding.eventCategory.setText(events.getCategory());
-                    if (events.getEventSource() != null) {
+                    if (events.getEventSource() != null && !events.getEventSource().getUrl().equals("user")) {
                         fragmentEventBinding.sourceTV.setText(events.getEventSource().getUrl());
                     } else {
                         fragmentEventBinding.forMoreInfoTV.setVisibility(View.GONE);
@@ -700,7 +699,7 @@ public class EventFragment extends Fragment {
             }
         });
 
-        if (events.getEventSource() != null) {
+        if (events.getEventSource() != null && !events.getEventSource().getUrl().equals("user")) {
             fragmentEventBinding.sourceTV.setText(events.getEventSource().getUrl());
         } else {
             fragmentEventBinding.forMoreInfoTV.setVisibility(View.GONE);
