@@ -124,8 +124,8 @@ public class EditPlaceFragment extends Fragment {
         oldPlace = place;
 
         mapView = fragmentEditPlaceBinding.mapView;
-        //mapView.onCreate(savedInstanceState);
-        //mapView.onResume();
+        mapView.onCreate(savedInstanceState);
+        mapView.onResume();
         if (mapView != null) {
             mapView.getMapAsync(callback);
         }
@@ -214,7 +214,7 @@ public class EditPlaceFragment extends Fragment {
                         bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                         byte[] data = baos.toByteArray();
 
-                        StorageReference storageRef = storage.getReference().child("images/");
+                        StorageReference storageRef = storage.getReference().child("images/" + imageUri.toString());
 
                         UploadTask uploadTask = storageRef.putBytes(data);
 
@@ -307,25 +307,25 @@ public class EditPlaceFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //mapView.onResume();
+        mapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //mapView.onPause();
+        mapView.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //mapView.onDestroy();
+        mapView.onDestroy();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        //mapView.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
 

@@ -677,6 +677,7 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     @Override
     public void onSuccessFromReadUserCreatedEvent(List<Events> eventsList) {
+        eventsLocalDataSource.insertEvents(eventsList);
         usersCreatedEventsMutableLiveData.postValue(new Result.EventsResponseSuccess(new EventsResponse(eventsList)));
     }
 
