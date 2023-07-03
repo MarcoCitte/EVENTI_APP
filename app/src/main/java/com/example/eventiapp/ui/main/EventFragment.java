@@ -212,6 +212,11 @@ public class EventFragment extends Fragment {
                         fragmentEventBinding.sourceTV.setVisibility(View.GONE);
                     }
 
+                    //PRIVATE
+                    if(events.isPrivate()){
+                        fragmentEventBinding.eventPrivate.setVisibility(View.VISIBLE);
+                    }
+
                     //CATEGORY
 
                     fragmentEventBinding.eventCategory.setOnClickListener(new View.OnClickListener() {
@@ -687,6 +692,11 @@ public class EventFragment extends Fragment {
 
         fragmentEventBinding.eventTitle.setText(events.getTitle());
         fragmentEventBinding.eventCategory.setText(events.getCategory());
+
+        //PRIVATE
+        if(events.isPrivate()){
+            fragmentEventBinding.eventPrivate.setVisibility(View.VISIBLE);
+        }
 
         //CATEGORY
 

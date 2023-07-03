@@ -1,13 +1,7 @@
 package com.example.eventiapp.repository.events;
 
 import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsApiResponse;
 import com.example.eventiapp.model.EventsResponse;
@@ -25,15 +19,9 @@ import com.example.eventiapp.source.places.BasePlacesLocalDataSource;
 import com.example.eventiapp.source.places.BasePlacesRemoteDataSource;
 import com.example.eventiapp.source.places.PlaceCallback;
 import com.example.eventiapp.util.Constants;
-import com.example.eventiapp.util.StringUtils;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCallback, PlaceCallback {
 
@@ -84,8 +72,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
     private final PlaceDetailsSource placeDetailsSource;
     private int count;
-
-    private final LifecycleRegistry lifecycleRegistry;
     private final MutableLiveData<List<Place>> usersCreatedPlacesMutableLiveData;
 
 
@@ -134,15 +120,6 @@ public class RepositoryWithLiveData implements IRepositoryWithLiveData, EventsCa
 
         this.backupDataSource4 = myPlacesDataSource;
         this.backupDataSource4.setMyPlacesCallback(this);
-
-        lifecycleRegistry = new LifecycleRegistry(new LifecycleOwner() {
-            @NonNull
-            @Override
-            public Lifecycle getLifecycle() {
-                return lifecycleRegistry;
-            }
-        });
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
 
         usersCreatedEventsMutableLiveData = new MutableLiveData<>();
         usersCreatedPlacesMutableLiveData = new MutableLiveData<>();

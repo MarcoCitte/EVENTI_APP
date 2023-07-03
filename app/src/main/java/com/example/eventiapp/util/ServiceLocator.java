@@ -95,7 +95,7 @@ public class ServiceLocator {
         PlacesClient placesClient = Places.createClient(application);
         Geocoder geocoder = new Geocoder(application, Locale.getDefault());
 
-        eventsRemoteDataSource = new EventsRemoteDataSource("Bearer MoUe9kWQvZ1KPM1lpoI9Ia3SuzZWGip-PMOX-ujN");
+        eventsRemoteDataSource = new EventsRemoteDataSource("Bearer Mt04VHwLgnyJ5To0xG3cME-a1Yoku62aib8P4Np2");
         placesRemoteDataSource = new PlacesRemoteDataSource();
 
         eventsLocalDataSource = new EventsLocalDataSource(getDao(application), sharedPreferencesUtil, dataEncryptionUtil);

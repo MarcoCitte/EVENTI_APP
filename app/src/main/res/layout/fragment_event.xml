@@ -67,11 +67,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lineSpacingExtra="-20sp"
-                    android:paddingTop="16dp"
+                    android:paddingTop="16sp"
                     android:paddingBottom="8dp"
                     android:text="@string/event_title"
                     android:textColor="@color/colorPrimary"
                     android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/event_private"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-25sp"
+                    android:lineSpacingExtra="-20sp"
+                    android:paddingTop="-16sp"
+                    android:paddingBottom="8dp"
+                    android:visibility="gone"
+                    android:text="@string/isprivate"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <com.google.android.material.chip.Chip
