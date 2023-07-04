@@ -204,10 +204,6 @@ public class UserEventsFragment extends Fragment {
             case "Meno recente":
                 Collections.sort(eventsList, new Events.SortByLeastRecent());
                 break;
-            case "Rank":
-            case "Più attesi":
-                Collections.sort(eventsList, new Events.SortByRank());
-                break;
             case "Alphabet (A-Z)":
             case "Alfabetico (A-Z)":
                 Collections.sort(eventsList, new Events.SortByAlphabetAZ());
