@@ -21,18 +21,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventiapp.R;
 import com.example.eventiapp.adapter.CalendarAdapter;
-import com.example.eventiapp.databinding.FragmentAllEventsBinding;
 import com.example.eventiapp.databinding.FragmentCalendarBinding;
 import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.eventsAndPlaces.IRepositoryWithLiveData;
 import com.example.eventiapp.util.DateUtils;
 import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -40,7 +38,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class CalendarFragment extends Fragment implements CalendarAdapter.OnItemListener {
 

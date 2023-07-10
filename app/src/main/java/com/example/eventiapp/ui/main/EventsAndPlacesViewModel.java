@@ -2,7 +2,6 @@ package com.example.eventiapp.ui.main;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -10,7 +9,7 @@ import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.eventsAndPlaces.IRepositoryWithLiveData;
 
 import java.util.ArrayList;
 import java.util.List;

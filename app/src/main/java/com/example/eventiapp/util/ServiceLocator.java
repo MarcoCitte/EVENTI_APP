@@ -11,8 +11,8 @@ import com.example.eventiapp.R;
 import com.example.eventiapp.repository.user.IUserRepository;
 import com.example.eventiapp.repository.user.UserRepository;
 import com.example.eventiapp.database.RoomDatabase;
-import com.example.eventiapp.repository.events.RepositoryWithLiveData;
-import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.eventsAndPlaces.RepositoryWithLiveData;
+import com.example.eventiapp.repository.eventsAndPlaces.IRepositoryWithLiveData;
 import com.example.eventiapp.service.EventsApiService;
 import com.example.eventiapp.source.events.BaseFavoriteEventsDataSource;
 import com.example.eventiapp.source.events.BaseMyEventsDataSource;
@@ -91,11 +91,11 @@ public class ServiceLocator {
         SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(application);
         DataEncryptionUtil dataEncryptionUtil = new DataEncryptionUtil(application);
 
-        Places.initialize(application,  "AIzaSyBfUbHrX9y475T-c7v--HuxDmxjUMldAE8");
+        Places.initialize(application,  application.getString(R.string.maps_api_key));
         PlacesClient placesClient = Places.createClient(application);
         Geocoder geocoder = new Geocoder(application, Locale.getDefault());
 
-        eventsRemoteDataSource = new EventsRemoteDataSource("Bearer Mt04VHwLgnyJ5To0xG3cME-a1Yoku62aib8P4Np2");
+        eventsRemoteDataSource = new EventsRemoteDataSource(application.getString(R.string.events_api_key));
         placesRemoteDataSource = new PlacesRemoteDataSource();
 
         eventsLocalDataSource = new EventsLocalDataSource(getDao(application), sharedPreferencesUtil, dataEncryptionUtil);

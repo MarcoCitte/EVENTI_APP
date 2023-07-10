@@ -1,7 +1,6 @@
 package com.example.eventiapp.ui.user;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.eventiapp.util.Constants.BICOCCA_LATLNG;
 import static com.example.eventiapp.util.Constants.REQUEST_CODE_PICK_IMAGE;
 
 import android.content.Intent;
@@ -23,12 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.databinding.FragmentAddPlaceBinding;
 import com.example.eventiapp.databinding.FragmentEditPlaceBinding;
-import com.example.eventiapp.model.EventSource;
-import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.Place;
-import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.eventsAndPlaces.IRepositoryWithLiveData;
 import com.example.eventiapp.repository.user.IUserRepository;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;

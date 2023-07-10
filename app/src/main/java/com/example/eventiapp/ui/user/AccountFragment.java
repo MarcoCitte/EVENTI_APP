@@ -5,14 +5,12 @@ import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOAD
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYEVENTS;
 import static com.example.eventiapp.util.Constants.SHARED_PREFERENCES_FIRST_LOADING_MYPLACES;
 
-import android.app.Application;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,15 +24,13 @@ import com.example.eventiapp.model.Events;
 import com.example.eventiapp.model.EventsResponse;
 import com.example.eventiapp.model.Place;
 import com.example.eventiapp.model.Result;
-import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.eventsAndPlaces.IRepositoryWithLiveData;
 import com.example.eventiapp.repository.user.IUserRepository;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
 import com.example.eventiapp.ui.welcome.UserViewModel;
 import com.example.eventiapp.ui.welcome.UserViewModelFactory;
 import com.example.eventiapp.util.Constants;
-import com.example.eventiapp.util.ErrorMessageUtil;
-import com.example.eventiapp.util.LanguageUtil;
 import com.example.eventiapp.util.ServiceLocator;
 import com.example.eventiapp.util.SharedPreferencesUtil;
 import com.google.android.material.snackbar.Snackbar;

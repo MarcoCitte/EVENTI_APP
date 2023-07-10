@@ -128,12 +128,11 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
             Log.e(TAG, "Dentro il remote");
             if (!task.isSuccessful()) {
                 Log.d(TAG, "Error getting data", task.getException());
-            }
-            else {
+            } else {
                 Log.d(TAG, "Successful read: " + task.getResult().getValue());
 
                 List<Events> eventsList = new ArrayList<>();
-                for(DataSnapshot ds : task.getResult().getChildren()) {
+                for (DataSnapshot ds : task.getResult().getChildren()) {
                     Events events = ds.getValue(Events.class);
                     if (events != null) {
                         events.setSynchronized(true);
@@ -149,7 +148,10 @@ public class EventsRemoteDataSource extends BaseEventsRemoteDataSource implement
     @Override
     public void onPostExecuted(List<Events> eventsList) {
         List<Events> updatedEventsList = new ArrayList<>(Objects.requireNonNull(eventsApiResponse.body()).getEventsList());
-        List<Events> updatedEventsList2 = new ArrayList<>(Objects.requireNonNull(eventsApiResponse2.body()).getEventsList());
+        List<Events> updatedEventsList2 = new ArrayList<>();
+        if (eventsApiResponse2 != null) {
+            updatedEventsList2 = new ArrayList<>(Objects.requireNonNull(eventsApiResponse2.body()).getEventsList());
+        }
 
         updatedEventsList.addAll(updatedEventsList2);
         updatedEventsList.addAll(eventsList);

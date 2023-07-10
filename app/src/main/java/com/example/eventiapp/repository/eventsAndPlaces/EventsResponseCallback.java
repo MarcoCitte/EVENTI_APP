@@ -1,4 +1,4 @@
-package com.example.eventiapp.repository.events;
+package com.example.eventiapp.repository.eventsAndPlaces;
 
 import com.example.eventiapp.model.Events;
 

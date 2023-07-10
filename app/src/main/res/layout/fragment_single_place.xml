@@ -46,7 +46,7 @@
             <HorizontalScrollView
                 android:id="@+id/scrollViewImagesPlace"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="200sp"
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="center"
                 android:scrollbars="none"
@@ -110,8 +110,8 @@
             <com.google.android.gms.maps.MapView
                 android:id="@+id/mapView"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginTop="16dp" />
+                android:layout_height="300sp"
+                android:layout_marginTop="16sp" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/place_address2"
@@ -304,9 +304,9 @@
                     android:id="@+id/place_events"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
+                    android:paddingTop="16sp"
                     android:visibility="gone"
-                    android:paddingBottom="8dp"
+                    android:paddingBottom="8sp"
                     android:text="@string/present_events"
                     android:textColor="@color/colorTextSecondary"
                     android:textSize="20sp"
@@ -318,7 +318,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5sp"
                     android:clickable="false"
-                    android:paddingBottom="8dp"
+                    android:paddingBottom="8sp"
                     android:text="10"
                     android:textStyle="bold"
                     android:textColor="@color/colorTextSecondary"

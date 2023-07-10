@@ -1,4 +1,4 @@
-package com.example.eventiapp.repository.events;
+package com.example.eventiapp.repository.eventsAndPlaces;
 
 import android.util.Log;
 import androidx.lifecycle.MutableLiveData;

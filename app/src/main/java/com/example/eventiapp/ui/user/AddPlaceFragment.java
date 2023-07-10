@@ -25,9 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eventiapp.R;
-import com.example.eventiapp.model.EventSource;
 import com.example.eventiapp.model.Place;
-import com.example.eventiapp.repository.events.IRepositoryWithLiveData;
+import com.example.eventiapp.repository.eventsAndPlaces.IRepositoryWithLiveData;
 import com.example.eventiapp.repository.user.IUserRepository;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModel;
 import com.example.eventiapp.ui.main.EventsAndPlacesViewModelFactory;
